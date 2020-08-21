@@ -11,3 +11,4 @@ IMX_CORE_TOOLS_imxpxp = " tslib"
 RDEPENDS_${PN} += " \
     ${IMX_CORE_TOOLS} \
 "
+RDEPENDS_${PN}_remove = "ltp"

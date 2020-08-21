@@ -15,7 +15,6 @@ QT5_FONTS = "ttf-dejavu-common ttf-dejavu-sans ttf-dejavu-sans-mono ttf-dejavu-s
 
 QT5_IMAGE_INSTALL = ""
 QT5_IMAGE_INSTALL_common = " \
-    packagegroup-qt5-demos \
     ${QT5_FONTS} \
     ${QT5_IMAGE_INSTALL_APPS} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'libxkbcommon', '', d)} \
@@ -25,7 +24,7 @@ QT5_IMAGE_INSTALL_imxgpu2d = "${@bb.utils.contains('DISTRO_FEATURES', 'x11','${Q
     'qtbase qtbase-plugins', d)}"
 
 QT5_IMAGE_INSTALL_imxpxp = "${@bb.utils.contains('DISTRO_FEATURES', 'x11','${QT5_IMAGE_INSTALL_common}', \
-    'qtbase qtbase-examples qtbase-plugins', d)}"
+    'qtbase  qtbase-plugins', d)}"
 
 QT5_IMAGE_INSTALL_imxgpu3d = " \
     ${QT5_IMAGE_INSTALL_common} \
