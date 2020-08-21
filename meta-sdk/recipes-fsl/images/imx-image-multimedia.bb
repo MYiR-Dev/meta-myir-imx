@@ -57,4 +57,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     tslib-tests \
     sqlite3 \
     lftp \
+    inetutils-ftp \
 "
