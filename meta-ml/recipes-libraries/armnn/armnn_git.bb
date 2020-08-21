@@ -39,7 +39,7 @@ PACKAGECONFIG_OPENCL       = ""
 PACKAGECONFIG_OPENCL_mx8   = "opencl"
 PACKAGECONFIG_OPENCL_mx8mm = ""
 
-PACKAGECONFIG ??= "neon caffe tensorflow tensorflow_lite onnx unit_tests vsi_npu"
+PACKAGECONFIG ??= "neon caffe tensorflow tensorflow_lite onnx  vsi_npu"
 
 PACKAGECONFIG[caffe] = "-DBUILD_CAFFE_PARSER=1 -DCAFFE_GENERATED_SOURCES=${STAGING_DIR_HOST}${datadir}/armnn-caffe,-DBUILD_CAFFE_PARSER=0,armnn-caffe"
 PACKAGECONFIG[examples] = "-DBUILD_ARMNN_EXAMPLES=1,-DBUILD_ARMNN_EXAMPLES=0, opencv"
@@ -48,7 +48,7 @@ PACKAGECONFIG[onnx] = "-DBUILD_ONNX_PARSER=1 -DONNX_GENERATED_SOURCES=${STAGING_
 PACKAGECONFIG[opencl] = "-DARMCOMPUTECL=1,-DARMCOMPUTECL=0,opencl-headers"
 PACKAGECONFIG[tensorflow] = "-DBUILD_TF_PARSER=1 -DTF_GENERATED_SOURCES=${STAGING_DIR_HOST}${datadir}/armnn-tensorflow,-DBUILD_TF_PARSER=0, armnn-tensorflow "
 PACKAGECONFIG[tensorflow_lite] = "-DTF_LITE_GENERATED_PATH=${STAGING_DIR_HOST}${datadir}/armnn-tensorflow-lite -DBUILD_TF_LITE_PARSER=1 ,-DBUILD_TF_LITE_PARSER=0, flatbuffers armnn-tensorflow"
-PACKAGECONFIG[unit_tests] = "-DBUILD_UNIT_TESTS=1,-DBUILD_UNIT_TESTS=0"
+#PACKAGECONFIG[unit_tests] = "-DBUILD_UNIT_TESTS=1,-DBUILD_UNIT_TESTS=0"
 PACKAGECONFIG[vsi_npu] = "-DVSI_NPU=1,-DVSI_NPU=0,nn-imx"
 PACKAGECONFIG[vsi_tests] = "-DBUILD_VSI_TESTS=1,-DBUILD_VSI_TESTS=0"
 
