@@ -61,4 +61,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     ntp \
     tcpdump \
     proftpd \
+    openvpn \
 "
