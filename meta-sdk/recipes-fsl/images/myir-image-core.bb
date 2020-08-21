@@ -23,4 +23,4 @@ IMAGE_INSTALL += " \
     imx-test \
     packagegroup-imx-core-tools \
 "
-export IMAGE_BASENAME = "imx-image-core"
+export IMAGE_BASENAME = "myir-image-core"
