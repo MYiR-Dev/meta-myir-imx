@@ -12,12 +12,13 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
 
 DEPENDS += "lzop-native bc-native"
 
-KERNEL_BRANCH ?= "imx_5.4.3_2.0.0"
+KERNEL_BRANCH ?= "develop"
 LOCALVERSION = "-2.0.0"
-KERNEL_SRC ?= "git://source.codeaurora.org/external/imx/linux-imx.git;protocol=https"
+KERNEL_SRC ?= "git://github.com/MYiR-Dev/myir-imx-linux.git;protocol=https"
 SRC_URI = "${KERNEL_SRC};branch=${KERNEL_BRANCH}"
 
-SRCREV = "fd263a3edd95dfe812397fabf1059b5f99bba2ab"
+SRCREV = "d50b65dafc49e6b4d15041805c0f4a3441a6c960"
+
 
 FILES_${KERNEL_PACKAGE_NAME}-base += "${nonarch_base_libdir}/modules/${KERNEL_VERSION}/modules.builtin.modinfo "
 
@@ -43,8 +44,13 @@ do_copy_defconfig () {
     else
         # copy latest imx_v8_defconfig to use for mx8
         mkdir -p ${B}
-        cp ${S}/arch/arm64/configs/imx_v8_defconfig ${B}/.config
-        cp ${S}/arch/arm64/configs/imx_v8_defconfig ${B}/../defconfig
+        if [ -n ${KERNEL_CONFIG_FILE} ];then
+        	cp ${S}/arch/arm64/configs/${KERNEL_CONFIG_FILE} ${B}/.config
+	        cp ${S}/arch/arm64/configs/${KERNEL_CONFIG_FILE} ${B}/../defconfig
+        else
+	        cp ${S}/arch/arm64/configs/imx_v8_defconfig ${B}/.config
+	        cp ${S}/arch/arm64/configs/imx_v8_defconfig ${B}/../defconfig
+        fi
     fi
 }
 
