@@ -48,4 +48,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     ap6256 \
     haveged \
     v4l-utils \
+    u-boot-imx-fw-utils \
 "

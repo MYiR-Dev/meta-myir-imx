@@ -1,0 +1,38 @@
+From 396e85d15fd18c0ce244de92c6560e6fcd331e2e Mon Sep 17 00:00:00 2001
+From: duxy <568988005@qq.com>
+Date: Wed, 19 Aug 2020 10:03:18 +0800
+Subject: [PATCH] FEAT: mys-iot-fw_env-configure
+
+---
+ tools/env/fw_env.config | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/tools/env/fw_env.config b/tools/env/fw_env.config
+index 053895a..515ca03 100644
+--- a/tools/env/fw_env.config
++++ b/tools/env/fw_env.config
+@@ -8,8 +8,8 @@
+ 
+ # NOR example
+ # MTD device name	Device offset	Env. size	Flash sector size	Number of sectors
+-/dev/mtd1		0x0000		0x4000		0x4000
+-/dev/mtd2		0x0000		0x4000		0x4000
++#/dev/mtd1		0x0000		0x4000		0x4000
++#/dev/mtd2		0x0000		0x4000		0x4000
+ 
+ # MTD SPI-dataflash example
+ # MTD device name	Device offset	Env. size	Flash sector size	Number of sectors
+@@ -23,8 +23,8 @@
+ # end of the device/partition, rather than a forwards offset from the start.
+ 
+ # Block device example
+-#/dev/mmcblk0		0xc0000		0x20000
+-#/dev/mmcblk0		-0x20000	0x20000
++/dev/mmcblk2		0x400000	0x1000
++#/dev/mmcblk1		0x400000	0x1000
+ 
+ # VFAT example
+ #/boot/uboot.env	0x0000          0x4000
+-- 
+2.10.1
+
