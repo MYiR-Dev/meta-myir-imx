@@ -12,12 +12,13 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
 
 DEPENDS += "lzop-native bc-native"
 
-KERNEL_BRANCH ?= "imx_5.4.3_2.0.0"
+KERNEL_BRANCH ?= "myd_y6ulx_5.4.3_2.0.0_test"
 LOCALVERSION = "-2.0.0"
-KERNEL_SRC ?= "git://source.codeaurora.org/external/imx/linux-imx.git;protocol=https"
+KERNEL_SRC ?= "git:///media/hufan/imx6ul/MYiR-i.MX6UL-Linux;protocol=file;"
+#KERNEL_SRC ?= "git://source.codeaurora.org/external/imx/linux-imx.git;protocol=https"
 SRC_URI = "${KERNEL_SRC};branch=${KERNEL_BRANCH}"
 
-SRCREV = "fd263a3edd95dfe812397fabf1059b5f99bba2ab"
+SRCREV = "${AUTOREV}"
 
 FILES_${KERNEL_PACKAGE_NAME}-base += "${nonarch_base_libdir}/modules/${KERNEL_VERSION}/modules.builtin.modinfo "
 
@@ -38,8 +39,8 @@ do_copy_defconfig () {
     if [ ${DO_CONFIG_V7_COPY} = "yes" ]; then
         # copy latest imx_v7_defconfig to use for mx6, mx6ul and mx7
         mkdir -p ${B}
-        cp ${S}/arch/arm/configs/imx_v7_defconfig ${B}/.config
-        cp ${S}/arch/arm/configs/imx_v7_defconfig ${B}/../defconfig
+        cp ${S}/arch/arm/configs/myd_y6ulx_defconfig ${B}/.config
+        cp ${S}/arch/arm/configs/myd_y6ulx_defconfig ${B}/../defconfig
     else
         # copy latest imx_v8_defconfig to use for mx8
         mkdir -p ${B}
