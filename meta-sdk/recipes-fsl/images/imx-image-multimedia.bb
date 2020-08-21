@@ -59,4 +59,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     lftp \
     inetutils-ftp \
     ntp \
+    tcpdump \
 "
