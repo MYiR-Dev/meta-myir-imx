@@ -62,4 +62,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     tcpdump \
     proftpd \
     openvpn \
+    bridge-utils \
 "
