@@ -47,4 +47,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     ${ERPC_COMPS} \
     ap6256 \
     haveged \
+    v4l-utils \
 "
