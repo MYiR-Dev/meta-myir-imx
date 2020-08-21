@@ -15,6 +15,8 @@ DEPENDS_append = " python3-pycrypto-native python3-pyelftools-native"
 # and a imx8mnevk MACHINE. In this example, the PLATFORM_FLAVOR 
 # defined is imx8mnevk, the other MACHINE derivatives 
 # are just using the original one.
+PLATFORM_FLAVOR_myd-y6ull14x14  = "mx6ullevk"
+PLATFORM_FLAVOR_myd-y6ul14x14   = "mx6ulevk"
 PLATFORM_FLAVOR_mx8mn		= "mx8mnevk"
 PLATFORM_FLAVOR_mx8qxp		= "mx8qxpmek"
 PLATFORM_FLAVOR_mx8mp   	= "mx8mpevk"
