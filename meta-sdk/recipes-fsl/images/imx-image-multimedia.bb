@@ -55,4 +55,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     tslib-conf \
     tslib-uinput \
     tslib-tests \
+    sqlite3 \
 "
