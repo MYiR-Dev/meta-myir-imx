@@ -49,4 +49,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     haveged \
     v4l-utils \
     u-boot-imx-fw-utils \
+    genext2fs \
 "
