@@ -63,4 +63,6 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     proftpd \
     openvpn \
     bridge-utils \
+    ffmpeg \
+    x264 \
 "
