@@ -50,4 +50,9 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     v4l-utils \
     u-boot-imx-fw-utils \
     genext2fs \
+    tslib \
+    tslib-calibrate \
+    tslib-conf \
+    tslib-uinput \
+    tslib-tests \
 "
