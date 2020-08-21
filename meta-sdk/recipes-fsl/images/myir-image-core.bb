@@ -6,7 +6,6 @@ DESCRIPTION = "This is the basic core image with minimal tests"
 inherit core-image
 
 IMAGE_FEATURES += " \
-    package-management \
     splash \
     nfs-server \
     ssh-server-dropbear \

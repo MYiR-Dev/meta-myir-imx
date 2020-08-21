@@ -16,7 +16,6 @@ inherit core-image
 
 ## Select Image Features
 IMAGE_FEATURES += " \
-    package-management \
     splash \
     nfs-server \
     ssh-server-dropbear \
