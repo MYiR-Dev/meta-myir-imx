@@ -56,4 +56,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     tslib-uinput \
     tslib-tests \
     sqlite3 \
+    lftp \
 "
