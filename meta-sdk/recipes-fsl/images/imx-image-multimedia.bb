@@ -60,4 +60,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     inetutils-ftp \
     ntp \
     tcpdump \
+    proftpd \
 "
