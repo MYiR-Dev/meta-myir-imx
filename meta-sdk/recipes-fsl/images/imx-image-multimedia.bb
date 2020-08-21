@@ -65,4 +65,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     bridge-utils \
     ffmpeg \
     x264 \
+    pv \
 "
