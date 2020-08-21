@@ -58,4 +58,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     sqlite3 \
     lftp \
     inetutils-ftp \
+    ntp \
 "
