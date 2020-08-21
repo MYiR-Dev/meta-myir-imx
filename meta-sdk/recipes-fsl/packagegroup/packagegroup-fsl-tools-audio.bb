@@ -14,24 +14,23 @@ ALSA_INSTALL = " \
 "
 ALSA_INSTALL_append_mx8 = " tinycompress"
 
-PULSEAUDIO_INSTALL = " \
-    pulseaudio-server \
-    pulseaudio-module-cli \
-    pulseaudio-misc \
-    pulseaudio-module-device-manager \
-    ${@bb.utils.contains('DISTRO_FEATURES',"x11", "pulseaudio-module-x11-xsmp \
-                                                   pulseaudio-module-x11-publish \
-                                                   pulseaudio-module-x11-cork-request \
-                                                   pulseaudio-module-x11-bell \
-                                                   consolekit", \
-                                           "", d)} \
-"
+#PULSEAUDIO_INSTALL = " \
+#    pulseaudio-server \
+#    pulseaudio-module-cli \
+#    pulseaudio-misc \
+#    pulseaudio-module-device-manager \
+#    ${@bb.utils.contains('DISTRO_FEATURES',"x11", "pulseaudio-module-x11-xsmp \
+#                                                   pulseaudio-module-x11-publish \
+#                                                   pulseaudio-module-x11-cork-request \
+#                                                   pulseaudio-module-x11-bell \
+#                                                   consolekit", \
+#                                           "", d)} \
+#"
 
 ASRC_INSTALL ?= ""
 ASRC_INSTALL_mx8 = "imx-dspc-asrc"
 
 RDEPENDS_${PN} = " \
     ${@bb.utils.contains("DISTRO_FEATURES", "alsa",  "${ALSA_INSTALL}", "", d)} \
-    ${@bb.utils.contains("DISTRO_FEATURES", "pulseaudio",  "${PULSEAUDIO_INSTALL}", "", d)} \
     ${ASRC_INSTALL} \
 "
