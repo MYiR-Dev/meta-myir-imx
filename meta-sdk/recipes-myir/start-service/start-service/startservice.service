@@ -1,0 +1,11 @@
+[Unit]
+Description=start process control system for UNIX
+After=getty@tty1.service
+
+[Service]
+Type=oneshot
+ExecStart=/etc/myir_start_service.sh
+TimeoutSec=200
+
+[Install]
+WantedBy=multi-user.target

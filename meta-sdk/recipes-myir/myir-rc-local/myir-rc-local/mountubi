@@ -1,0 +1,11 @@
+#! /bin/sh 
+if grep "rootfstype=ubifs" /proc/cmdline > /dev/null;then
+   #mount
+   echo "nandflash"
+   ubiattach /dev/ubi_ctrl -m 5 
+   ubimkvol /dev/ubi1 -Nrootfs -m
+   mkdir -p  /data
+   mount  -t ubifs ubi1_0 /data/
+else
+   exit 0
+fi

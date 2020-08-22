@@ -22,4 +22,7 @@ IMAGE_INSTALL += " \
     ${ML_PKGS} \
     python3 \
     ppp-quectel \
+    staticip-network \
+    start-service \
+    myir-rc-local \
 "

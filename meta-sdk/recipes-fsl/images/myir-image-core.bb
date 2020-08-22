@@ -17,5 +17,8 @@ SDKIMAGE_FEATURES_append = " \
 IMAGE_INSTALL += " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', ' weston weston-examples weston-init','', d)} \
     ppp-quectel \
+    staticip-network \
+    start-service \
+    myir-rc-local \
 "
 export IMAGE_BASENAME = "myir-image-core"
