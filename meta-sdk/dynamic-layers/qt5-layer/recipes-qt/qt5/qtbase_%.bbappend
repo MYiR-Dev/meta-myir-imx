@@ -27,7 +27,7 @@ SRC_URI_append_imxgpu3d = " \
 PACKAGECONFIG_GL_imxpxp   = "gles2"
 PACKAGECONFIG_GL_imxgpu2d = "${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'gl', '', d)}"
 PACKAGECONFIG_GL_imxgpu3d = "gles2"
-PACKAGECONFIG_append = " accessibility examples"
+PACKAGECONFIG_append = " accessibility examples linuxfb"
 
 PACKAGECONFIG_MX8_GPU     = ""
 PACKAGECONFIG_MX8_GPU_mx8 = " gbm kms"
