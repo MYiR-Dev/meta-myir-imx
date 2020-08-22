@@ -31,4 +31,5 @@ IMAGE_INSTALL += " \
     start-service \
     myir-rc-local \
 "
-IMAGE_INSTALL_append = " ffmpeg "
+
+IMAGE_INSTALL_append = "ffmpeg alsa-utils mtd-utils mtd-utils-ubifs"

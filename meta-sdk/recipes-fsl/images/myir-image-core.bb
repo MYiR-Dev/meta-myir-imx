@@ -19,6 +19,8 @@ IMAGE_INSTALL += " \
     ppp-quectel \
     staticip-network \
     start-service \
+    mtd-utils-ubifs \
+    mtd-utils \
     myir-rc-local \
 "
 export IMAGE_BASENAME = "myir-image-core"
