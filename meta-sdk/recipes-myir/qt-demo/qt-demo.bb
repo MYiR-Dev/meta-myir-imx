@@ -18,9 +18,7 @@ SRC_URI = " \
 	    file://files \
 	    file://Capture \
 	    file://Music \
-	    file://Video \
 	    file://ecg \
-	    file://mxapp2 \
 	    file://lib \
           "
 S_G = "${WORKDIR}"
@@ -44,8 +42,6 @@ do_install () {
       cp -r ${S_G}/ecg/* ${D}/usr/share/myir/
       cp -r ${S_G}/Music/* ${D}/usr/share/myir/Music/
       cp -r ${S_G}/Capture/* ${D}/usr/share/myir/Capture/
-      cp -r ${S_G}/Video/* ${D}/usr/share/myir/Video/
-
 }
 
 FILES_${PN} = "\
