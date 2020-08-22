@@ -21,6 +21,7 @@ IMAGE_INSTALL += " \
     start-service \
     mtd-utils-ubifs \
     mtd-utils \
+    u-boot-imx-fw-utils \
     myir-rc-local \
 "
 export IMAGE_BASENAME = "myir-image-core"

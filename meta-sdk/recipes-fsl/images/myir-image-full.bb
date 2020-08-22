@@ -30,6 +30,7 @@ IMAGE_INSTALL += " \
     staticip-network \
     start-service \
     myir-rc-local \
+    u-boot-fw-utils \
 "
 
 IMAGE_INSTALL_append = "ffmpeg alsa-utils mtd-utils mtd-utils-ubifs"
