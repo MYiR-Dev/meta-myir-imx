@@ -31,3 +31,4 @@ IMAGE_INSTALL += " \
     start-service \
     myir-rc-local \
 "
+IMAGE_INSTALL_append = " ffmpeg "
