@@ -21,6 +21,11 @@ IMAGE_INSTALL += " \
     ${OPENCV_PKGS} \
     ${ML_PKGS} \
     python3 \
+    qtquickcontrols \
+    qtquickcontrols2 \
+    qtvirtualkeyboard \
+    qtmultimedia \
+    qt-demo \
     ppp-quectel \
     staticip-network \
     start-service \
