@@ -348,3 +348,4 @@ MACHINEOVERRIDES =. "imx:"
 
 HOSTTOOLS_NONFATAL_append_mx8 = " sha384sum"
 
+LICENSE_FLAGS_WHITELIST="commercial"
