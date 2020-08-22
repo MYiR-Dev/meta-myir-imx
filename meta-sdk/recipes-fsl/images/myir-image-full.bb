@@ -21,4 +21,5 @@ IMAGE_INSTALL += " \
     ${OPENCV_PKGS} \
     ${ML_PKGS} \
     python3 \
+    ppp-quectel \
 "

@@ -1,0 +1,66 @@
+# /etc/ppp/peers/quectel-dial
+# Usage:root>pppd call quectel-pppd
+#Modem path, like /dev/ttyUSB3,/dev/ttyACM0, depend on your module, default path is /dev/ttyUSB3
+/dev/ttyUSB3 115200
+
+#Insert the username and password for authentication, default user and password are test
+#user "test" password "test"
+user "card" password "card"
+
+# The chat script, customize your APN in this file
+connect 'chat -s -v -f /etc/ppp/chatscripts/quectel-chat-connect'
+
+# The close script
+disconnect 'chat -s -v -f /etc/ppp/chatscripts/quectel-chat-disconnect'
+
+# Hide password in debug messages
+hide-password
+
+# The phone is not required to authenticate
+noauth
+
+# Debug info from pppd
+debug
+logfile
+/var/log/quectel-dial.log
+
+# If you want to use the HSDPA link as your gateway
+defaultroute
+
+# pppd must not propose any IP address to the peer
+noipdefault
+
+# No ppp compression
+#novj
+#novjccomp
+noccp
+ipcp-accept-local
+ipcp-accept-remote
+local
+
+# For sanity, keep a lock on the serial line
+lock
+dump
+#nodetach
+
+# Hardware flow control
+nocrtscts
+remotename 3gppp
+ipparam 3gppp
+ipcp-max-failure 10
+
+# Ask the peer for up to 2 DNS server addresses
+usepeerdns
+
+# reconnect while dial terminated instead of exit
+persist
+
+# send lcp-echo every 5 seconds to check the connection
+lcp-echo-interval 5
+
+# set max lcp-echo failue to 12, result in 12x5=60 seconds redial
+# if connection disconnected for some reason
+lcp-echo-failure 12
+
+# keep retrying forever if dial failed
+maxfail 0
