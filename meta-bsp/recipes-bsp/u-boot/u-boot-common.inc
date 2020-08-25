@@ -11,8 +11,8 @@ PE = "1"
 #SRCREV = "3c99166441bf3ea325af2da83cfe65430b49c066"
 #SRC_URI = "git://git.denx.de/u-boot.git"
 
-UBOOT_SRC ?= "git:///media/hufan/imx6ul/MYiR-i.MX6UL-UBoot;protocol=file;"
-SRCBRANCH = "test_uuu"
+UBOOT_SRC ?= "git://github.com/MYiR-Dev/myir-imx-uboot.git;protocol=https"
+SRCBRANCH = "develop"
 SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH} \
 "
 SRCREV = "${AUTOREV}"
