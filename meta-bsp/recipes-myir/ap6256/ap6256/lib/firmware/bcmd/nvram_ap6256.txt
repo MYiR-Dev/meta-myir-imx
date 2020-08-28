@@ -1,4 +1,4 @@
-#AP6256_NVRAM_V1.2_09202018.txt
+#AP6256_NVRAM_V1.3_10092019.txt
 # Cloned from bcm94345wlpagb_p2xx.txt 
 NVRAMRev=$Rev: 498373 $
 sromrev=11
@@ -128,3 +128,5 @@ cckdigfilttype=5
 fdss_level_2g=6
 #fdss_level_5g=6
 #pacalshift5g=0,0,1
+
+tempthresh=102
