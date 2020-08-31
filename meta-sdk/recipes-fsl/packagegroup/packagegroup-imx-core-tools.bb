@@ -28,9 +28,7 @@ RDEPENDS_${PN} = " \
     iw \
     can-utils \
     cpufrequtils \
-    nano \
     ntpdate \
-    minicom \
     coreutils \
     mmc-utils \
     udev-extraconf \

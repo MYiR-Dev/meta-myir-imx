@@ -23,7 +23,6 @@ IMAGE_INSTALL += " \
     python3 \
     qtquickcontrols \
     qtquickcontrols2 \
-    qtvirtualkeyboard \
     qtmultimedia \
     qt-demo \
     ppp-quectel \
@@ -31,6 +30,14 @@ IMAGE_INSTALL += " \
     start-service \
     myir-rc-local \
     u-boot-fw-utils \
+    libgpiod \
+    can-utils \
+    memtester \
+    sqlite3 \
+    tslib \
+    tslib-calibrate \
+    tslib-conf \
+    tslib-tests \
 "
 
-IMAGE_INSTALL_append = "ffmpeg alsa-utils mtd-utils mtd-utils-ubifs"
+IMAGE_INSTALL_append = "ffmpeg alsa-utils v4l-utils"
