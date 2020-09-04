@@ -19,7 +19,7 @@ Build images
 
 Building XWayland
 ---------------------------
-  DISTRO=fsl-imx-xwayland MACHINE=mys_iot_imx8mmddr4 source sources/meta-myir/tools/imx-setup-release.sh -b build-xwayland
+  DISTRO=fsl-imx-xwayland MACHINE=mys_iot_imx8mmddr4 source sources/meta-myir/tools/myir-setup-release.sh -b build-xwayland
   
 
 Building with Multilib support
