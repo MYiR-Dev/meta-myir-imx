@@ -1,7 +1,4 @@
-DESCRIPTION = "NXP Image - Adds Qt5"
-LICENSE = "MIT"
-
-require recipes-fsl/images/myir-image-full.bb
+# Install qt5 packages
 
 inherit ${@bb.utils.contains('BBFILE_COLLECTIONS', 'qt5-layer', 'populate_sdk_qt5', '', d)}
 
