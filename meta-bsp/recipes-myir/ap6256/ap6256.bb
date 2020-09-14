@@ -31,7 +31,7 @@ do_install (){
 	install -m 0644 ${WORKDIR}/lib/firmware/bcmd/fw_bcm43456c5_ag.bin ${D}/lib/firmware/bcmd
 	install -m 0644 ${WORKDIR}/lib/firmware/bcmd/fw_bcm43456c5_ag_apsta.bin ${D}/lib/firmware/bcmd
 	install -m 0644 ${WORKDIR}/lib/firmware/bcmd/nvram_ap6256.txt ${D}/lib/firmware/bcmd
-	install -m 0644 ${WORKDIR}/lib/firmware/bcmd/BCM4345C5_AP6256_CL1.hcd ${D}/lib/firmware/bcmds
+	install -m 0644 ${WORKDIR}/lib/firmware/bcmd/BCM4345C5_AP6256_CL1.hcd ${D}/lib/firmware/bcmd
 	install -m 0644 ${WORKDIR}/etc/udhcpd.conf ${D}/etc/
 	install -m 0755 ${WORKDIR}/usr/bin/brcm_patchram_plus ${D}/usr/bin
 	
