@@ -38,6 +38,7 @@ IMAGE_INSTALL += " \
     tslib-calibrate \
     tslib-conf \
     tslib-tests \
+    myir-linux-examples \
 "
 
 IMAGE_INSTALL_append = "ffmpeg alsa-utils v4l-utils"
