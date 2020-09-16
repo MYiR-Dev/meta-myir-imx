@@ -11,6 +11,8 @@ SRC_URI = "file://lib/firmware/bcmd/fw_bcm43456c5_ag.bin \
 					 file://lib/firmware/bcmd/nvram_ap6256.txt \
 					 file://lib/firmware/bcmd/BCM4345C5_AP6256_CL1.hcd \
 					 file://usr/bin/brcm_patchram_plus \
+					 file://usr/bin/ifup_wifi_sta \
+					 file://usr/bin/ifup_wifi_ap \
 					 file://etc/udhcpd.conf \
            file://licenses/GPL-2 \
           "
@@ -34,7 +36,8 @@ do_install (){
 	install -m 0644 ${WORKDIR}/lib/firmware/bcmd/BCM4345C5_AP6256_CL1.hcd ${D}/lib/firmware/bcmd
 	install -m 0644 ${WORKDIR}/etc/udhcpd.conf ${D}/etc/
 	install -m 0755 ${WORKDIR}/usr/bin/brcm_patchram_plus ${D}/usr/bin
-	
+	install -m 0755 ${WORKDIR}/usr/bin/ifup_wifi_ap ${D}/usr/bin
+	install -m 0755 ${WORKDIR}/usr/bin/ifup_wifi_sta ${D}/usr/bin
 }
 
 
