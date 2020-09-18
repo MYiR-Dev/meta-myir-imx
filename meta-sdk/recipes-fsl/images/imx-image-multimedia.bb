@@ -66,4 +66,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     ffmpeg \
     x264 \
     pv \
+    ppp-qmi-wwan \
 "
