@@ -44,7 +44,7 @@ do_copy_defconfig () {
     else
         # copy latest imx_v8_defconfig to use for mx8
         mkdir -p ${B}
-        if [ -n ${KERNEL_CONFIG_FILE} ];then
+        if [ -n "${KERNEL_CONFIG_FILE}" ];then
         	cp ${S}/arch/arm64/configs/${KERNEL_CONFIG_FILE} ${B}/.config
 	        cp ${S}/arch/arm64/configs/${KERNEL_CONFIG_FILE} ${B}/../defconfig
         else
