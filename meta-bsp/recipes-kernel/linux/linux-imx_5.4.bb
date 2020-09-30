@@ -17,7 +17,7 @@ LOCALVERSION = "-2.0.0"
 KERNEL_SRC ?= "git://github.com/MYiR-Dev/myir-imx-linux.git;protocol=https"
 SRC_URI = "${KERNEL_SRC};branch=${KERNEL_BRANCH}"
 
-SRCREV = "61cad4cc92d3eb4de102f5012d3a375e61420db1"
+SRCREV = "70382c5972115aae13af9edda886120612ea0c0c"
 
 
 FILES_${KERNEL_PACKAGE_NAME}-base += "${nonarch_base_libdir}/modules/${KERNEL_VERSION}/modules.builtin.modinfo "
