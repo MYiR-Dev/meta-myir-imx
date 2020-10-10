@@ -24,6 +24,7 @@ IMAGE_INSTALL += " \
     qtquickcontrols \
     qtquickcontrols2 \
     qtmultimedia \
+    qtvirtualkeyboard \
     qt-demo \
     ppp-quectel \
     staticip-network \
@@ -38,6 +39,7 @@ IMAGE_INSTALL += " \
     tslib-calibrate \
     tslib-conf \
     tslib-tests \
+    evtest \
     myir-linux-examples \
 "
 

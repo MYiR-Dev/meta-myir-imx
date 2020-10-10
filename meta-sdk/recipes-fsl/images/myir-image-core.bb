@@ -26,5 +26,7 @@ IMAGE_INSTALL += " \
     libgpiod \
     sqlite3 \
     v4l-utils \
+    evtest \
+    myir-linux-examples \
 "
 export IMAGE_BASENAME = "myir-image-core"
