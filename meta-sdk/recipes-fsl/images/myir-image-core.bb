@@ -28,5 +28,6 @@ IMAGE_INSTALL += " \
     v4l-utils \
     evtest \
     myir-linux-examples \
+    quectel-cm \
 "
 export IMAGE_BASENAME = "myir-image-core"

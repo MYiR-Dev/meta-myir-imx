@@ -41,6 +41,7 @@ IMAGE_INSTALL += " \
     tslib-tests \
     evtest \
     myir-linux-examples \
+    quectel-cm \
 "
 
 IMAGE_INSTALL_append = "ffmpeg alsa-utils v4l-utils"
