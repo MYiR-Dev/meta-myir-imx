@@ -13,7 +13,6 @@ IMAGE_FEATURES += " \
 "
 SDKIMAGE_FEATURES_append = " \
     staticdev-pkgs \
-    packagegroup-imx-core-tools \
 "
 IMAGE_INSTALL += " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', ' weston weston-examples weston-init','', d)} \
@@ -22,12 +21,11 @@ IMAGE_INSTALL += " \
     staticip-network \
     start-service \
     u-boot-imx-fw-utils \
-    myir-rc-local \
     libgpiod \
     sqlite3 \
     v4l-utils \
-    evtest \
     myir-linux-examples \
     quectel-cm \
+    packagegroup-imx-core-tools \
 "
 export IMAGE_BASENAME = "myir-image-core"

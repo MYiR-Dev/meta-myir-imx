@@ -29,7 +29,6 @@ IMAGE_INSTALL += " \
     ppp-quectel \
     staticip-network \
     start-service \
-    myir-rc-local \
     u-boot-fw-utils \
     libgpiod \
     can-utils \
@@ -39,9 +38,9 @@ IMAGE_INSTALL += " \
     tslib-calibrate \
     tslib-conf \
     tslib-tests \
-    evtest \
     myir-linux-examples \
     quectel-cm \
+    packagegroup-imx-core-tools \
 "
 
 IMAGE_INSTALL_append = "ffmpeg alsa-utils v4l-utils"
