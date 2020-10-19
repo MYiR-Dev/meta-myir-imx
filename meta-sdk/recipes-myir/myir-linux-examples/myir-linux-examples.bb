@@ -8,7 +8,7 @@ SECTION = "libs"
 LICENSE = "MIT"
 
 
-SRCREV = "a51b504e59d15b3e187450dcf99287e850acf557"
+SRCREV = "a3f9ba961556816d29a454b22a1bec0ea5e2fb08"
 MYIREXAMPLES_BRANCH ?= "myd-y6ulx"
 MYIREXAMPLES_SRC ?= "git://github.com/MYiR-Dev/myir-linux-examples.git;protocol=https" 
 
