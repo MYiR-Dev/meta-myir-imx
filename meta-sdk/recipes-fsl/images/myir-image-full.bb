@@ -40,6 +40,8 @@ IMAGE_INSTALL += " \
     tslib-tests \
     myir-linux-examples \
     quectel-cm \
+    iperf3 \
+    uvc-stream \
     packagegroup-imx-core-tools \
 "
 
