@@ -8,7 +8,6 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
 
 RDEPENDS_${PN} = " \
-    dosfstools \
     evtest \
     e2fsprogs-mke2fs \
     fsl-rc-local \
@@ -16,20 +15,13 @@ RDEPENDS_${PN} = " \
     i2c-tools \
     iproute2 \
     memtester \
-    python-subprocess \
-    python-datetime \
-    python-json \
     ethtool \
     mtd-utils \
     mtd-utils-ubifs \
     procps \
-    ptpd \
-    linuxptp \
     iw \
     can-utils \
-    cpufrequtils \
     ntpdate \
-    coreutils \
     mmc-utils \
     udev-extraconf \
     e2fsprogs-resize2fs \
