@@ -42,6 +42,7 @@ IMAGE_INSTALL += " \
     quectel-cm \
     iperf3 \
     uvc-stream \
+    proftpd \
     packagegroup-imx-core-tools \
 "
 
