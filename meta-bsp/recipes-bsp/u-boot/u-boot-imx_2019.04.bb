@@ -18,7 +18,7 @@ UBOOT_SRC ?= "git://github.com/MYiR-Dev/myir-imx-uboot.git;protocol=https"
 SRCBRANCH = "develop"
 SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH} \
 "
-SRCREV = "0169c667797ba3c404ace63d294c32c97978b87e"
+SRCREV = "e584c34bf1fa25e50e74a3d5fcd88e13ac0d7739"
 
 S = "${WORKDIR}/git"
 
