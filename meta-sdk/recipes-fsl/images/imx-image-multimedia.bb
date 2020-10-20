@@ -67,4 +67,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     x264 \
     pv \
     ppp-qmi-wwan \
+    autorun-script \
 "
