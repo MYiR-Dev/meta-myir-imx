@@ -73,10 +73,12 @@ parse_input_info(){
 connect_wifi(){
 
     if [ -n "${SSID}" ];then
-	head -n 4 ${WPA_FILE} > ${WPA_FILE}.tmp
-	wpa_passphrase ${SSID} ${PASSWD} >> ${WPA_FILE}.tmp
-	mv ${WPA_FILE} ${WPA_FILE}.bak
-	mv ${WPA_FILE}.tmp ${WPA_FILE}
+	rm ${WPA_FILE}
+	echo "ctrl_interface=/var/run/wpa_supplicant" > ${WPA_FILE}
+	echo "ctrl_interface_group=0" >> ${WPA_FILE}
+	echo "update_config=1" >> ${WPA_FILE}
+	echo "" >> ${WPA_FILE}
+	wpa_passphrase ${SSID} ${PASSWD} >> ${WPA_FILE}
     fi
 
     wpa_supplicant -B -i ${WLAN} -c ${WPA_FILE} -D ${DRIVER_NAME} >/dev/null 2>&1
