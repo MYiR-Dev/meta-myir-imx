@@ -21,7 +21,7 @@ SRC_URI = "file://autorun.service \
 do_install(){
 	install -d ${D}${systemd_system_unitdir}
 
-	install -m 755 ${WORKDIR}/autorun.service ${D}${systemd_system_unitdir}/autorun.service
+	install -m 644 ${WORKDIR}/autorun.service ${D}${systemd_system_unitdir}/autorun.service
 }
 
 
