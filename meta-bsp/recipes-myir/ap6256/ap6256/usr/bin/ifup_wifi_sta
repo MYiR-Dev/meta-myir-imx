@@ -4,7 +4,7 @@
 SSID=
 PASSWD=
 WLAN=wlan0
-WPA_FILE=/etc/wpa_supplicant.conf	
+WPA_FILE=/etc/wpa_supplicant/wpa_supplicant-${WLAN}.conf
 DRIVER_NAME=nl80211
 
 usage(){
@@ -73,7 +73,9 @@ parse_input_info(){
 connect_wifi(){
 
     if [ -n "${SSID}" ];then
-	rm ${WPA_FILE}
+	if [ ! -d ${WPA_FILE%/*} ];then
+		mkdir -p ${WPA_FILE%/*}
+	fi
 	echo "ctrl_interface=/var/run/wpa_supplicant" > ${WPA_FILE}
 	echo "ctrl_interface_group=0" >> ${WPA_FILE}
 	echo "update_config=1" >> ${WPA_FILE}
