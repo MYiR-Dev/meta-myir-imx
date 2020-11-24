@@ -4,13 +4,14 @@
 /dev/ttyUSB3 115200
 
 #Insert the username and password for authentication, default user and password are test
+#user "test" password "test"
 user "card" password "card"
 
 # The chat script, customize your APN in this file
-connect 'chat -s -v -f /etc/ppp/peers/quectel-chat-connect'
+connect 'chat -s -v -f /etc/ppp/chatscripts/quectel-chat-connect'
 
 # The close script
-disconnect 'chat -s -v -f /etc/ppp/peers/quectel-chat-disconnect'
+disconnect 'chat -s -v -f /etc/ppp/chatscripts/quectel-chat-disconnect'
 
 # Hide password in debug messages
 hide-password
@@ -20,8 +21,8 @@ noauth
 
 # Debug info from pppd
 debug
-#logfile
-#/var/log/quectel-dial.log
+logfile
+/var/log/quectel-dial.log
 
 # If you want to use the HSDPA link as your gateway
 defaultroute
