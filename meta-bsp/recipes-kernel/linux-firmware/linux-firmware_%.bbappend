@@ -17,6 +17,15 @@ SRC_URI += " \
 "
 SRCREV_imx-firmware = "4054827650f833f646899e99af78bbdfb89b9579"
 
+
+
+MYIR_FIRMWARE_SRC ?= "git://github.com/MYiR-Dev/myir-firmware.git;protocol=https"
+SRC_URI += " \
+           ${MYIR_FIRMWARE_SRC};branch=main;destsuffix=myir-firmware;name=myir-firmware \
+"
+SRCREV_myir-firmware = "deca652d392049166e168204ab9a9a295e0f0d03"
+
+
 SRCREV_FORMAT = "default_murata-qca_imx-firmware"
 
 do_install_append () {
@@ -70,11 +79,28 @@ do_install_append () {
     install -d ${D}${datadir}/mrvl_wireless/bin_pcie8997
     install -m 0644 ${WORKDIR}/imx-firmware/nxp/FwImage_8997/fw_loader_arm64 ${D}${datadir}/mrvl_wireless/bin_pcie8997
 
+    install -d ${D}${nonarch_base_libdir}/firmware/bcmd/
+    # Install AP6212 firmware
+    install -m 0644 ${WORKDIR}/myir-firmware/brcm/AP6212/fw_bcm43438a1_apsta.bin ${D}${nonarch_base_libdir}/firmware/bcmd
+    install -m 0644 ${WORKDIR}/myir-firmware/brcm/AP6212/fw_bcm43438a1.bin ${D}${nonarch_base_libdir}/firmware/bcmd
+    install -m 0644 ${WORKDIR}/myir-firmware/brcm/AP6212/fw_bcm43438a1_p2p.bin ${D}${nonarch_base_libdir}/firmware/bcmd
+    install -m 0644 ${WORKDIR}/myir-firmware/brcm/AP6212/nvram_ap6212a.txt ${D}${nonarch_base_libdir}/firmware/bcmd
+    install -m 0644 ${WORKDIR}/myir-firmware/brcm/AP6212/bcm43438a1.hcd ${D}${nonarch_base_libdir}/firmware/bcmd
+
+    # Install AP6256 firmware
+    install -m 0644 ${WORKDIR}/myir-firmware/brcm/AP6256/fw_bcm43456c5_ag_apsta.bin ${D}${nonarch_base_libdir}/firmware/bcmd
+    install -m 0644 ${WORKDIR}/myir-firmware/brcm/AP6256/fw_bcm43456c5_ag.bin ${D}${nonarch_base_libdir}/firmware/bcmd
+    install -m 0644 ${WORKDIR}/myir-firmware/brcm/AP6256/nvram_ap6256.txt ${D}${nonarch_base_libdir}/firmware/bcmd
+    install -m 0644 ${WORKDIR}/myir-firmware/brcm/AP6256/BCM4345C5_AP6256_CL1.hcd ${D}${nonarch_base_libdir}/firmware/bcmd
+
 }
 
 # Use the latest version of sdma firmware in firmware-imx
 PACKAGES_remove = "${PN}-imx-sdma-license ${PN}-imx-sdma-imx6q ${PN}-imx-sdma-imx7d"
-PACKAGES =+ " ${PN}-bcm4359-pcie"
+PACKAGES =+ " ${PN}-bcm4359-pcie \
+              ${PN}-ap6212 \
+              ${PN}-ap6256 \
+            "
 
 FILES_${PN}-qca += " \
   ${sysconfdir}/bluetooth/firmware.conf \
@@ -117,4 +143,19 @@ FILES_${PN}-pcie8997 += " \
        ${nonarch_base_libdir}/firmware/mrvl/helper_uart_3000000.bin \
        ${nonarch_base_libdir}/firmware/mrvl/uart8997_bt_v4.bin \
        ${datadir}/mrvl_wireless/bin_pcie8997/fw_loader_arm64 \
+"
+
+FILES_${PN}-ap6212 += " \
+       ${nonarch_base_libdir}/firmware/bcmd/fw_bcm43438a1_apsta.bin \
+       ${nonarch_base_libdir}/firmware/bcmd/fw_bcm43438a1.bin \
+       ${nonarch_base_libdir}/firmware/bcmd/fw_bcm43438a1_p2p.bin \
+       ${nonarch_base_libdir}/firmware/bcmd/nvram_ap6212a.txt \
+       ${nonarch_base_libdir}/firmware/bcmd/bcm43438a1.hcd \
+"
+
+FILES_${PN}-ap6256 += " \
+       ${nonarch_base_libdir}/firmware/bcmd/fw_bcm43456c5_ag_apsta.bin \
+       ${nonarch_base_libdir}/firmware/bcmd/fw_bcm43456c5_ag.bin \
+       ${nonarch_base_libdir}/firmware/bcmd/nvram_ap6256.txt \
+       ${nonarch_base_libdir}/firmware/bcmd/BCM4345C5_AP6256_CL1.hcd \
 "
