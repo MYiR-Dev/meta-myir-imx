@@ -67,5 +67,7 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     pv \
     ppp-quectel \
     quectel-cm \
+    ${@bb.utils.contains('MACHINENAME', 'myd-imx8mm', 'start-service', '', d)} \
+    ${@bb.utils.contains('MACHINENAME', 'myd-imx8mm', 'staticip-network', '', d)} \
     autorun-script \
 "
