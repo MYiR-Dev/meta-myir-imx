@@ -8,8 +8,14 @@ PE = "1"
 
 # We use the revision in order to avoid having to fetch it from the
 # repo during parse
-SRCREV = "3c99166441bf3ea325af2da83cfe65430b49c066"
+# SRCREV = "3c99166441bf3ea325af2da83cfe65430b49c066"
+# SRC_URI = "git://git.denx.de/u-boot.git"
 
-SRC_URI = "git://git.denx.de/u-boot.git"
+UBOOT_SRC ?= "git://github.com/MYiR-Dev/myir-imx-uboot.git;protocol=https"
+SRCBRANCH = "develop"
+SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH} \
+"
+SRCREV = "3e0fd30655db87a2bbcd453bf7009582e96d95aa"
+#SRCREV = "${AUTOREV}"
 
 S = "${WORKDIR}/git"

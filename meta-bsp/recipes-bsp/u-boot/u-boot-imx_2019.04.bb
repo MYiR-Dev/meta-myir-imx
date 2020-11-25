@@ -14,11 +14,12 @@ DEPENDS_append = " dtc-native"
 LICENSE = "GPLv2+"
 LIC_FILES_CHKSUM = "file://Licenses/gpl-2.0.txt;md5=b234ee4d69f5fce4486a80fdaf4a4263"
 
-UBOOT_SRC ?= "git://github.com/MYiR-Dev/myir-imx-uboot.git;protocol=https"
-SRCBRANCH = "develop"
-SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH} \
-"
-SRCREV = "e584c34bf1fa25e50e74a3d5fcd88e13ac0d7739"
+#UBOOT_SRC ?= "git://github.com/MYiR-Dev/myir-imx-uboot.git;protocol=https"
+#UBOOT_SRC ?= "git:////media/hufan/L5.4-i.MX8MM/myir-imx-uboot;protocol=file"
+#SRCBRANCH = "myd_imx8mm_v2.0"
+#SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH} \
+#"
+#SRCREV = "c19c9cdfbe13fb153ec822515acba5f2a112c624"
 
 S = "${WORKDIR}/git"
 
