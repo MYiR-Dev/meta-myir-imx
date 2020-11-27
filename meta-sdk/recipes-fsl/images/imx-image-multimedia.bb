@@ -67,6 +67,10 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     pv \
     ppp-quectel \
     quectel-cm \
+    wireless-tools \
+    qtwebengine \
+    qtwebengine-examples \
+    qtwebengine-qmlplugins \
     ${@bb.utils.contains('MACHINENAME', 'myd-imx8mm', 'start-service', '', d)} \
     ${@bb.utils.contains('MACHINENAME', 'myd-imx8mm', 'staticip-network', '', d)} \
     autorun-script \
