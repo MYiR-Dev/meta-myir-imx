@@ -7,6 +7,7 @@ Please see the release notes for the quality statement for each baord.
 The following boards were tested in this release.
 
    * MYIR i.MX 8MM IOT (mys-8mmx)
+   * MYIR i.MX 8MM MYD (myd-c8mmx)
 
 
 Quick Start Guide
@@ -20,6 +21,7 @@ Build images
 Building XWayland
 ---------------------------
   DISTRO=fsl-imx-xwayland MACHINE=mys-8mmx source sources/meta-myir/tools/myir-setup-release.sh -b build-xwayland
+  DISTRO=fsl-imx-xwayland MACHINE=myd-imx8mm source sources/meta-myir/tools/myir-setup-release.sh -b build-xwayland
   
 
 Building with Multilib support
