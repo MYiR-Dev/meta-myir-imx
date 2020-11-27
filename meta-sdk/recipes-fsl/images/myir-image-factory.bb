@@ -49,7 +49,7 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     v4l-utils \
     u-boot-imx-fw-utils \
     genext2fs \
-    quectel-CM \
+    quectel-cm \
     ppp-quectel \   
     autorun-script \
     myir-factory \
