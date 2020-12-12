@@ -3,9 +3,9 @@ Description=start process control system for UNIX
 After=getty@tty1.service
 
 [Service]
-Type=oneshot
+Type=forking
 ExecStart=/etc/myir_start_service.sh
-TimeoutSec=200
+TimeoutSec=0
 
 [Install]
 WantedBy=multi-user.target
