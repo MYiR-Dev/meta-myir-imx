@@ -1,7 +1,11 @@
 SRCBRANCH = "imx_5.4.3_2.0.0"
+
+FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+
 ATF_SRC ?= "git://source.codeaurora.org/external/imx/imx-atf.git;protocol=https"
 SRC_URI = "${ATF_SRC};branch=${SRCBRANCH} \
            file://0001-Allow-BUILD_STRING-to-be-set-in-.revision-file.patch \
+           file://0001-add-uart4-A53-support.patch \
 "
 SRCREV = "f1a195b5cce64365a7227557a9009a4f545aa02d"
 
