@@ -86,9 +86,15 @@ class myThread(threading.Thread):
 
             ret = self.connnect_wifi(wlan_name,wifi_5g_ssid,passwd)
             if (ret == FAIL):
-                wifi_param['dsc'] = wifi_5g_ssid + " test Fail"
-                wifi_param['thread_flag'] = 0
-                wifi_param['result'] = FAIL
+                # try twice 5G connect maybe fail
+                ret = self.connnect_wifi(wlan_name,wifi_5g_ssid,passwd)
+                if (ret == FAIL):
+                    wifi_param['dsc'] = wifi_5g_ssid + " test Fail"
+                    wifi_param['thread_flag'] = 0
+                    wifi_param['result'] = FAIL
+                else:
+                    wifi_param['result'] = SUCCESS
+                    wifi_param['thread_flag'] = 0
             else:
                 wifi_param['result'] = SUCCESS
                 wifi_param['thread_flag'] = 0

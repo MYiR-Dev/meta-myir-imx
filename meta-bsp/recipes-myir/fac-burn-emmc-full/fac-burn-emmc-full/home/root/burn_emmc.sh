@@ -16,8 +16,8 @@ if [ x"$HOSTNAME" == x"$MYD_NAME" ];then
   led2=user2
   led3=user1
 elif [ x"$HOSTNAME" == x"$MYS_NAME" ];then
-  led1=cpu
-  led2=user
+  led1=user
+  led2=cpu
 fi
 
 LED_PID=-1
