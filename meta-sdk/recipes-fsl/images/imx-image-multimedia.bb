@@ -80,4 +80,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     qtmultimedia \
     qtvirtualkeyboard \
     ${@bb.utils.contains('MACHINENAME', 'mys-8mmx', 'hmi', '', d)} \
+    ${@bb.utils.contains('MACHINENAME', 'myd-imx8mm', 'hmi', '', d)} \
 "
