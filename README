@@ -22,6 +22,7 @@ Building XWayland
 ---------------------------
   DISTRO=fsl-imx-xwayland MACHINE=mys-8mmx source sources/meta-myir/tools/myir-setup-release.sh -b build-xwayland
   DISTRO=fsl-imx-xwayland MACHINE=myd-imx8mm source sources/meta-myir/tools/myir-setup-release.sh -b build-xwayland
+  DISTRO=fsl-imx-xwayland MACHINE=myd-jx8mp source sources/meta-myir/tools/myir-setup-release.sh -b build-xwayland
   
 
 Building with Multilib support
