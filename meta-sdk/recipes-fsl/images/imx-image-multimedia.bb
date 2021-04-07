@@ -68,9 +68,6 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     ppp-quectel \
     quectel-cm \
     wireless-tools \
-    qtwebengine \
-    qtwebengine-examples \
-    qtwebengine-qmlplugins \
     ${@bb.utils.contains('MACHINENAME', 'myd-imx8mm', 'start-service', '', d)} \
     ${@bb.utils.contains('MACHINENAME', 'myd-imx8mm', 'staticip-network', '', d)} \
     autorun-script \
@@ -80,5 +77,6 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     qtmultimedia \
     qtvirtualkeyboard \
     ${@bb.utils.contains('MACHINENAME', 'mys-8mmx', 'hmi', '', d)} \
+    ${@bb.utils.contains('MACHINENAME', 'mys-8mmx', 'tf-upgrade', '', d)} \
     ${@bb.utils.contains('MACHINENAME', 'myd-imx8mm', 'hmi', '', d)} \
 "

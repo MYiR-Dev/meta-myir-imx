@@ -23,6 +23,7 @@ IMAGE_INSTALL += " \
     imx-test \
     packagegroup-myir-burn-tools \
     fac-burn-emmc-full \
+    ${@bb.utils.contains('MACHINENAME', 'mys-8mmx', 'tf-upgrade', '', d)} \
 "
 
 

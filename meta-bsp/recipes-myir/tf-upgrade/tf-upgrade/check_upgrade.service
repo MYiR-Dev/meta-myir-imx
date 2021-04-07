@@ -1,0 +1,11 @@
+[Unit]
+Description=auto run script after psplash-quit service
+After=psplash-quit.service
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/check_upgrade.sh
+
+
+[Install]
+WantedBy=multi-user.target
