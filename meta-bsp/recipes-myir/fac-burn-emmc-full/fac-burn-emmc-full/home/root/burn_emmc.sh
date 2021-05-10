@@ -112,7 +112,7 @@ mksdcard(){
     node=$1
     echo $node
 
-    dd if=/dev/zero of=${node} bs=1024 count=1
+    dd if=/dev/zero of=${node} bs=1024 count=5
 
     
     
@@ -176,6 +176,20 @@ reszie2fs_mmc(){
     sync
 }
 
+check_rootfs(){
+    mkdir -p /mnt/mmcblk${PART}p2
+    mount /dev/mmcblk${PART}p2 /mnt/mmcblk${PART}p2
+    rootfs_hostname=`cat /mnt/mmcblk${PART}p2/etc/hostname`
+    echo_fun "rootfs_hostname:$rootfs_hostname"
+
+    if [ x"$rootfs_hostname" != x"$HOSTNAME" ];then
+       echo_fun "not equal"
+       reboot
+    else
+       echo_fun "equal"
+    fi
+}
+
 burn_start_ing &
 LED_PID=$!
 sleep 1
@@ -188,6 +202,7 @@ burn_rootfs_ext4
 echo_fun "start burn uboot "
 burn_bootloader
 reszie2fs_mmc
+check_rootfs
 enable_bootpart
 burn_succeed
 
