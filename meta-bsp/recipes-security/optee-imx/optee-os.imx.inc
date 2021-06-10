@@ -21,6 +21,7 @@ PLATFORM_FLAVOR_mx8mp   	= "mx8mpevk"
 PLATFORM_FLAVOR_mx8dx   	= "mx8dxmek"
 PLATFORM_FLAVOR_mx8dxl  	= "mx8dxlevk"
 PLATFORM_FLAVOR_mx8phantomdxl 	= "mx8qxpmek"
+PLATFORM_FLAVOR_mx8mq   	= "mx8mqevk"
 
 OPTEE_CORE_LOG_LEVEL ?= "1"
 OPTEE_TA_LOG_LEVEL ?= "0"

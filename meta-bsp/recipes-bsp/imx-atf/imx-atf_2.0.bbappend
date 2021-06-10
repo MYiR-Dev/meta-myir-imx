@@ -8,6 +8,7 @@ ATF_SRC ?= "git://source.codeaurora.org/external/imx/imx-atf.git;protocol=https"
 SRC_URI = "${ATF_SRC};branch=${SRCBRANCH} \
            file://0001-Allow-BUILD_STRING-to-be-set-in-.revision-file.patch \
            ${@bb.utils.contains('MACHINENAME', 'myd-imx8mm', '${IMX8MM_UART4_PATCH}', '', d)} \
+           ${@bb.utils.contains('MACHINENAME', 'myd-jx8mx', 'file://0001-FEAT-myd_jx8mx-imx8mq-2GDDR-configure.patch', '', d)} \
 "
 SRCREV = "f1a195b5cce64365a7227557a9009a4f545aa02d"
 

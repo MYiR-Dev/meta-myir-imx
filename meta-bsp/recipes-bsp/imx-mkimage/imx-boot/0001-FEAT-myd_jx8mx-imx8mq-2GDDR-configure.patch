@@ -1,0 +1,25 @@
+From 570d49cdf5885f6f14439170f3b3d190956972ff Mon Sep 17 00:00:00 2001
+From: duxy <568988005@qq.com>
+Date: Thu, 10 Jun 2021 12:49:04 +0800
+Subject: [PATCH] FEAT:myd_jx8mx-imx8mq-2GDDR-configure
+
+---
+ iMX8M/soc.mak | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/iMX8M/soc.mak b/iMX8M/soc.mak
+index 96a1385..8ad01ef 100644
+--- a/iMX8M/soc.mak
++++ b/iMX8M/soc.mak
+@@ -65,7 +65,7 @@ else
+ PLAT = imx8mq
+ HDMI = yes
+ SPL_LOAD_ADDR = 0x7E1000
+-TEE_LOAD_ADDR = 0xfe000000
++TEE_LOAD_ADDR = 0xbe000000
+ ATF_LOAD_ADDR = 0x00910000
+ VAL_BOARD = arm2
+ #define the F(Q)SPI header file
+-- 
+2.7.4
+

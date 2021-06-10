@@ -1,0 +1,45 @@
+From 99b719fd3b7a561bae6819664a8c23724ea3df12 Mon Sep 17 00:00:00 2001
+From: duxy <568988005@qq.com>
+Date: Thu, 10 Jun 2021 12:43:43 +0800
+Subject: [PATCH] FEAT:myd_jx8mx-imx8mq-2GDDR-configure
+
+---
+ plat/imx/imx8mq/imx8mq_bl31_setup.c    | 2 +-
+ plat/imx/imx8mq/include/platform_def.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+ mode change 100644 => 100755 plat/imx/imx8mq/imx8mq_bl31_setup.c
+ mode change 100644 => 100755 plat/imx/imx8mq/include/platform_def.h
+
+diff --git a/plat/imx/imx8mq/imx8mq_bl31_setup.c b/plat/imx/imx8mq/imx8mq_bl31_setup.c
+old mode 100644
+new mode 100755
+index af4bc93..49acd1e
+--- a/plat/imx/imx8mq/imx8mq_bl31_setup.c
++++ b/plat/imx/imx8mq/imx8mq_bl31_setup.c
+@@ -335,7 +335,7 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
+ 	bl33_image_ep_info.args.arg1 = BL32_BASE;
+ 	/* TEE size + RDC reserved memory = 0x2000000 + 0x2000000 + 0x30000000 */
+ #ifdef DECRYPTED_BUFFER_START
+-	bl33_image_ep_info.args.arg2 = 0x100000000 - DECRYPTED_BUFFER_START;
++	bl33_image_ep_info.args.arg2 = 0xC0000000 - DECRYPTED_BUFFER_START;
+ #else
+ 	bl33_image_ep_info.args.arg2 = BL32_SIZE;
+ #endif
+diff --git a/plat/imx/imx8mq/include/platform_def.h b/plat/imx/imx8mq/include/platform_def.h
+old mode 100644
+new mode 100755
+index 4a458cd..864c408
+--- a/plat/imx/imx8mq/include/platform_def.h
++++ b/plat/imx/imx8mq/include/platform_def.h
+@@ -37,7 +37,7 @@
+ #define BL32_LIMIT			0x100000000
+ #define BL32_BASE			tee_base_address
+ #else
+-#define BL32_BASE			0xfe000000
++#define BL32_BASE			0xbe000000
+ #define BL32_SIZE			0x02000000
+ #define BL32_LIMIT			(BL32_BASE + BL32_SIZE)
+ #define BL32_FDT_OVERLAY_ADDR		0x43100000
+-- 
+2.7.4
+

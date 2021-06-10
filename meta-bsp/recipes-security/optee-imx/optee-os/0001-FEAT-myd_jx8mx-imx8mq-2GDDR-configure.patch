@@ -1,0 +1,28 @@
+From 1244c67d7da99ba254a799666ba5329ddcc8c41e Mon Sep 17 00:00:00 2001
+From: duxy <568988005@qq.com>
+Date: Thu, 10 Jun 2021 10:30:47 +0800
+Subject: [PATCH] FEAT: myd_jx8mx imx8mq 2GDDR configure
+
+---
+ core/arch/arm/plat-imx/conf.mk | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+ mode change 100644 => 100755 core/arch/arm/plat-imx/conf.mk
+
+diff --git a/core/arch/arm/plat-imx/conf.mk b/core/arch/arm/plat-imx/conf.mk
+old mode 100644
+new mode 100755
+index 6d4742d..9c63951
+--- a/core/arch/arm/plat-imx/conf.mk
++++ b/core/arch/arm/plat-imx/conf.mk
+@@ -321,7 +321,7 @@ CFG_NS_ENTRY_ADDR ?= 0x80800000
+ endif
+ 
+ ifneq (,$(filter $(PLATFORM_FLAVOR),mx8mqevk))
+-CFG_DDR_SIZE ?= 0xc0000000
++CFG_DDR_SIZE ?= 0x80000000
+ CFG_UART_BASE ?= UART1_BASE
+ endif
+ 
+-- 
+2.7.4
+
