@@ -76,6 +76,7 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     qtquickcontrols2 \
     qtmultimedia \
     qtvirtualkeyboard \
+	myir-regulatory \
     ${@bb.utils.contains('MACHINENAME', 'mys-8mmx', 'hmi', '', d)} \
     ${@bb.utils.contains('MACHINENAME', 'mys-8mmx', 'tf-upgrade', '', d)} \
     ${@bb.utils.contains('MACHINENAME', 'myd-imx8mm', 'hmi', '', d)} \
