@@ -5,10 +5,12 @@ require u-boot-common.inc
 # SRCREV = "b8604312e60b3d96fd340f9c8fe047dcf5c736a4"
 
 IMX8MM_PATCH="file://0001-FEAT-mys-iot-fw_env-configure.patch"
+IMX8MQ_PATH="file://0001-FEAT-myd-jx8mx-fw_env-configure.patch"
 SRC_URI += " \
 	${@bb.utils.contains('MACHINENAME', 'mys-8mmx', '${IMX8MM_PATCH}', '', d)} \
 	${@bb.utils.contains('MACHINENAME', 'myd-imx8mm', '${IMX8MM_PATCH}', '', d)} \
 	${@bb.utils.contains('MACHINENAME', 'myd-jx8mp', '${IMX8MM_PATCH}', '', d)} \
+	${@bb.utils.contains('MACHINENAME', 'myd-jx8mx', '${IMX8MQ_PATH}', '', d)} \
 "
 
 inherit fsl-u-boot-localversion

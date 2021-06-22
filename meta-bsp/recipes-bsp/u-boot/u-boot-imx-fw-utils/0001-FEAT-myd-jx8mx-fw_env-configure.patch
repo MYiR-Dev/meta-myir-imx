@@ -1,0 +1,36 @@
+From 44bfa0e19197bbf1b4211837c42fc80484c19cb8 Mon Sep 17 00:00:00 2001
+From: duxy <568988005@qq.com>
+Date: Fri, 18 Jun 2021 10:40:50 +0800
+Subject: [PATCH] FEAT:myd-jx8mx-fw_env-configure
+
+---
+ tools/env/fw_env.config | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/tools/env/fw_env.config b/tools/env/fw_env.config
+index 053895a..adb33d7 100644
+--- a/tools/env/fw_env.config
++++ b/tools/env/fw_env.config
+@@ -8,8 +8,8 @@
+ 
+ # NOR example
+ # MTD device name	Device offset	Env. size	Flash sector size	Number of sectors
+-/dev/mtd1		0x0000		0x4000		0x4000
+-/dev/mtd2		0x0000		0x4000		0x4000
++#/dev/mtd1		0x0000		0x4000		0x4000
++#/dev/mtd2		0x0000		0x4000		0x4000
+ 
+ # MTD SPI-dataflash example
+ # MTD device name	Device offset	Env. size	Flash sector size	Number of sectors
+@@ -23,7 +23,7 @@
+ # end of the device/partition, rather than a forwards offset from the start.
+ 
+ # Block device example
+-#/dev/mmcblk0		0xc0000		0x20000
++/dev/mmcblk0		0x400000	0x1000
+ #/dev/mmcblk0		-0x20000	0x20000
+ 
+ # VFAT example
+-- 
+2.7.4
+
