@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# firmware loader script
+ATH10=`find /sys/devices/platform/ -name ath10*.bin`
+FIRM_PATH="/lib/firmware/ath10k/QCA6174/hw3.0/board-2.bin"
+
+if [ X"" != X${ATH10} ]; then
+cd ${ATH10}
+echo 1 > loading
+cat ${FIRM_PATH} > data
+echo 0 > loading
+fi
+
+
+GOODIX=`find /sys/devices/platform/ -name goodix*.bin`
+if [ X"" != X${GOODIX} ]; then
+cd ${GOODIX}
+echo 1 > loading
+echo 0 > loading
+fi

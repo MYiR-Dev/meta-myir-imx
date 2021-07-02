@@ -51,5 +51,7 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'weston-init', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11 wayland', 'weston-xwayland xterm', '', d)} \
     ${ERPC_COMPS} \
-    ${ISP_PKGS} \
+    wifi-bt-conf \
+    autorun-script \
+	myir-regulatory \
 "

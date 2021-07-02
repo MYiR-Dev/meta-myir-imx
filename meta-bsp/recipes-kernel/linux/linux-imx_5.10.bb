@@ -14,10 +14,10 @@ DEPENDS += "lzop-native bc-native"
 
 SRCBRANCH = "lf-5.10.y"
 LOCALVERSION = "-1.0.0"
-KERNEL_SRC ?= "git://source.codeaurora.org/external/imx/linux-imx.git;protocol=https"
+KERNEL_SRC ?= "git:///${PWD}/../linux-imx;protocol=file"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
 
-SRCREV = "32513c25d8c7867f07b44900368346795357b48e"
+SRCREV = "dce9daa76252b27b7f6d52bf5e4d7bc2eb49e03f"
 
 LINUX_VERSION = "5.10.9"
 
@@ -56,7 +56,13 @@ do_copy_defconfig () {
     else
         # copy latest IMX_KERNEL_CONFIG_AARCH64 to use for mx8
         mkdir -p ${B}
-        cp ${S}/arch/arm64/configs/${IMX_KERNEL_CONFIG_AARCH64} ${B}/.config
+        if [ -n "${KERNEL_CONFIG_FILE}" ];then
+        	 cp ${S}/arch/arm64/configs/${KERNEL_CONFIG_FILE} ${B}/.config
+        	 cp ${S}/arch/arm64/configs/${KERNEL_CONFIG_FILE} ${B}/../defconfig
+        else
+        	cp ${S}/arch/arm64/configs/${IMX_KERNEL_CONFIG_AARCH64} ${B}/.config
+        	cp ${S}/arch/arm64/configs/${IMX_KERNEL_CONFIG_AARCH64} ${B}/../defconfig
+				fi
     fi
 }
 
