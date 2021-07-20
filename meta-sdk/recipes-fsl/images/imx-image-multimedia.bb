@@ -18,13 +18,11 @@ inherit core-image
 IMAGE_FEATURES += " \
     debug-tweaks \
     tools-profile \
-    tools-sdk \
     package-management \
     splash \
     nfs-server \
     tools-debug \
     ssh-server-dropbear \
-    tools-testapps \
     hwcodecs \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', '', \
        bb.utils.contains('DISTRO_FEATURES',     'x11', 'x11-base x11-sato', \
@@ -51,6 +49,7 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'weston-init', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11 wayland', 'weston-xwayland xterm', '', d)} \
     ${ERPC_COMPS} \
+    ${ISP_PKGS} \
     wifi-bt-conf \
     autorun-script \
 	myir-regulatory \

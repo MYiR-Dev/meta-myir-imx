@@ -18,7 +18,7 @@ UBOOT_SRC ?= "git:///${PWD}/../uboot-imx;protocol=file"
 SRCBRANCH = "develop_2020.04"
 SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH} \
 "
-SRCREV = "ff15a6a6eb2b82da2c121af2d26ef26c830d7617"
+SRCREV = "ffa8a8c18260f63af77e7f0c363c33aa6b5c08ce"
 
 S = "${WORKDIR}/git"
 

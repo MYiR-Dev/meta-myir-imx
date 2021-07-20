@@ -67,6 +67,9 @@ do_install_append () {
     install -m 0644 ${WORKDIR}/imx-firmware/nxp/FwImage_8987/sdiouart8987_combo_v0.bin ${D}${nonarch_base_libdir}/firmware/nxp
     install -m 0644 ${WORKDIR}/imx-firmware/nxp/FwImage_8987/txpwrlimit_cfg_8987.conf  ${D}${nonarch_base_libdir}/firmware/nxp
 
+
+		# Install AP6212.txt to imx8mp
+		install -m 0644 ${WORKDIR}/linux-firmware-20200817/brcm/brcmfmac43430-sdio.AP6212.txt  ${D}${nonarch_base_libdir}/firmware/brcm/brcmfmac43430-sdio.fsl,imx8mp-evk.txt
 }
 
 # Use the latest version of sdma firmware in firmware-imx

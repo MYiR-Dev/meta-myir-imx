@@ -17,7 +17,7 @@ LOCALVERSION = "-1.0.0"
 KERNEL_SRC ?= "git:///${PWD}/../linux-imx;protocol=file"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
 
-SRCREV = "dce9daa76252b27b7f6d52bf5e4d7bc2eb49e03f"
+SRCREV = "d9b9d82984e1d2e497cca916cb22840063bb2f77"
 
 LINUX_VERSION = "5.10.9"
 
@@ -36,7 +36,7 @@ DO_CONFIG_V7_COPY_mx8 = "no"
 
 # Add setting for LF Mainline build
 IMX_KERNEL_CONFIG_AARCH32 = "imx_v7_defconfig"
-IMX_KERNEL_CONFIG_AARCH64 = "imx_v8_defconfig"
+IMX_KERNEL_CONFIG_AARCH64 ?= "imx_v8_defconfig"
 KBUILD_DEFCONFIG ?= ""
 KBUILD_DEFCONFIG_mx6= "${IMX_KERNEL_CONFIG_AARCH32}"
 KBUILD_DEFCONFIG_mx7= "${IMX_KERNEL_CONFIG_AARCH32}"
@@ -56,13 +56,7 @@ do_copy_defconfig () {
     else
         # copy latest IMX_KERNEL_CONFIG_AARCH64 to use for mx8
         mkdir -p ${B}
-        if [ -n "${KERNEL_CONFIG_FILE}" ];then
-        	 cp ${S}/arch/arm64/configs/${KERNEL_CONFIG_FILE} ${B}/.config
-        	 cp ${S}/arch/arm64/configs/${KERNEL_CONFIG_FILE} ${B}/../defconfig
-        else
-        	cp ${S}/arch/arm64/configs/${IMX_KERNEL_CONFIG_AARCH64} ${B}/.config
-        	cp ${S}/arch/arm64/configs/${IMX_KERNEL_CONFIG_AARCH64} ${B}/../defconfig
-				fi
+        cp ${S}/arch/arm64/configs/${IMX_KERNEL_CONFIG_AARCH64} ${B}/.config
     fi
 }
 
