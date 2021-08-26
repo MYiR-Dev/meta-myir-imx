@@ -17,7 +17,7 @@ LOCALVERSION = "-1.0.0"
 KERNEL_SRC ?= "git:///${PWD}/../linux-imx;protocol=file"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
 
-SRCREV = "d9b9d82984e1d2e497cca916cb22840063bb2f77"
+SRCREV = "b97d93c9f3b81905bb9d07a3605b62aff2ecdf1e"
 
 LINUX_VERSION = "5.10.9"
 
