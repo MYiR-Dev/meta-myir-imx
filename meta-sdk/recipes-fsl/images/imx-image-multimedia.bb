@@ -52,5 +52,6 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     ${ISP_PKGS} \
     wifi-bt-conf \
     autorun-script \
-	myir-regulatory \
+    myir-regulatory \
+    quectel-cm \
 "
