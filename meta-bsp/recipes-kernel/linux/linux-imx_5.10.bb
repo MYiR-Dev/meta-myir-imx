@@ -17,7 +17,7 @@ LOCALVERSION = "-1.0.0"
 KERNEL_SRC ?= "git://github.com/MYiR-Dev/myir-imx-linux.git;protocol=https"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
 
-SRCREV = "3e1b43967622b95a5479ec105aca9b85a8006ae9"
+SRCREV = "0b1abf95bbef59c074aa7d6a068cdf5e521bfeeb"
 
 LINUX_VERSION = "5.10.9"
 
