@@ -12,12 +12,12 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
 DEPENDS += "lzop-native bc-native"
 
-SRCBRANCH = "lf-5.10.y"
+SRCBRANCH = "develop_lf-5.10.y"
 LOCALVERSION = "-1.0.0"
-KERNEL_SRC ?= "git:///${PWD}/../linux-imx;protocol=file"
+KERNEL_SRC ?= "git://github.com/MYiR-Dev/myir-imx-linux.git;protocol=https"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
 
-SRCREV = "c711e9a33825c3db7a4ab8d8cf3891ec80f87ae7"
+SRCREV = "3e1b43967622b95a5479ec105aca9b85a8006ae9"
 
 LINUX_VERSION = "5.10.9"
 

@@ -14,11 +14,12 @@ DEPENDS_append = " dtc-native"
 LICENSE = "GPLv2+"
 LIC_FILES_CHKSUM = "file://Licenses/gpl-2.0.txt;md5=b234ee4d69f5fce4486a80fdaf4a4263"
 
-UBOOT_SRC ?= "git:///${PWD}/../uboot-imx;protocol=file"
+UBOOT_SRC ?= "git://github.com/MYiR-Dev/myir-imx-uboot.git;protocol=https"
+#UBOOT_SRC ?= "git:///${PWD}/../uboot-imx;protocol=file"
 SRCBRANCH = "develop_2020.04"
 SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH} \
 "
-SRCREV = "0d22dce454801a5e2442e738054791963546e64b"
+SRCREV = "dd2daeac0ed4ed9e64ecc2dbdc917e93028ba453"
 
 S = "${WORKDIR}/git"
 
