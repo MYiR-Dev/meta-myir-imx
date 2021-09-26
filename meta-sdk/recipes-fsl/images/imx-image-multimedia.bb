@@ -53,5 +53,28 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     wifi-bt-conf \
     autorun-script \
     myir-regulatory \
+    genext2fs \
+    tslib \
+    tslib-calibrate \
+    tslib-conf \
+    tslib-uinput \
+    tslib-tests \
+    lftp \
+    inetutils-ftp \
+    ntp \
+    tcpdump \
+    proftpd \
+    openvpn \
+    bridge-utils \
+    ffmpeg \
+    x264 \
+    pv \
+    ppp-quectel \
     quectel-cm \
+    qtsvg \
+    qtquickcontrols \
+    qtquickcontrols2 \
+    qtmultimedia \
+    qtvirtualkeyboard \
+    fonts \
 "

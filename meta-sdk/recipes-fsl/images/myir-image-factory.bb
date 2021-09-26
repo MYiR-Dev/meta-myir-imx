@@ -55,4 +55,10 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     myir-regulatory \
     quectel-cm \
     fac-burn-emmc-full \
+    fonts \
+    qtsvg \
+    qtquickcontrols \
+    qtquickcontrols2 \
+    qtmultimedia \
+    qtvirtualkeyboard \
 "

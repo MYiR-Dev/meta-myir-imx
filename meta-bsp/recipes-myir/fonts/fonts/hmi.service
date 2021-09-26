@@ -1,0 +1,11 @@
+[Unit]
+Description=auto run hmi after psplash-quit service
+After=weston.service
+
+[Service]
+Type=oneshot
+ExecStart=/home/root/hmi.sh
+
+
+[Install]
+WantedBy=multi-user.target
