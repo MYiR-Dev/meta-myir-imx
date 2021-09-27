@@ -63,7 +63,7 @@ burn_start_ing(){
 }
 
 burn_faild(){
-
+	echo $'>>>[100]{\"step\":\"firmware\",\"result\":{\"bootloader\":\"2\",\"data\":\"2\",\"kernel\":\"2\",\"rootfs\":\"2\"}}\r\n'
 	if [[ ${no_led} -eq 1 ]];then
 		exit 0;
 	fi
@@ -79,7 +79,7 @@ burn_faild(){
 }
 
 burn_succeed(){
-    
+  echo $'>>>[100]{\"step\":\"firmware\",\"result\":{\"bootloader\":\"0\",\"data\":\"0\",\"kernel\":\"0\",\"rootfs\":\"0\"}}\r\n'
   if [[ ${no_led} -eq 1 ]];then
 		exit 0;
 	fi

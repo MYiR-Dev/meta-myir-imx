@@ -10,7 +10,10 @@ install_upgrade_info() {
 			echo " " > ${IMAGE_ROOTFS}${systemd_system_unitdir}/fac-burn-emmc.service
 		fi
 
-		
+		# Add no user longin 
+    if [ -f  ${IMAGE_ROOTFS}${systemd_system_unitdir}/serial-getty@.service ]; then
+        sed -i '/ExecStart/s/$/ -a root/g' ${IMAGE_ROOTFS}${systemd_system_unitdir}/serial-getty@.service
+    fi
 
 
 }

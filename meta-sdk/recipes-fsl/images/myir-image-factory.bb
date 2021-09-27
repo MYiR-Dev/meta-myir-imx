@@ -62,4 +62,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     qtmultimedia \
     qtvirtualkeyboard \
     packagegroup-qt5-imx \
+    mes-factory \
 "
