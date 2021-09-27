@@ -61,4 +61,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     qtquickcontrols2 \
     qtmultimedia \
     qtvirtualkeyboard \
+    packagegroup-qt5-imx \
 "
