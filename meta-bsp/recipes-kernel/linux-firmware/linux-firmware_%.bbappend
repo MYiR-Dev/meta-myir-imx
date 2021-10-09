@@ -12,6 +12,12 @@ SRC_URI += " \
 SRCREV_murata-qca = "a0026b646ce6adfb72f135ffa8a310f3614b2272"
 SRCREV_imx-firmware = "e217fa34a193867f60b7a4870d37c3370cd3b0e4" 
 
+MYIR_FIRMWARE_SRC ?= "git://github.com/MYiR-Dev/myir-firmware.git;protocol=https"
+SRC_URI += " \
+           ${MYIR_FIRMWARE_SRC};branch=main;destsuffix=myir-firmware;name=myir-firmware \
+"
+SRCREV_myir-firmware = "deca652d392049166e168204ab9a9a295e0f0d03"
+
 SRCREV_FORMAT = "default_murata-qca_imx-firmware"
 
 do_install_append () {
@@ -70,11 +76,24 @@ do_install_append () {
 
 		# Install AP6212.txt to imx8mp
 		install -m 0644 ${WORKDIR}/linux-firmware-20200817/brcm/brcmfmac43430-sdio.AP6212.txt  ${D}${nonarch_base_libdir}/firmware/brcm/brcmfmac43430-sdio.fsl,imx8mp-evk.txt
+    install -d ${D}${nonarch_base_libdir}/firmware/bcmd/
+    # Install AP6212 firmware
+    install -m 0644 ${WORKDIR}/myir-firmware/brcm/AP6212/fw_bcm43438a1_apsta.bin ${D}${nonarch_base_libdir}/firmware/bcmd
+    install -m 0644 ${WORKDIR}/myir-firmware/brcm/AP6212/fw_bcm43438a1.bin ${D}${nonarch_base_libdir}/firmware/bcmd
+    install -m 0644 ${WORKDIR}/myir-firmware/brcm/AP6212/fw_bcm43438a1_p2p.bin ${D}${nonarch_base_libdir}/firmware/bcmd
+    install -m 0644 ${WORKDIR}/myir-firmware/brcm/AP6212/nvram_ap6212a.txt ${D}${nonarch_base_libdir}/firmware/bcmd
+    install -m 0644 ${WORKDIR}/myir-firmware/brcm/AP6212/bcm43438a1.hcd ${D}${nonarch_base_libdir}/firmware/bcmd
+
+    # Install AP6256 firmware
+    install -m 0644 ${WORKDIR}/myir-firmware/brcm/AP6256/fw_bcm43456c5_ag_apsta.bin ${D}${nonarch_base_libdir}/firmware/bcmd
+    install -m 0644 ${WORKDIR}/myir-firmware/brcm/AP6256/fw_bcm43456c5_ag.bin ${D}${nonarch_base_libdir}/firmware/bcmd
+    install -m 0644 ${WORKDIR}/myir-firmware/brcm/AP6256/nvram_ap6256.txt ${D}${nonarch_base_libdir}/firmware/bcmd
+    install -m 0644 ${WORKDIR}/myir-firmware/brcm/AP6256/BCM4345C5_AP6256_CL1.hcd ${D}${nonarch_base_libdir}/firmware/bcmd
 }
 
 # Use the latest version of sdma firmware in firmware-imx
 PACKAGES_remove = "${PN}-imx-sdma-license ${PN}-imx-sdma-imx6q ${PN}-imx-sdma-imx7d"
-PACKAGES =+ " ${PN}-bcm4359-pcie ${PN}-nxp89xx"
+PACKAGES =+ " ${PN}-bcm4359-pcie ${PN}-nxp89xx ${PN}-ap6212 ${PN}-ap6256"
 
 FILES_${PN}-bcm4339 += " \
        ${nonarch_base_libdir}/firmware/brcm/brcmfmac4339-sdio.txt \
@@ -111,4 +130,18 @@ FILES_${PN}-bcm4359-pcie = " \
 
 FILES_${PN}-nxp89xx = " \
        ${nonarch_base_libdir}/firmware/nxp/* \
+"
+FILES_${PN}-ap6212 += " \
+       ${nonarch_base_libdir}/firmware/bcmd/fw_bcm43438a1_apsta.bin \
+       ${nonarch_base_libdir}/firmware/bcmd/fw_bcm43438a1.bin \
+       ${nonarch_base_libdir}/firmware/bcmd/fw_bcm43438a1_p2p.bin \
+       ${nonarch_base_libdir}/firmware/bcmd/nvram_ap6212a.txt \
+       ${nonarch_base_libdir}/firmware/bcmd/bcm43438a1.hcd \
+"
+
+FILES_${PN}-ap6256 += " \
+       ${nonarch_base_libdir}/firmware/bcmd/fw_bcm43456c5_ag_apsta.bin \
+       ${nonarch_base_libdir}/firmware/bcmd/fw_bcm43456c5_ag.bin \
+       ${nonarch_base_libdir}/firmware/bcmd/nvram_ap6256.txt \
+       ${nonarch_base_libdir}/firmware/bcmd/BCM4345C5_AP6256_CL1.hcd \
 "

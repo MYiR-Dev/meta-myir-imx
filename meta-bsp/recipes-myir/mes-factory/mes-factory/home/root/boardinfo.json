@@ -5,16 +5,16 @@
         "function":{
             "boot":"0",
             "code":"1",
-            "firmware":"0",
-            "funtest":"0"
+            "firmware":"1",
+            "funtest":"1"
         },
         "jig_id":"JYA15XC-TYY0001",
         "stage":"0",
         "updatetoserver":"0",
         "url":"http://ss.myir.cn/",
         "wifi":{
-            "passwd":"MYIR_ME",
-            "ssid":"12345678"
+            "passwd":"12345678",
+            "ssid":"MYIR_ME"
         }
     },
     "name":"MYD-JX8MP"
