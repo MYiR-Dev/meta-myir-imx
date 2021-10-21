@@ -77,4 +77,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     qtmultimedia \
     qtvirtualkeyboard \
     fonts \
+    tf-upgrade \
 "

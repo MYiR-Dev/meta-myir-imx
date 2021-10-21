@@ -81,7 +81,7 @@ burn_faild(){
 burn_succeed(){
   echo $'>>>[100]{\"step\":\"firmware\",\"result\":{\"bootloader\":\"0\",\"data\":\"0\",\"kernel\":\"0\",\"rootfs\":\"0\"}}\r\n'
   if [[ ${no_led} -eq 1 ]];then
-		exit 0;
+		return 0;
 	fi
     
     kill $LED_PID
