@@ -62,4 +62,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     pv \
     ppp-quectel \
     quectel-cm \
+    tf-upgrade \
 "
