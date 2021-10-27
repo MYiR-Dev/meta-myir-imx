@@ -78,4 +78,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     qtvirtualkeyboard \
     fonts \
     tf-upgrade \
+    sqlite3\
 "
