@@ -11,4 +11,6 @@ do_install_append() {
 
     #FIXME: Add weston.log back
     sed -i -e "s,ExecStart=/usr/bin/weston ,ExecStart=/usr/bin/weston --log=\$\{XDG_RUNTIME_DIR\}/weston.log ,g" ${D}${systemd_system_unitdir}/weston@.service
+    
+    rm -rf ${D}${sysconfdir}/default/weston
 }

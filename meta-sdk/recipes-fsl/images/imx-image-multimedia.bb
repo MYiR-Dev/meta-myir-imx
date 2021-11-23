@@ -79,4 +79,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     fonts \
     tf-upgrade \
     sqlite3\
+    nxp-demo-experience \
 "
