@@ -23,7 +23,7 @@ MYIR_FIRMWARE_SRC ?= "git://github.com/MYiR-Dev/myir-firmware.git;protocol=https
 SRC_URI += " \
            ${MYIR_FIRMWARE_SRC};branch=main;destsuffix=myir-firmware;name=myir-firmware \
 "
-SRCREV_myir-firmware = "deca652d392049166e168204ab9a9a295e0f0d03"
+SRCREV_myir-firmware = "bde171cca83b9461c9b18a037e5a585643ae52e7"
 
 
 SRCREV_FORMAT = "default_murata-qca_imx-firmware"
