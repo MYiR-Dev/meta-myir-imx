@@ -15,5 +15,7 @@ install_upgrade_info() {
         sed -i '/ExecStart/s/$/ -a root/g' ${IMAGE_ROOTFS}${systemd_system_unitdir}/serial-getty@.service
     fi
 
-
+		if [ ! -f ${IMAGE_ROOTFS}/etc/default/weston ]; then
+			echo "HOME=/home/root/\r\nQT_QPA_PLATFORM=wayland" >> ${IMAGE_ROOTFS}/etc/default/weston
+		fi
 }
