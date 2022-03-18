@@ -11,6 +11,7 @@ SRC_URI += " \
 	${@bb.utils.contains('MACHINENAME', 'myd-imx8mm', '${IMX8MM_PATCH}', '', d)} \
 	${@bb.utils.contains('MACHINENAME', 'myd-jx8mp', '${IMX8MM_PATCH}', '', d)} \
 	${@bb.utils.contains('MACHINENAME', 'myd-jx8mx', '${IMX8MQ_PATH}', '', d)} \
+	${@bb.utils.contains('MACHINENAME', 'myd-jx8mm', '${IMX8MM_PATCH}', '', d)} \
 "
 
 inherit fsl-u-boot-localversion
