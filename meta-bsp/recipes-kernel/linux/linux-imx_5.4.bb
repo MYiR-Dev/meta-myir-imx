@@ -18,7 +18,7 @@ KERNEL_SRC ?= "git://github.com/MYiR-Dev/myir-imx-linux.git;protocol=https"
 
 SRC_URI = "${KERNEL_SRC};branch=${KERNEL_BRANCH}"
 
-SRCREV = "c5f479243930b82d02ed5861e7e2839e740d4d1d"
+SRCREV = "61de1d21b7e773d14cdb12a63e5d087fd03f793f"
 
 
 FILES_${KERNEL_PACKAGE_NAME}-base += "${nonarch_base_libdir}/modules/${KERNEL_VERSION}/modules.builtin.modinfo "
