@@ -80,4 +80,6 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     ${@bb.utils.contains('MACHINENAME', 'mys-8mmx', 'hmi', '', d)} \
     ${@bb.utils.contains('MACHINENAME', 'mys-8mmx', 'tf-upgrade', '', d)} \
     ${@bb.utils.contains('MACHINENAME', 'myd-imx8mm', 'hmi', '', d)} \
+    ${@bb.utils.contains('MACHINENAME', 'myd-jx8mm', 'kernel-module-pcie', '', d)} \
+    ${@bb.utils.contains('MACHINENAME', 'myd-jx8mm', 'pcie-app', '', d)} \
 "

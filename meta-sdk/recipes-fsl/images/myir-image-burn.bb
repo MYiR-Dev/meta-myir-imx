@@ -24,6 +24,7 @@ IMAGE_INSTALL += " \
     packagegroup-myir-burn-tools \
     fac-burn-emmc-full \
     ${@bb.utils.contains('MACHINENAME', 'mys-8mmx', 'tf-upgrade', '', d)} \
+    ${@bb.utils.contains('MACHINENAME', 'myd-jx8mm', 'tf-upgrade', '', d)} \
 "
 
 
