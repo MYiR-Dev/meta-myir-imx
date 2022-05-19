@@ -15,10 +15,10 @@ DEPENDS += "lzop-native bc-native"
 KERNEL_BRANCH ?= "develop"
 LOCALVERSION = "-2.0.0"
 KERNEL_SRC ?= "git://github.com/MYiR-Dev/myir-imx-linux.git;protocol=https"
-
 SRC_URI = "${KERNEL_SRC};branch=${KERNEL_BRANCH}"
 
-SRCREV = "61de1d21b7e773d14cdb12a63e5d087fd03f793f"
+SRCREV = "1d2ecb815909cf2aa7934c00722d9b839e25b318"
+#SRCREV = "${AUTOREV}"
 
 
 FILES_${KERNEL_PACKAGE_NAME}-base += "${nonarch_base_libdir}/modules/${KERNEL_VERSION}/modules.builtin.modinfo "
