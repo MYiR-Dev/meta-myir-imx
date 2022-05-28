@@ -206,8 +206,4 @@ check_rootfs
 enable_bootpart
 burn_succeed
 
-if [ x"$HOSTNAME" == x"$MYS_NAME" ];then
-  reboot
-fi
-
 
