@@ -50,10 +50,8 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11 wayland', 'weston-xwayland xterm', '', d)} \
     ${ERPC_COMPS} \
     ${ISP_PKGS} \
-    wifi-bt-conf \
     autorun-script \
     myir-regulatory \
-    genext2fs \
     tslib \
     tslib-calibrate \
     tslib-conf \
@@ -80,4 +78,6 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     tf-upgrade \
     sqlite3\
     nxp-demo-experience \
+	${@bb.utils.contains('MACHINENAME', 'myd-jx8mp', 'wifi-bt-conf', '', d)} \
+	${@bb.utils.contains('MACHINENAME', 'myd-jx8mp', 'genext2fs', '', d)} \
 "

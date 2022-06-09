@@ -23,8 +23,10 @@ IMAGE_INSTALL += " \
     imx-test \
     packagegroup-myir-burn-tools \
     packagegroup-imx-security \
-    fac-burn-emmc-full \
-    ${@bb.utils.contains('MACHINENAME', 'myd-jx8mp', 'tf-upgrade', '', d)} \
+	${@bb.utils.contains('MACHINENAME', 'myd-jx8mp', 'tf-upgrade', '', d)} \
+	${@bb.utils.contains('MACHINENAME', 'myd-jx8mp', 'fac-burn-emmc-full', '', d)} \
+    ${@bb.utils.contains('UBOOT_CONFIG', 'emmc', 'fac-burn-emmc-full', '', d)} \
+	${@bb.utils.contains('UBOOT_CONFIG', 'nand', 'fac-burn-nand-full', '', d)} \
 "
 
 

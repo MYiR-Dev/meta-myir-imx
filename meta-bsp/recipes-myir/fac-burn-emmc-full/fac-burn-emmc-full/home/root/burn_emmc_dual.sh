@@ -1,4 +1,6 @@
 #!/bin/sh
+PART=2
+EMMC_NODE=/dev/mmcblk${PART}
 
 UBOOT_FILE=/home/root/mfgimage/imx-boot
 KERNEL_DTB_DIR=/home/root/mfgimage/kernel_dtb
@@ -12,15 +14,14 @@ MYD_JX8MP_NAME="myd-jx8mp"
 HOSTNAME=`cat /etc/hostname`
 if [ x"$HOSTNAME" == x"$MYS_6ULL_NAME" ];then
     PART=1
-    EMMC_NODE=/dev/mmcblk${PART}
     led1=cpu
 elif [ x"$HOSTNAME" == x"$MYD_NAME" ];then
     led1=cpu
     led2=user2
     led3=user1
 elif [ x"$HOSTNAME" == x"$MYS_NAME" ];then
-  led1=user
-  led2=cpu
+    led1=user
+    led2=cpu
 elif [ x"$HOSTNAME" == x"$MYD_JX8MP_NAME" ];then
 	no_led=1  
 	echo "no led!"
@@ -119,18 +120,31 @@ cmd_check()
 }
 
 mksdcard(){
+
+    if [   $# -lt 1 ];then
+	    echo format node not exist
+        exit 1
+    else
+	    echo exist
+    fi
+
+    if [ ! -f /sys/block/mmcblk${PART}/size ];then
+        echo sys/block/mmcblk${PART{}/size not exit
+        exit 1
+    else
+	    echo exist
+    fi
+
+
     #partition size in 10M
     BOOT_ROM_SIZE=10
     KERNEL_DTB_SIZE=100
+    EMMC_SIZE=`cat /sys/block/mmcblk${PART}/size`
+    EMMC_SIZE=$((${EMMC_SIZE} * 512 / 1024 / 1024))
+    echo EMMC_SIZE ${EMMC_SIZE}
+    HALF_SIZE=$(((${EMMC_SIZE}  - ${ROOT_ROM_SIZE} - ${KERNEL_DTB_SIZE} ) / 2))
+    echo "half_size ${HALF_SIZE}"
 
-    if [   $# -lt 1 ];then
-	echo format node not exist
-        exit 1
-    else
-	echo exist
-    fi
-    node=$1
-    echo $node
 
     dd if=/dev/zero of=${node} bs=1k count=8192
 
@@ -138,7 +152,8 @@ mksdcard(){
     
 sfdisk --force ${node} <<EOF
     ${BOOT_ROM_SIZE}M,${KERNEL_DTB_SIZE}M,0c
-    $(($KERNEL_DTB_SIZE + 10))M,,83
+    $(($KERNEL_DTB_SIZE + ${BOOT_ROM_SIZE}))M,${HALF_SIZE}M,83
+    $(($KERNEL_DTB_SIZE + ${BOOT_ROM_SIZE} + ${HALF_SIZE}))M,,83
 EOF
     while [ 1 ]
     do
@@ -182,21 +197,27 @@ burn_kernel_dtb(){
 }
 
 burn_rootfs_ext4(){
-    # start_time=`date +%s`
-    mkfs.ext4  /dev/mmcblk${PART}p2 <<EOF
-y
+    for index in 2 3
+        do
+        # start_time=`date +%s`
+        mkfs.ext4  /dev/mmcblk${PART}p${index} <<EOF
+        y
 EOF
-    dd if=${ROOTFS_FILE_EXT4} of=/dev/mmcblk${PART}p2 bs=1M
-    cmd_check $? "burn root faild"
-    sync
+        dd if=${ROOTFS_FILE_EXT4} of=/dev/mmcblk${PART}p${index} bs=1M
+        cmd_check $? "burn root faild"
+        sync
+    done
     # end_time=`date +%s`
     # echo rootfs time:$(($end_time - $start_time))
 }
 
 reszie2fs_mmc(){
-    resize2fs /dev/mmcblk${PART}p2
-    cmd_check $? "reszie2fs mmc faild"
-    sync
+    for index in 2 3
+    do
+        resize2fs /dev/mmcblk${PART}p${index}
+        cmd_check $? "reszie2fs mmc faild"
+        sync
+    done
 }
 
 check_rootfs(){

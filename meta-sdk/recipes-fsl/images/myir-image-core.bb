@@ -43,10 +43,8 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     packagegroup-imx-security \
     ${ERPC_COMPS} \
     ${ISP_PKGS} \
-    wifi-bt-conf \
     autorun-script \
     myir-regulatory \
-    genext2fs \
     tslib \
     tslib-calibrate \
     tslib-conf \
@@ -63,4 +61,6 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     ppp-quectel \
     quectel-cm \
     tf-upgrade \
+	${@bb.utils.contains('MACHINENAME', 'myd-jx8mp', 'wifi-bt-conf', '', d)} \
+	${@bb.utils.contains('MACHINENAME', 'myd-jx8mp', 'genext2fs', '', d)} \
 "
