@@ -28,7 +28,7 @@ do_install(){
 		install -m 755 ${DEPLOY_DIR_IMAGE}/${i} ${D}/home/root/mfgimage/kernel_dtb/${i}
 	done
 	
-    install -m 755 ${DEPLOY_DIR_IMAGE}/myir-image-full-${MACHINENAME}.ext4  ${D}/home/root/mfgimage/rootfs-full.ext4
+    install -m 755 ${DEPLOY_DIR_IMAGE}/myir-image-core-${MACHINENAME}.ext4  ${D}/home/root/mfgimage/rootfs-full.ext4
 }
 
 

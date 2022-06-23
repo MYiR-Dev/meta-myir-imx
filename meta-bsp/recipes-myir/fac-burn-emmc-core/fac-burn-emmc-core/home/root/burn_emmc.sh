@@ -14,7 +14,7 @@ if [ x"$HOSTNAME" == x"$MYS_6ULL_NAME" ];then
     PART=1
     EMMC_NODE=/dev/mmcblk${PART}
     led1=cpu
-	ECHO_TTY="/dev/ttymxc0"
+    ECHO_TTY="/dev/ttymxc0"
 elif [ x"$HOSTNAME" == x"$MYD_NAME" ];then
     led1=cpu
     led2=user2
@@ -29,7 +29,6 @@ fi
 
 LED_PID=-1
 time=0.2
-
 
 burn_start_ing(){
 

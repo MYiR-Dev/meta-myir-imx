@@ -21,9 +21,7 @@ IMAGE_FEATURES += " \
     package-management \
     splash \
     nfs-server \
-    tools-debug \
     ssh-server-dropbear \
-    hwcodecs \
 "
 ERPC_COMPS ?= ""
 ERPC_COMPS_append_mx7ulp = "packagegroup-imx-erpc"
@@ -34,15 +32,10 @@ ISP_PKGS_mx8mp = "packagegroup-imx-isp"
 CORE_IMAGE_EXTRA_INSTALL += " \
     imx-uuc \
     packagegroup-core-full-cmdline \
-    packagegroup-tools-bluetooth \
     packagegroup-fsl-tools-audio \
-    packagegroup-fsl-tools-gpu \
-    packagegroup-fsl-tools-gpu-external \
-    packagegroup-fsl-tools-testapps \
-    packagegroup-fsl-tools-benchmark \
-    packagegroup-imx-security \
-    ${ERPC_COMPS} \
-    ${ISP_PKGS} \
+    packagegroup-fsl-gstreamer1.0 \
+    packagegroup-fsl-gstreamer1.0-full \
+    iperf3 \
     autorun-script \
     myir-regulatory \
     tslib \
@@ -50,17 +43,21 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     tslib-conf \
     tslib-uinput \
     tslib-tests \
-    lftp \
-    inetutils-ftp \
-    ntp \
-    tcpdump \
-    proftpd \
-    openvpn \
     bridge-utils \
-    pv \
-    ppp-quectel \
-    quectel-cm \
     tf-upgrade \
-	${@bb.utils.contains('MACHINENAME', 'myd-jx8mp', 'wifi-bt-conf', '', d)} \
-	${@bb.utils.contains('MACHINENAME', 'myd-jx8mp', 'genext2fs', '', d)} \
+    v4l-utils \
+    libjpeg-turbo \
+    libgpiod \
+    hostapd \
+    iptables \
+    vsftpd \
+    udev-extraconf \
+    autorun-script \
+    kernel-module-rtl8188fu \
+    v4l-utils \
+    libjpeg-turbo \
+    libgpiod \
+    iptables \
+    i2c-tools \
+    mtd-utils \
 "
