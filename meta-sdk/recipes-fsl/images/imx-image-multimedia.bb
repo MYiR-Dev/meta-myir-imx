@@ -79,10 +79,6 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     sqlite3\
     nxp-demo-experience \
 	v4l-utils \
-	libjpeg-turbo \
-	libgpiod \
-	iptables \
-	i2c-tools \
 	qmllive \
 	${@bb.utils.contains('MACHINENAME', 'myd-jx8mp', 'wifi-bt-conf', '', d)} \
 	${@bb.utils.contains('MACHINENAME', 'myd-jx8mp', 'genext2fs', '', d)} \

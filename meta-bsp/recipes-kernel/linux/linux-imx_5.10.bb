@@ -17,7 +17,7 @@ LOCALVERSION = "-1.0.0"
 KERNEL_SRC ?= "git://github.com/MYiR-Dev/myir-imx-linux.git;protocol=https"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
 
-SRCREV = "68232600d8b7d998a6f4109e537925b050d541d8"
+SRCREV = "54a0bc904fa2ecf3aa292a027bb56ae313f64780"
 
 LINUX_VERSION = "5.10.9"
 
@@ -35,7 +35,7 @@ DO_CONFIG_V7_COPY_mx7 = "yes"
 DO_CONFIG_V7_COPY_mx8 = "no"
 
 # Add setting for LF Mainline build
-IMX_KERNEL_CONFIG_AARCH32 = "imx_v7_defconfig"
+IMX_KERNEL_CONFIG_AARCH32 = "mys_6ulx_defconfig"
 IMX_KERNEL_CONFIG_AARCH64 ?= "imx_v8_defconfig"
 KBUILD_DEFCONFIG ?= ""
 KBUILD_DEFCONFIG_mx6= "${IMX_KERNEL_CONFIG_AARCH32}"

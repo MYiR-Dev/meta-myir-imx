@@ -4,7 +4,7 @@
 
 require recipes-fsl/images/imx-image-multimedia.bb
 
-inherit populate_sdk populate_sdk_qt5
+inherit populate_sdk_qt5
 
 CONFLICT_DISTRO_FEATURES = "directfb"
 
