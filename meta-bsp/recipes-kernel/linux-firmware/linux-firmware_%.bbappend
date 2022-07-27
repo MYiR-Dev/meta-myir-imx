@@ -145,3 +145,9 @@ FILES_${PN}-ap6256 += " \
        ${nonarch_base_libdir}/firmware/bcmd/nvram_ap6256.txt \
        ${nonarch_base_libdir}/firmware/bcmd/BCM4345C5_AP6256_CL1.hcd \
 "
+
+FILES_${PN}-rtl8188fu += " \
+       ${base_libdir}/firmware \
+	   ${base_libdir}/firmware/rtlwifi \
+	   ${base_libdir}/firmware/rtlwifi/rtl8188fu.bin \
+"

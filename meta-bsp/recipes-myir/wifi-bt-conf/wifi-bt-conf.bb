@@ -7,7 +7,6 @@ PV = "0.1"
 PR = "v1"
 
 SRC_URI = " \
-	   file://usr/bin/brcm_patchram_plus \
 	   file://usr/bin/ifup_wifi_sta \
 	   file://usr/bin/ifup_wifi_ap \
 	   file://etc/udhcpd.conf \
@@ -27,7 +26,6 @@ do_install (){
 	done
 	
 	install -m 0644 ${WORKDIR}/etc/udhcpd.conf ${D}/etc/
-	install -m 0755 ${WORKDIR}/usr/bin/brcm_patchram_plus ${D}/usr/bin
 	install -m 0755 ${WORKDIR}/usr/bin/ifup_wifi_ap ${D}/usr/bin
 	install -m 0755 ${WORKDIR}/usr/bin/ifup_wifi_sta ${D}/usr/bin
 }

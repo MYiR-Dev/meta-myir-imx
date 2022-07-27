@@ -60,4 +60,6 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     iptables \
     i2c-tools \
     mtd-utils \
+	firmware-imx \
+	wifi-bt-conf \
 "
