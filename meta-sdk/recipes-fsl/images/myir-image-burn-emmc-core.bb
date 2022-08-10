@@ -19,7 +19,6 @@ SDKIMAGE_FEATURES_append = " \
     staticdev-pkgs \
 "
 IMAGE_INSTALL += " \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', ' weston weston-examples weston-init','', d)} \
     imx-test \
     packagegroup-myir-burn-tools \
     packagegroup-imx-security \
