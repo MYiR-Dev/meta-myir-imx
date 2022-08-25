@@ -24,6 +24,9 @@ IMAGE_FEATURES += " \
     tools-debug \
     ssh-server-dropbear \
     hwcodecs \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', '', \
+       bb.utils.contains('DISTRO_FEATURES',     'x11', 'x11-base x11-sato', \
+                                                       '', d), d)} \
 "
 ERPC_COMPS ?= ""
 ERPC_COMPS_append_mx7ulp = "packagegroup-imx-erpc"
@@ -62,6 +65,7 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     ffmpeg \
     x264 \
     pv \
+    libgpiod \
     ppp-quectel \
     quectel-cm \
     qtsvg \

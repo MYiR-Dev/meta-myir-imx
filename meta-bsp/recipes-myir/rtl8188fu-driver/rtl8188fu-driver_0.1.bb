@@ -5,7 +5,8 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 
 
 SRCREV = "471fb39418272ee52025235b8d38de02124ab112"
-SRC_URI = "git://github.com/whistmazel/rtl8188fu.git;protocol=https;branch=L5.10.9" 
+#SRC_URI = "git://github.com/whistmazel/rtl8188fu.git;protocol=https;branch=L5.10.9" 
+#SRC_URI = "git:///media/liao/Linux_5.10.9/wifi-driver/rtl8188fu_linux_5.10.9;protocol=file;branch=L5.10.9"
 S = "${WORKDIR}/git"
 
 inherit module

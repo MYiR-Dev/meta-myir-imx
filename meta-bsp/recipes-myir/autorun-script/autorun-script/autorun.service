@@ -4,7 +4,8 @@ After=psplash-quit.service
 
 [Service]
 Type=oneshot
-ExecStart=/home/root/autorun.sh
+#ExecStart=/home/root/autorun.sh
+ExecStart=/unit_tests/autorun.sh
 
 
 [Install]

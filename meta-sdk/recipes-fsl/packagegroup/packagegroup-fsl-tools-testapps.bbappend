@@ -50,7 +50,7 @@ RDEPENDS_${PN} += " \
     python3-pip \
     udev-extraconf \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'tk', '', d)} \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'weston-examples', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', ' weston weston-examples weston-init','', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wifi', 'hostapd sigma-dut', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'qca6174', 'qca-tools', \
        bb.utils.contains('MACHINE_FEATURES', 'qca9377', 'qca-tools', \

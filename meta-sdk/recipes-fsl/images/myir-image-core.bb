@@ -36,7 +36,6 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     packagegroup-fsl-gstreamer1.0 \
     packagegroup-fsl-gstreamer1.0-full \
     iperf3 \
-    autorun-script \
     myir-regulatory \
     tslib \
     tslib-calibrate \
@@ -44,15 +43,16 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     tslib-uinput \
     tslib-tests \
     bridge-utils \
+    firmware-brcm43362 \
     tf-upgrade \
     v4l-utils \
     libjpeg-turbo \
     libgpiod \
+    libgpiod-tools \
     hostapd \
     iptables \
     vsftpd \
     udev-extraconf \
-    autorun-script \
     kernel-module-rtl8188fu \
     v4l-utils \
     libjpeg-turbo \
@@ -63,3 +63,4 @@ CORE_IMAGE_EXTRA_INSTALL += " \
 	firmware-imx \
 	wifi-bt-conf \
 "
+IMAGE_INSTALL_append += "libgpiod"

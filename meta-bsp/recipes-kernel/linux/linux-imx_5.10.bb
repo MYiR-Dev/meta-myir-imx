@@ -15,10 +15,19 @@ DEPENDS += "lzop-native bc-native"
 SRCBRANCH = "develop_lf-5.10.y"
 LOCALVERSION = "-1.0.0"
 KERNEL_SRC ?= "git://github.com/MYiR-Dev/myir-imx-linux.git;protocol=https"
+#KERNEL_SRC ?= "git:///media/liao/Linux_5.10.9/myir-imx-linux;protocol=file"
 
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
 
-SRCREV = "6214f6056992c12848b624b193cf19267335f7cb"
+SRCREV = "e05e818b70c90a46070127d7ab19ee8beb40ee48"
+
+
+#KERNEL_BRANCH ?= "6ull-kernel5.10.9"
+#LOCALVERSION = "-1.0.0"
+#KERNEL_SRC ?= "git://github.com/123markhong/6ullkernel-test.git;protocol=https"
+#SRC_URI = "${KERNEL_SRC};branch=${KERNEL_BRANCH}"
+
+#SRCREV = "062cea228859fa734f7930ce7eabcb95f4f1ed57"
 
 LINUX_VERSION = "5.10.9"
 
@@ -36,12 +45,12 @@ DO_CONFIG_V7_COPY_mx7 = "yes"
 DO_CONFIG_V7_COPY_mx8 = "no"
 
 # Add setting for LF Mainline build
-IMX_KERNEL_CONFIG_AARCH32 = "mys_6ulx_defconfig"
-IMX_KERNEL_CONFIG_AARCH64 ?= "imx_v8_defconfig"
+IMX_KERNEL_CONFIG_AARCH32 = "myd_y6ulx_defconfig"
+#IMX_KERNEL_CONFIG_AARCH64 ?= "imx_v8_defconfig"
 KBUILD_DEFCONFIG ?= ""
 KBUILD_DEFCONFIG_mx6= "${IMX_KERNEL_CONFIG_AARCH32}"
 KBUILD_DEFCONFIG_mx7= "${IMX_KERNEL_CONFIG_AARCH32}"
-KBUILD_DEFCONFIG_mx8= "${IMX_KERNEL_CONFIG_AARCH64}"
+#KBUILD_DEFCONFIG_mx8= "${IMX_KERNEL_CONFIG_AARCH64}"
 
 
 # Use a verbatim copy of the defconfig from the linux-imx repo.

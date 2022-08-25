@@ -33,6 +33,8 @@ SRC_URI +=" \
       file://Music \
       file://ecg \
       file://lib \
+      file://uvc_stream \
+      file://fw_env.config \
 "
 
 S_G = "${WORKDIR}"
@@ -48,6 +50,8 @@ dirinstall=" \
       ${libdir}/fonts/ \
       /usr/share/fonts/ttf/ \
       /home/ \
+      /usr/bin \
+      /etc/ \
       /home/root \
       /usr/share/myir/ \
       /usr/share/myir/Music/ \
@@ -72,6 +76,8 @@ do_install () {
       install -m 755 ${WORKDIR}/start.sh ${D}${bindir} 
       install -m 0644 ${WORKDIR}/myir.service ${D}${systemd_system_unitdir}
       install -m 755 ${WORKDIR}/build/mxapp2 ${D}/home/root/
+      install -m 0777 ${WORKDIR}/uvc_stream  ${D}/usr/bin
+      install -m 0777 ${WORKDIR}/fw_env.config  ${D}/etc
 }
 
 SYSTEMD_SERVICE_${PN} = "${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'myir.service', '', d)}"
