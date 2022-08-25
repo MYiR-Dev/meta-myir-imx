@@ -19,7 +19,7 @@ SRC_URI = "git://git.denx.de/u-boot.git"
 #SRCREV = "25276d37405151d3f77a900c74f0e19934e8d4aa"
 
 
-UBOOT_SRC ?= "git://github.com/myir-private/myir-imx-uboot.git;protocol=https"
+UBOOT_SRC ?= "git://github.com/MYiR-Dev/myir-imx-uboot.git;protocol=https"
 SRCBRANCH = "develop_2020.04"
 SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH} \
 "
