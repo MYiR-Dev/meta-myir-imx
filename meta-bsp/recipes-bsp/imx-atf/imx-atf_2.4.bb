@@ -6,10 +6,13 @@ LICENSE = "BSD-3-Clause"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/BSD-3-Clause;md5=550794465ba0ec5312d6919e203a55f9"
 
 PV .= "+git${SRCPV}"
-
+IMX8MM_UART4_PATCH="file://0001-FIX-Assign-uart4-to-A53.patch \
+                    file://0002-FIX-Solve-the-problem-that-poweroff-will-restart-aut.patch \
+"
 SRCBRANCH = "lf_v2.4"
 ATF_SRC ?= "git://source.codeaurora.org/external/imx/imx-atf.git;protocol=https"
 SRC_URI = "${ATF_SRC};branch=${SRCBRANCH} \
+	  ${@bb.utils.contains('MACHINENAME', 'myd-jx8mma7', '${IMX8MM_UART4_PATCH}', '', d)} \
 "
 SRCREV = "2cad06596e7714af780922bb52d6d512664042f6"
 
