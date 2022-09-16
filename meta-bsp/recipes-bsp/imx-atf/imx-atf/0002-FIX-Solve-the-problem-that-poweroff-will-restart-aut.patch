@@ -1,0 +1,29 @@
+From 9400703f8e298efb48f01d14ff4d6ff2364f9c98 Mon Sep 17 00:00:00 2001
+From: wjl <1053924360@qq.com>
+Date: Fri, 26 Aug 2022 17:24:57 +0800
+Subject: [PATCH 2/2] FIX:Solve the problem that poweroff will restart
+ automatically
+
+---
+ plat/imx/imx8m/imx8m_psci_common.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/plat/imx/imx8m/imx8m_psci_common.c b/plat/imx/imx8m/imx8m_psci_common.c
+index 018ec3f3e..17933e661 100644
+--- a/plat/imx/imx8m/imx8m_psci_common.c
++++ b/plat/imx/imx8m/imx8m_psci_common.c
+@@ -203,8 +203,10 @@ void __dead2 imx_system_reset(void)
+ void __dead2 imx_system_off(void)
+ {
+ 	mmio_write_32(IMX_SNVS_BASE + SNVS_LPCR, SNVS_LPCR_SRTC_ENV |
+-			SNVS_LPCR_DP_EN | SNVS_LPCR_TOP | SNVS_LPCR_LPTA_EN | SNVS_LPCR_LPWUI_EN);
++			SNVS_LPCR_DP_EN | SNVS_LPCR_TOP);
++			//SNVS_LPCR_DP_EN | SNVS_LPCR_TOP | SNVS_LPCR_LPTA_EN | SNVS_LPCR_LPWUI_EN);
+ 
++	INFO("poweroff\n");
+ 	while (1)
+ 		;
+ }
+-- 
+2.17.1
+
