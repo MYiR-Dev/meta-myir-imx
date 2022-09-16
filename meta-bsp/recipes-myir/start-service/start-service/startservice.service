@@ -1,0 +1,11 @@
+[Unit]
+Description=start process control system for UNIX
+After=getty@tty1.service
+
+[Service]
+Type=forking
+ExecStart=/etc/start_service.sh
+TimeoutSec=0
+
+[Install]
+WantedBy=multi-user.target

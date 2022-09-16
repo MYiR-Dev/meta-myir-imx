@@ -1,0 +1,16 @@
+#!/bin/bash 
+#
+# located in /lib/systemd/system-sleep/
+# Created 4/2/19
+exec 2> /tmp/systemd_suspend_test_err.txt
+if [ "${1}" = "pre" ]; then
+  # Do the thing you want before suspend here
+  echo "we are suspending." > /tmp/systemd_suspend_test.txt
+elif [ "${1}" = "post" ]; then
+  # Do the thing you want after resume here
+  echo "and we are back from being suspended" >> /tmp/systemd_suspend_test.txt
+sleep 2
+echo 1 > /sys/bus/pci/devices/0000:00:00.0/remove
+echo 1 > /sys/bus/pci/rescan
+  
+fi

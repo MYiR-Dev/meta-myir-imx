@@ -1,0 +1,10 @@
+prefix=/usr
+exec_prefix=/usr/bin
+libdir=/usr/lib
+includedir=/usr/include
+
+Name: libubootenv
+Description: Library to access U-Boot environment
+Version: 0.3.1
+Libs: -L${libdir} -lubootenv -lz
+Cflags: -I${includedir}

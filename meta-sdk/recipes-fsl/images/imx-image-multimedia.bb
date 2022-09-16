@@ -55,6 +55,35 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     packagegroup-imx-security \
     packagegroup-fsl-gstreamer1.0 \
     packagegroup-fsl-gstreamer1.0-full \
+    wifi-bt-conf \
+    wireless-tools \
+    pv \
+    devmem2 \
+    openvpn \
+    inetutils-ftp \
+    haveged \
+    tslib \
+    tslib-calibrate \
+    tslib-conf \
+    tslib-uinput \
+    tslib-tests \
+    sqlite3 \
+    v4l-utils \
+    tcpdump \
+    ppp-quectel \
+    quectel-cm \
+    proftpd    \
+    libubootenv \
+    myir-tool   \
+    qtmultimedia \
+    qtvirtualkeyboard  \
+    qtquickcontrols \
+    qtquickcontrols2  \
+    qtsvg   \
+    x264     \
+    ${@bb.utils.contains('MACHINENAME', 'myd-jx8mma7', 'pcie-app', '', d)} \
+    ${@bb.utils.contains('MACHINENAME', 'myd-jx8mma7', 'kernel-module-pcie', '', d)} \
+    ${@bb.utils.contains('MACHINENAME', 'myd-jx8mma7', 'hmi', '', d)} \
     firmwared \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11 wayland', 'weston-xwayland xterm', '', d)} \
     ${V2X_PKGS} \
