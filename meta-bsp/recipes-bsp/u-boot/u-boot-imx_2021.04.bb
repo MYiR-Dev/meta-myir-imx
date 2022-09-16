@@ -7,10 +7,11 @@ require recipes-bsp/u-boot/u-boot-imx-common_${PV}.inc
 
 PROVIDES += "u-boot"
 
-UBOOT_SRC ?= "git://source.codeaurora.org/external/imx/uboot-imx.git;protocol=https"
-SRCBRANCH = "lf_v2021.04"
+#UBOOT_SRC ?= "git://source.codeaurora.org/external/imx/uboot-imx.git;protocol=https"
+UBOOT_SRC ?= "git://github.com/MYiR-Dev/myir-imx-uboot.git;protocol=https"
+SRCBRANCH = "develop_lf_v2021.04"
 SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH}"
-SRCREV = "8372631b287e98ffda15d6412a38ebe37433ea0b"
+SRCREV = "ca13f21771870233b1d4f79f5b235c25d13ac81c"
 
 LOCALVERSION = "-${SRCBRANCH}"
 
