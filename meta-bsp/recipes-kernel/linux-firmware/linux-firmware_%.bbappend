@@ -12,8 +12,7 @@ SRC_URI += " \
 SRCREV_murata-qca = "a0026b646ce6adfb72f135ffa8a310f3614b2272"
 SRCREV_imx-firmware = "a312213179f671cecba5f32aa839cc752a3e817f"
 
-#MYIR_FIRMWARE_SRC ?= "git://github.com/MYiR-Dev/myir-firmware.git;protocol=https"
-MYIR_FIRMWARE_SRC ?= "git:///media/wujl/myd-jx8mma7/wifi-firm/myir-firmware;protocol=file"
+MYIR_FIRMWARE_SRC ?= "git://github.com/MYiR-Dev/myir-firmware.git;protocol=https"
 SRC_URI += " \
            ${MYIR_FIRMWARE_SRC};branch=main;destsuffix=myir-firmware;name=myir-firmware \
 "

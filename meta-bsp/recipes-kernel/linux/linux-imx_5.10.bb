@@ -16,12 +16,14 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
 DEPENDS += "lzop-native bc-native"
 
-SRCBRANCH = "lf-5.10.y"
+SRCBRANCH = "develop_5.10.y"
 LOCALVERSION = "-lts-5.10.y"
-KERNEL_SRC ?= "git://source.codeaurora.org/external/imx/linux-imx.git;protocol=https"
+#KERNEL_SRC ?= "git://source.codeaurora.org/external/imx/linux-imx.git;protocol=https"
+KERNEL_SRC ?= "git://github.com/MYiR-Dev/myir-imx-linux.git;protocol=https"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
 
-SRCREV = "c59614bdd6f6b288a42cebda186f37da87968990"
+#SRCREV = "c59614bdd6f6b288a42cebda186f37da87968990"
+SRCREV = "605b120428cf5474f8537553d8ac7f9c1b039f38"
 
 # PV is defined in the base in linux-imx.inc file and uses the LINUX_VERSION definition
 # required by kernel-yocto.bbclass.
@@ -43,7 +45,8 @@ DO_CONFIG_V7_COPY_mx8 = "no"
 
 # Add setting for LF Mainline build
 IMX_KERNEL_CONFIG_AARCH32 = "imx_v7_defconfig"
-IMX_KERNEL_CONFIG_AARCH64 = "imx_v8_defconfig"
+#IMX_KERNEL_CONFIG_AARCH64 = "imx_v8_defconfig"
+IMX_KERNEL_CONFIG_AARCH64 = "myd_jx8mma7_defconfig"
 KBUILD_DEFCONFIG ?= ""
 KBUILD_DEFCONFIG_mx6= "${IMX_KERNEL_CONFIG_AARCH32}"
 KBUILD_DEFCONFIG_mx7= "${IMX_KERNEL_CONFIG_AARCH32}"
