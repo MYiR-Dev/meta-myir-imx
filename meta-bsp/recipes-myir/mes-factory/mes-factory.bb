@@ -9,9 +9,11 @@ S = "${WORKDIR}"
 SRC_URI = "file://licenses/GPL-2 \
            file://home/root/mes-factory.sh \
 					file://home/root/mes \
+					file://home/root/mes-lite \
 					file://home/root/boardinfo.json \
 					file://home/root/1K1V.wav \
 					file://usr/bin/pcba_test \
+					file://usr/bin/pcba_test-lite \
 					file://usr/bin/eth0_eth1_net.sh \
 					file://mes-factory.service \
           "
@@ -31,11 +33,17 @@ do_install (){
 	install -d ${D}${bindir}
 
 	
+	if [ ${BOARD_MODE} = "lite" ]; then
+		install -m 755 ${WORKDIR}${ROOT_HOME}/mes-lite ${D}${ROOT_HOME}/mes
+		install -m 755 ${WORKDIR}${bindir}/pcba_test-lite ${D}${bindir}/pcba_test
+	else
+		install -m 755 ${WORKDIR}${ROOT_HOME}/mes ${D}${ROOT_HOME}/mes
+		install -m 755 ${WORKDIR}${bindir}/pcba_test ${D}${bindir}/pcba_test
+	fi
+	
 	install -m 755 ${WORKDIR}${ROOT_HOME}/mes-factory.sh ${D}${ROOT_HOME}/mes-factory.sh
-	install -m 755 ${WORKDIR}${ROOT_HOME}/mes ${D}${ROOT_HOME}/mes
 	install -m 755 ${WORKDIR}${ROOT_HOME}/boardinfo.json ${D}${ROOT_HOME}/boardinfo.json
 	install -m 755 ${WORKDIR}${ROOT_HOME}/1K1V.wav ${D}${ROOT_HOME}/1K1V.wav
-	install -m 755 ${WORKDIR}${bindir}/pcba_test ${D}${bindir}/pcba_test
 	install -m 755 ${WORKDIR}${bindir}/eth0_eth1_net.sh ${D}${bindir}/eth0_eth1_net.sh
 	install -m 644 ${WORKDIR}/mes-factory.service ${D}${systemd_system_unitdir}/mes-factory.service
 	
