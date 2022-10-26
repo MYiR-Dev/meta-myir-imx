@@ -10,5 +10,5 @@ video/x-raw,format=RGB16 ! waylandsink window-height=960 window-width=640 \
 v4l2src device=/dev/video0 ! video/x-raw,width=640,height=480 ! comp.sink_0 \
 v4l2src device=/dev/video1 ! video/x-raw,width=640,height=480 ! comp.sink_1  &
 
-sleep 3
+sleep 8
 /home/root/mes
