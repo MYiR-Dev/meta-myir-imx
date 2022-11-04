@@ -6,8 +6,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 inherit module 
 
 SRCREV = "0fbe65d59cdaa9c003bf563c1dad366593b8c2b5"
-#SRC_URI = "git://github.com/Alex-Hu2020/pcie-driver.git;branch=master 
-SRC_URI = "git:///media/wujl/myd-jx8mma7/pcie/pcie-driver;protocol=file;branch=master"
+SRC_URI = "git://github.com/Alex-Hu2020/pcie-driver.git;branch=PCIE_V5.10.72" 
 S = "${WORKDIR}/git"
 
 do_compile (){

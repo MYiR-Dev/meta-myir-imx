@@ -11,7 +11,7 @@ PROVIDES += "u-boot"
 UBOOT_SRC ?= "git://github.com/MYiR-Dev/myir-imx-uboot.git;protocol=https"
 SRCBRANCH = "develop_lf_v2021.04"
 SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH}"
-SRCREV = "ca13f21771870233b1d4f79f5b235c25d13ac81c"
+SRCREV = "14e741a92f33fad2ef7e0163397517c227ef4d5d"
 
 LOCALVERSION = "-${SRCBRANCH}"
 
