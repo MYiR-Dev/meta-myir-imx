@@ -16,7 +16,7 @@ MYIR_FIRMWARE_SRC ?= "git://github.com/MYiR-Dev/myir-firmware.git;protocol=https
 SRC_URI += " \
            ${MYIR_FIRMWARE_SRC};branch=main;destsuffix=myir-firmware;name=myir-firmware \
 "
-SRCREV_myir-firmware = "deca652d392049166e168204ab9a9a295e0f0d03"
+SRCREV_myir-firmware = "72f430e060a4fe471b68988808cf3a27d9694c3d"
 
 SRCREV_FORMAT = "default_murata-qca_imx-firmware"
 
@@ -74,8 +74,8 @@ do_install_append () {
     install -m 0644 ${WORKDIR}/imx-firmware/nxp/FwImage_8987/txpwrlimit_cfg_8987.conf  ${D}${nonarch_base_libdir}/firmware/nxp
 
 
-		# Install AP6212.txt to imx8mp
-		install -m 0644 ${WORKDIR}/linux-firmware-20200817/brcm/brcmfmac43430-sdio.AP6212.txt  ${D}${nonarch_base_libdir}/firmware/brcm/brcmfmac43430-sdio.fsl,imx8mp-evk.txt
+    # Install AP6212.txt to imx8mp
+    install -m 0644 ${WORKDIR}/myir-firmware/brcm/AP6212/brcmfmac43430-sdio.AP6212.txt  ${D}${nonarch_base_libdir}/firmware/brcm/brcmfmac43430-sdio.fsl,imx8mp-evk.txt
     install -d ${D}${nonarch_base_libdir}/firmware/bcmd/
     # Install AP6212 firmware
     install -m 0644 ${WORKDIR}/myir-firmware/brcm/AP6212/fw_bcm43438a1_apsta.bin ${D}${nonarch_base_libdir}/firmware/bcmd
