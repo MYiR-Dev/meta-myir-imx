@@ -1,0 +1,15 @@
+#!/bin/bash
+
+source basicsh
+
+PATH_FIRMWATE="/lib/firmware/bcmd/BCM4345C5_003.006.006.1043.1093.hcd"
+BT_UART="/dev/ttySTM6"
+BT_BAUDRATE="3000000"
+FLAGS="--enable_lpm --enable_hci --no2bytes"
+PRO_NAME="hciattach"
+kill_process_fun $PRO_NAME
+
+sleep 1
+brcm_patchram_plus -d --tosleep=200000 --no2bytes --enable_hci --patchram=${PATH_FIRMWATE} ${BT_UART} &
+
+/usr/libexec/bluetooth/bluetoothd &

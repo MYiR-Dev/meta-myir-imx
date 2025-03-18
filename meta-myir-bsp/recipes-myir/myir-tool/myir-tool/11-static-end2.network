@@ -1,0 +1,10 @@
+[Match]
+Name=end2
+
+[Network]
+Address=192.168.1.10/24
+DHCP=ipv4
+
+[DHCP]
+UseDNS=true
+UseRoutes=true

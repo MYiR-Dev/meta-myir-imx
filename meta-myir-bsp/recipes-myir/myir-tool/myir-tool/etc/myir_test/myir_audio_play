@@ -1,0 +1,2 @@
+#!/bin/sh
+gst-play-1.0 /usr/share/myir/Music/song.mp3

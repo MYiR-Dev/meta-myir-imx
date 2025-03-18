@@ -1,0 +1,1 @@
+../../dynamic-layers/qt6-layer/recipes-fsl/images/myir-image-full.bb

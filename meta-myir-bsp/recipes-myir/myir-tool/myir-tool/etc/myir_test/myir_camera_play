@@ -1,0 +1,4 @@
+#!/bin/sh
+/usr/bin/launch_camera_control_mp25.sh 
+sleep 2
+/usr/bin/launch_camera_preview_mp25.sh

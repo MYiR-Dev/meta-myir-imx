@@ -1,0 +1,7 @@
+fsbla="tf-a-myb-stm32mp257x-2GB-optee-emmc.stm32"
+metadata="metadata.bin"
+fip="fip-myb-stm32mp257x-2GB-optee-emmc.bin"
+bootfs="st-image-bootfs.ext4"
+vendorfs="st-image-vendorfs.ext4"
+rootfs="myir-image-full.ext4"
+userfs="st-image-userfs.ext4"

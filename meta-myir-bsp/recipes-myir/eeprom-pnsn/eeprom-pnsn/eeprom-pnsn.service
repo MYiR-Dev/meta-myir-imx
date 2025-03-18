@@ -1,0 +1,14 @@
+[Unit]
+Description=Temperature Control Service
+After=tee-supplicant.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/eeprom_read
+StandardOutput=tty
+StandardOutput=append:/dev/ttySTM0
+StandardError=append:/dev/ttySTM0
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
