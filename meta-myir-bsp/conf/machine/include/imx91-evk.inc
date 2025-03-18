@@ -4,9 +4,9 @@ require conf/machine/include/arm/armv8-2a/tune-cortexa55.inc
 MACHINE_FEATURES += "pci wifi bluetooth"
 MACHINE_FEATURES:append:use-nxp-bsp = " dpdk optee nxpwifi-all-sdio"
 
-KERNEL_DEVICETREE = " \
-    freescale/${KERNEL_DEVICETREE_BASENAME}.dtb \
-"
+#KERNEL_DEVICETREE = " \
+#    freescale/${KERNEL_DEVICETREE_BASENAME}.dtb \
+#"
 
 IMX_DEFAULT_BOOTLOADER:use-nxp-bsp = "u-boot-imx"
 IMX_DEFAULT_BOOTLOADER:use-mainline-bsp = "u-boot-fslc"
