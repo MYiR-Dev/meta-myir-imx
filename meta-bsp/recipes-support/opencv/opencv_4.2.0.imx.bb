@@ -4,7 +4,7 @@ FILESEXTRAPATHS_prepend := "${BSPDIR}/sources/meta-openembedded/meta-oe/recipes-
 
 LIC_FILES_CHKSUM = "file://LICENSE;md5=014935351b2df6f3094bf25de8d50ed8"
 
-SRCREV_opencv = "f70f223ea33a62e8d8a03f8a0de33f6b7b2f2bb3" 
+SRCREV_opencv = "3588357c45d258aed28767b9d09ae079cfe59fe5" 
 SRCREV_contrib = "65abc7090dedc84bbedec4dfd143f0340e52114f"
 SRCREV_extra = "322b475403899abc2411c4fbf68318afa77d3191"
 SRC_URI[tinydnn.md5sum] = "adb1c512e09ca2c7a6faef36f9c53e59"
@@ -15,7 +15,7 @@ SRC_URI_remove = " \
     git://github.com/opencv/opencv.git;name=opencv \
     file://0002-Make-opencv-ts-create-share-library-intead-of-static.patch \
 "
-OPENCV_SRC ?= "git://source.codeaurora.org/external/imx/opencv-imx.git;protocol=https"
+OPENCV_SRC ?= "git://github.com/nxp-imx/opencv-imx.git;protocol=https"
 SRCBRANCH = "4.2.0_imx"
 SRC_URI =+ "${OPENCV_SRC};branch=${SRCBRANCH};name=opencv"
 SRC_URI += " \

@@ -1,0 +1,1 @@
+SRC_URI = "git://bgithub.xyz/intel/${BPN};branch=main;protocol=https"

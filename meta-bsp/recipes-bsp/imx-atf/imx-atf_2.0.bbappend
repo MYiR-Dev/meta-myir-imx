@@ -4,7 +4,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 IMX8MM_UART4_PATCH="file://0001-add-uart4-A53-support.patch"
 
-ATF_SRC ?= "git://source.codeaurora.org/external/imx/imx-atf.git;protocol=https"
+ATF_SRC ?= "git://github.com/nxp-imx/imx-atf.git;protocol=https"
 SRC_URI = "${ATF_SRC};branch=${SRCBRANCH} \
            file://0001-Allow-BUILD_STRING-to-be-set-in-.revision-file.patch \
            ${@bb.utils.contains('MACHINENAME', 'myd-imx8mm', '${IMX8MM_UART4_PATCH}', '', d)} \

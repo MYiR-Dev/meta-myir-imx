@@ -1,0 +1,1 @@
+SRC_URI = "git://bgithub.xyz/tesseract-ocr/tessdata.git;branch=main;protocol=https"

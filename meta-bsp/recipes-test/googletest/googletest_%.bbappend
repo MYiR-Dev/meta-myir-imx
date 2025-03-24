@@ -1,0 +1,1 @@
+SRC_URI = "git://bgithub.xyz/google/googletest.git;branch=main;protocol=https"
