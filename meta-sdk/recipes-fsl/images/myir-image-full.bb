@@ -19,5 +19,4 @@ OPENCV_PKGS_append_imxgpu = " \
 "
 IMAGE_INSTALL += " \
     ${OPENCV_PKGS} \
-    ${ML_PKGS} \
 "
