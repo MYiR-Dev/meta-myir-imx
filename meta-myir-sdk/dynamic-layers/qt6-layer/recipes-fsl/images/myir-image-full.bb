@@ -10,7 +10,6 @@ CONFLICT_DISTRO_FEATURES = "directfb"
 
 IMAGE_INSTALL += " \
     curl \
-    packagegroup-imx-ml \
     packagegroup-qt6-imx \
     tzdata \
     ${IMAGE_INSTALL_OPENCV} \
@@ -18,15 +17,31 @@ IMAGE_INSTALL += " \
     ${IMAGE_INSTALL_PKCS11TOOL} \
     qtmultimedia \
     qtvirtualkeyboard \
+    eeprom-pnsn \
+    eeprom-pnsn-dev \
+    myir-tool \
+    autorun \
+    u-boot-fw-utils \
+    tcpdump \
+    tslib \
+    libmodbus \
+    ppp-quectel  \
+    quectel-cm  \
+    ppp  \
+    tslib \
+    tslib-calibrate \
+    tslib-conf \
+    tslib-uinput \
+    tslib-tests \
 "
 
 IMAGE_INSTALL_OPENCV              = ""
-IMAGE_INSTALL_OPENCV:imxgpu       = "${IMAGE_INSTALL_OPENCV_PKGS}"
-IMAGE_INSTALL_OPENCV:mx93-nxp-bsp = "${IMAGE_INSTALL_OPENCV_PKGS}"
-IMAGE_INSTALL_OPENCV_PKGS = " \
-    opencv-apps \
-    opencv-samples \
-    python3-opencv"
+#IMAGE_INSTALL_OPENCV:imxgpu       = "${IMAGE_INSTALL_OPENCV_PKGS}"
+#IMAGE_INSTALL_OPENCV:mx93-nxp-bsp = "${IMAGE_INSTALL_OPENCV_PKGS}"
+#IMAGE_INSTALL_OPENCV_PKGS = " \
+#    opencv-apps \
+#    opencv-samples \
+#    python3-opencv"
 
 IMAGE_INSTALL_PARSEC = " \
     packagegroup-security-tpm2 \
@@ -39,3 +54,6 @@ IMAGE_INSTALL_PARSEC = " \
 IMAGE_INSTALL_PKCS11TOOL = ""
 IMAGE_INSTALL_PKCS11TOOL:mx8-nxp-bsp = "opensc pkcs11-provider"
 IMAGE_INSTALL_PKCS11TOOL:mx9-nxp-bsp = "opensc pkcs11-provider"
+
+INHIBIT_PACKAGE_STRIP = "1"
+INHIBIT_PACKAGE_DEBUG_SPLIT = "1" 
