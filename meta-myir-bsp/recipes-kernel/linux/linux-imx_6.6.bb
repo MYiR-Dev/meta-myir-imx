@@ -18,11 +18,13 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 DEPENDS += "lzop-native bc-native"
 
 SRC_URI = "${LINUX_IMX_SRC}"
-LINUX_IMX_SRC ?= "git://github.com/nxp-imx/linux-imx.git;protocol=https;branch=${SRCBRANCH}"
+#LINUX_IMX_SRC ?= "git://github.com/nxp-imx/linux-imx.git;protocol=https;branch=${SRCBRANCH}"
+LINUX_IMX_SRC ?= "git:///media/home/didier/91/BSP/myir-i.mx9x-linux;protocol=file;branch=develop_6.6.36"
 KBRANCH = "${SRCBRANCH}"
 SRCBRANCH = "lf-6.6.y"
 LOCALVERSION = "-lts-next"
-SRCREV = "d23d64eea5111e1607efcce1d601834fceec92cb"
+#SRCREV = "d23d64eea5111e1607efcce1d601834fceec92cb"
+SRCREV = "05d064154949ba6e3483b4ffbfc1c7ba4b8ceb99"
 
 # PV is defined in the base in linux-imx.inc file and uses the LINUX_VERSION definition
 # required by kernel-yocto.bbclass.
@@ -43,7 +45,7 @@ DO_CONFIG_V7_COPY:mx9-nxp-bsp = "no"
 
 # Add setting for LF Mainline build
 IMX_KERNEL_CONFIG_AARCH32 = "imx_v7_defconfig"
-IMX_KERNEL_CONFIG_AARCH64 = "imx_v8_defconfig"
+IMX_KERNEL_CONFIG_AARCH64 = "myd_imx91_defconfig"
 KBUILD_DEFCONFIG ?= ""
 KBUILD_DEFCONFIG:mx6-nxp-bsp= "${IMX_KERNEL_CONFIG_AARCH32}"
 KBUILD_DEFCONFIG:mx7-nxp-bsp= "${IMX_KERNEL_CONFIG_AARCH32}"
