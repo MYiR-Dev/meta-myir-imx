@@ -32,3 +32,5 @@ do_install:append() {
         sed -i -e "/^\[core\]/a modules=screen-share.so" ${D}${sysconfdir}/xdg/weston/weston.ini
     fi
 }
+
+SYSTEMD_AUTO_ENABLE:${PN} = "disable"
