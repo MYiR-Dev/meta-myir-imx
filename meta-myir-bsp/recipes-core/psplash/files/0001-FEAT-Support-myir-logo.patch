@@ -1,0 +1,120 @@
+From 70fdba4d755a441ad1e7ef6cc7a0a82bcc0baefa Mon Sep 17 00:00:00 2001
+From: beste <bestexl@qq.com>
+Date: Thu, 27 Mar 2025 15:19:03 +0800
+Subject: [PATCH] FEAT:Support myir logo
+
+Upstream-Status: Inappropriate [myir-specific]
+
+---
+ Makefile.am      |  6 ++++--
+ psplash-colors.h |  2 +-
+ psplash-config.h |  4 +---
+ psplash.c        | 12 +++++++-----
+ 4 files changed, 13 insertions(+), 11 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 310e126..60612af 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -5,8 +5,8 @@ AM_CFLAGS = $(GCC_FLAGS) $(EXTRA_GCC_FLAGS) -D_GNU_SOURCE -DFONT_HEADER=\"$(FONT
+ psplash_SOURCES = psplash.c psplash.h psplash-fb.c psplash-fb.h \
+                   psplash-console.c psplash-console.h           \
+ 		  psplash-colors.h psplash-config.h		\
+-		  psplash-poky-img.h psplash-bar-img.h $(FONT_NAME)-font.h
+-BUILT_SOURCES = psplash-poky-img.h psplash-bar-img.h
++		  myir-poky-img.h psplash-bar-img.h $(FONT_NAME)-font.h
++BUILT_SOURCES = myir-poky-img.h psplash-bar-img.h
+ 
+ psplash_write_SOURCES = psplash-write.c psplash.h
+ 
+@@ -30,4 +30,6 @@ psplash-bar-img.h: base-images/psplash-bar.png
+ 	$(top_srcdir)/make-image-header.sh $< BAR
+ psplash-poky-img.h: base-images/psplash-poky.png
+ 	$(top_srcdir)/make-image-header.sh $< POKY
++myir-poky-img.h: base-images/myir-logo.png
++	$(top_srcdir)/make-image-header.sh $< POKY
+ 
+diff --git a/psplash-colors.h b/psplash-colors.h
+index 82a9893..cbcfd0d 100644
+--- a/psplash-colors.h
++++ b/psplash-colors.h
+@@ -12,7 +12,7 @@
+ #define _HAVE_PSPLASH_COLORS_H
+ 
+ /* This is the overall background color */
+-#define PSPLASH_BACKGROUND_COLOR 0xec,0xec,0xe1
++#define PSPLASH_BACKGROUND_COLOR 0xff,0xff,0xff
+ 
+ /* This is the color of any text output */
+ #define PSPLASH_TEXT_COLOR 0x6d,0x6d,0x70
+diff --git a/psplash-config.h b/psplash-config.h
+index eb90ef3..a4d9bc4 100644
+--- a/psplash-config.h
++++ b/psplash-config.h
+@@ -22,9 +22,7 @@
+ #endif
+ 
+ /* Bool indicated if the progress bar should be disabled */
+-#ifndef PSPLASH_DISABLE_PROGRESS_BAR
+-#define PSPLASH_SHOW_PROGRESS_BAR 1
+-#endif
++#define PSPLASH_SHOW_PROGRESS_BAR 0
+ 
+ /* Position of the image split from top edge, numerator of fraction */
+ #define PSPLASH_IMG_SPLIT_NUMERATOR 5
+diff --git a/psplash.c b/psplash.c
+index ee1af6b..c659ca4 100644
+--- a/psplash.c
++++ b/psplash.c
+@@ -13,7 +13,8 @@
+ #include "psplash.h"
+ #include "psplash-config.h"
+ #include "psplash-colors.h"
+-#include "psplash-poky-img.h"
++//#include "psplash-poky-img.h"
++#include "myir-logo-img.h"
+ #include "psplash-bar-img.h"
+ #ifdef HAVE_SYSTEMD
+ #include <systemd/sd-daemon.h>
+@@ -45,7 +46,7 @@ psplash_draw_msg (PSplashFB *fb, const char *msg)
+   DBG("displaying '%s' %ix%i\n", msg, w, h);
+ 
+   /* Clear */
+-
++#if 0
+   psplash_fb_draw_rect (fb, 
+ 			0, 
+ 			SPLIT_LINE_POS(fb) - h, 
+@@ -59,9 +60,10 @@ psplash_draw_msg (PSplashFB *fb, const char *msg)
+ 			PSPLASH_TEXT_COLOR,
+ 			&FONT_DEF,
+ 			msg);
++#endif
+ }
+ 
+-#ifdef PSPLASH_SHOW_PROGRESS_BAR
++#if 0 
+ void
+ psplash_draw_progress (PSplashFB *fb, int value)
+ {
+@@ -117,7 +119,7 @@ parse_command (PSplashFB *fb, char *string)
+       if (arg)
+         psplash_draw_msg (fb, arg);
+     } 
+- #ifdef PSPLASH_SHOW_PROGRESS_BAR
++ #if 0 
+   else  if (!strcmp(command,"PROGRESS"))
+     {
+       char *arg = strtok(NULL, "\0");
+@@ -315,7 +317,7 @@ main (int argc, char** argv)
+ 			 POKY_IMG_ROWSTRIDE,
+ 			 POKY_IMG_RLE_PIXEL_DATA);
+ 
+-#ifdef PSPLASH_SHOW_PROGRESS_BAR
++#if 0
+   /* Draw progress bar border */
+   psplash_fb_draw_image (fb, 
+ 			 (fb->width  - BAR_IMG_WIDTH)/2, 
+-- 
+2.25.1
+
