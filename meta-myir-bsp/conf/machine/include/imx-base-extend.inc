@@ -121,5 +121,5 @@ PREFERRED_VERSION_firmware-imx-ele:mx95-nxp-bsp ??= "0.1.3"
 PREFERRED_VERSION_firmware-imx-ele:mx91-nxp-bsp ??= "1.3.0"
 PREFERRED_VERSION_firmware-imx-ele:mx93-nxp-bsp ??= "1.3.0"
 
-SOC_DEFAULT_IMAGE_FSTYPES = "wic.bmap wic.zst tar.zst"
+SOC_DEFAULT_IMAGE_FSTYPES = "wic.bmap wic.zst tar.zst ext4"
 ZSTD_COMPRESSION_LEVEL ?= "-10"
