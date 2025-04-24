@@ -158,6 +158,7 @@ hook_in_layer meta-myir/meta-myir-bsp
 hook_in_layer meta-myir/meta-myir-sdk
 hook_in_layer meta-myir/meta-myir-ml
 hook_in_layer meta-myir/meta-myir-v2x
+hook_in_layer meta-myir/meta-myir-swupdate
 hook_in_layer meta-nxp-demo-experience
 hook_in_layer meta-nxp-connectivity/meta-nxp-matter-baseline
 hook_in_layer meta-nxp-connectivity/meta-nxp-openthread
