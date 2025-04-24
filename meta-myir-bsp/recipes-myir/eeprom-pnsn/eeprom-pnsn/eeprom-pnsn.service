@@ -1,13 +1,13 @@
 [Unit]
-Description=Temperature Control Service
+Description=PN SN
 After=tee-supplicant.service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/eeprom_read
+ExecStart=/usr/bin/MEasyListen-DEV
 StandardOutput=tty
-StandardOutput=append:/dev/ttySTM0
-StandardError=append:/dev/ttySTM0
+StandardOutput=append:/dev/ttyLP0
+StandardError=append:/dev/ttyLP0
 Restart=on-failure
 
 [Install]
