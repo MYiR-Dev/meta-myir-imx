@@ -9,12 +9,14 @@ S = "${WORKDIR}"
 SRC_URI = "file://licenses/GPL-2 \
 	   file://usr/sbin/ \
 	   file://usr/bin/autorun.sh \
+	   file://usr/bin/psplash-drm \
 	   file://usr/share/fonts/ttf/msyh.ttc \
 	   file://usr/share/myir/ecg.dat \
 	   file://usr/share/myir/resp.text \
 	   file://usr/share/myir/Video/ \
 	   file://usr/share/myir/Music/ \
 	   file://usr/share/myir/Capture/ \
+	   file://usr/share/psplash/ \
 	   file://autorun.service \
           "
           
@@ -28,6 +30,7 @@ do_install (){
 	install -d ${D}${systemd_system_unitdir}
 	install -d ${D}${datadir}
 	install -d ${D}${datadir}/myir
+	install -d ${D}${datadir}/psplash
 	install -d ${D}${datadir}/myir/Video
 	install -d ${D}${datadir}/myir/Music
 	install -d ${D}${datadir}/myir/Capture
@@ -39,6 +42,7 @@ do_install (){
 
 	
 	install -m 755 ${WORKDIR}${bindir}/autorun.sh ${D}${bindir}/autorun.sh
+	install -m 755 ${WORKDIR}${bindir}/psplash-drm ${D}${bindir}/psplash-drm
 	install -m 755 ${WORKDIR}${sbindir}/* ${D}${sbindir}/
 	install -m 755 ${WORKDIR}/usr/share/fonts/ttf/msyh.ttc ${D}/usr/share/fonts/ttf/msyh.ttc
 	install -m 755 ${WORKDIR}${datadir}/myir/ecg.dat ${D}${datadir}/myir/ecg.dat
@@ -46,6 +50,7 @@ do_install (){
 	install -m 755 ${WORKDIR}${datadir}/myir/Video/* ${D}${datadir}/myir/Video
 	install -m 755 ${WORKDIR}${datadir}/myir/Music/* ${D}${datadir}/myir/Music
 	install -m 755 ${WORKDIR}${datadir}/myir/Capture/* ${D}${datadir}/myir/Capture
+	install -m 755 ${WORKDIR}${datadir}/psplash/* ${D}${datadir}/psplash/
 
 	install -m 644 ${WORKDIR}/autorun.service ${D}${systemd_system_unitdir}/autorun.service
 	
@@ -57,6 +62,7 @@ SYSTEMD_AUTO_ENABLE = "enable"
 
 FILES:${PN} = "${systemd_system_unitdir} \
 	      ${datadir}/myir \
+	      ${datadir}/psplash \
 	      ${datadir}/myir/Video \
               ${datadir}/myir/Audio \
               ${datadir}/myir/Capture \

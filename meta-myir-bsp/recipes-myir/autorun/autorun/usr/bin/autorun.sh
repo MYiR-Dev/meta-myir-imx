@@ -1,6 +1,15 @@
 #!/bin/sh
-source /etc/profile.d/weston_profile.sh
-source /etc/profile.d/pulse_profile.sh
+psplash-drm -w --framerate 20 -n 50 --background ffffff --filename=/usr/share/psplash/splashscreen-animated_%05d.png
+killall weston
+export QT_WAYLAND_SHELL_INTEGRATION=xdg-shell
+export QTWEBENGINE_DISABLE_SANDBOX=1
+export QT_QPA_EGLFS_ALWAYS_SET_MODE=1
+export WAYLAND_DISPLAY=/run/wayland-0
+export XDG_RUNTIME_DIR=/run/user/0
+export  QT_QPA_PLATFORM=linuxfb:fb=/dev/fb0:offset=0x0
+echo on > /sys/devices/platform/bus@f0000/20000000.i2c/i2c-1/1-003c/power/control
+#timedatectl set-ntp yes
+#timedatectl set-local-rtc 1
 
 # Part 1: Enhanced Time Synchronization Configuration
 CONFIG_FILE="/etc/systemd/timesyncd.conf"
@@ -40,30 +49,34 @@ if [ $TIME_MODIFIED -eq 1 ]; then
     echo "[TimeSync] Time synchronization service restarted"
 fi
 
-# Part 2: Touchscreen Calibration Configuration
-RULES_FILE="/etc/udev/rules.d/touchscreen.rules"
-RULE_LINE='SUBSYSTEM=="input", KERNEL=="event[0-9]*", ENV{ID_INPUT_TOUCHSCREEN}=="1", ENV{LIBINPUT_CALIBRATION_MATRIX}=" 61.509373 0.480948 0.019359 2.795640 116.671989 -0.044791"'
+CONFIG_FILE="/etc/systemd/system.conf"
 
-echo "[TouchScreen] Configuring touchscreen rules..."
-if [ ! -f "$RULES_FILE" ]; then
-    touch "$RULES_FILE"
-    echo "[TouchScreen] Created new rules file"
+# Verify config file existence
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "Error: Config file $CONFIG_FILE not found" >&2
 fi
 
-if ! grep -qF -- "$RULE_LINE" "$RULES_FILE"; then
-    echo "$RULE_LINE" >> "$RULES_FILE"
-    echo "[TouchScreen] Calibration matrix added"
-else
-    echo "[TouchScreen] Calibration rule already exists"
-fi
+# Backup original file (optional)
+cp "$CONFIG_FILE" "${CONFIG_FILE}.bak" && echo "Backup created: ${CONFIG_FILE}.bak"
 
-# Apply device rules
-sync
-udevadm control --reload
-udevadm trigger --action=change --subsystem-match=input
-echo "[TouchScreen] Device rules reloaded"
+# Configuration check & add function
+check_and_add() {
+    local key="$1"
+    if ! grep -q "^${key}$" "$CONFIG_FILE"; then
+        echo "$key" >> "$CONFIG_FILE"
+        echo "Added configuration: $key"
+    else
+        echo "Configuration already exists: $key"
+    fi
+}
 
-# Part 3: Application Launch (remain unchanged)
+# Process first configuration
+check_and_add "RuntimeWatchdogSec=15"
+
+# Process second configuration
+check_and_add "RuntimeWatchdogPreSec=15"
+
+# Part 2: Application Launch (remain unchanged)
 echo "[Application] Starting mxapp2..."
 /usr/sbin/mxapp2 &
 echo "[Application] Program launched"
