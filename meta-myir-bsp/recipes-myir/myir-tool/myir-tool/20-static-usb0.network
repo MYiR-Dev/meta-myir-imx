@@ -1,0 +1,7 @@
+[Match]
+Name=usb0
+
+[Network]
+Address=192.168.7.2/24
+Gateway=192.168.7.1
+DNS=8.8.8.8

@@ -1,0 +1,38 @@
+#!/bin/bash
+# Function to send data via RS232
+send_data() {
+    echo "Sending data..."
+    uart_test -m 0 -b 115200 -l -d /dev/ttyLP5 -w 1234567890
+}
+
+# Function to receive data via RS232
+receive_data() {
+    echo "Receiving data..."
+    uart_test -m 0 -b 115200 -l -d /dev/ttyLP5
+}
+
+# Main menu
+while true; do
+    echo "Select RS232 operation:"
+    echo "1. Send data"
+    echo "2. Receive data"
+    echo "3. Exit"
+
+    read -p "Enter your choice: " choice
+
+    case $choice in
+        1)
+            send_data
+            ;;
+        2)
+            receive_data
+            ;;
+        3)
+            echo "Exiting..."
+            exit 0
+            ;;
+        *)
+            echo "Invalid choice. Please enter 1, 2, or 3."
+            ;;
+    esac
+done
