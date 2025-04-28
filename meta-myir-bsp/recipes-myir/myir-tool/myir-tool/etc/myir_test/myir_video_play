@@ -1,2 +1,0 @@
-#!/bin/sh
-gst-play-1.0 /usr/share/myir/Video/myir.mp4

@@ -4,6 +4,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=309cc7bace8769cfabdd34577f654f8e"
 
 SRC_URI += " \
 		file://etc/myir_test/ \
+		file://etc/fw_env.config \
 		file://etc/myir-hostapd.conf \
 		file://etc/myir-udhcpd.conf \
  		file://usr/bin/ \
@@ -29,6 +30,7 @@ do_install() {
         install -m 755 ${S}/etc/myir_test/* ${D}/etc/myir_test/ 
         install -m 755 ${S}/etc/myir-hostapd.conf ${D}/etc/myir-hostapd.conf 
         install -m 755 ${S}/etc/myir-udhcpd.conf ${D}/etc/myir-udhcpd.conf
+        install -m 755 ${S}/etc/fw_env.config ${D}/etc/fw_env.config
 	install -m 755 ${S}${bindir}/* ${D}/${bindir}/
 
 }

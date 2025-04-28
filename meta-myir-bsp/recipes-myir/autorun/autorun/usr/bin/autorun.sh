@@ -10,6 +10,7 @@ export  QT_QPA_PLATFORM=linuxfb:fb=/dev/fb0:offset=0x0
 echo on > /sys/devices/platform/bus@f0000/20000000.i2c/i2c-1/1-003c/power/control
 #timedatectl set-ntp yes
 #timedatectl set-local-rtc 1
+amixer -c 0 set 'Headphone' 100%
 
 # Part 1: Enhanced Time Synchronization Configuration
 CONFIG_FILE="/etc/systemd/timesyncd.conf"
