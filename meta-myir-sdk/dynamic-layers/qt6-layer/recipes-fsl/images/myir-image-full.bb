@@ -33,6 +33,7 @@ IMAGE_INSTALL += " \
     tslib-conf \
     tslib-uinput \
     tslib-tests \
+    u-boot-imx-env \
 "
 
 IMAGE_INSTALL_OPENCV              = ""
