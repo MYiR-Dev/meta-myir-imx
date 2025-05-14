@@ -74,4 +74,6 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     tslib-conf \
     tslib-uinput \
     tslib-tests \
+    u-boot-imx \
+    u-boot-imx-env \
 "
