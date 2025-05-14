@@ -13,7 +13,7 @@ FAC_NAME="imx91evk"
 
 HOSTNAME=`cat /etc/hostname`
 
-if [ x"$HOSTNAME" == x"$FAC_NAME" ];then
+if [ x"$HOSTNAME" == x"$MYD_NAME" ];then
   led1=cpu
   led2=91x:led1
   led3=91x:led2
@@ -26,7 +26,7 @@ elif [ x"$HOSTNAME" == x"$MYD_JX8MP_NAME" ];then
 fi
 
 LED_PID=-1
-time=0.2
+time=1
 
 ECHO_TTY="/dev/ttyLP0"
 
@@ -49,15 +49,11 @@ burn_start_ing(){
     echo "                                               " >> ${ECHO_TTY} 
 
 	#核心板上的绿灯闪烁则烧写中
-	# echo 0 > /sys/class/leds/${led1}/brightness
-	echo 0 > /sys/class/leds/${led2}/brightness
-    # echo 0 > /sys/class/leds/${led3}/brightness
+	echo heartbeat > /sys/class/leds/91x\:led1/trigger                        
+        echo heartbeat > /sys/class/leds/91x\:led2/trigger                        
 
 	while [ 1 ]
 	do
-		# echo 1 > /sys/class/leds/${led2}/brightness
-		sleep $time
-		# echo 0 > /sys/class/leds/${led2}/brightness
 		sleep $time
         echo "*************   Updating   *************" >> ${ECHO_TTY} 
 	done 
@@ -88,7 +84,10 @@ burn_succeed(){
     kill $LED_PID
 
 	# 闪烁
-	echo heartbeat > /sys/class/leds/91x\:led1/trigger
+	echo none > /sys/class/leds/91x\:led1/trigger
+	echo 1 > /sys/class/leds/91x\:led1/brightness
+	echo none > /sys/class/leds/91x\:led2/trigger
+	echo 1 > /sys/class/leds/91x\:led2/brightness
 
 	echo "***********************************************" >> ${ECHO_TTY} 
 	echo "********    SYSTEM UPDATE  SUCCEED  ***********" >> ${ECHO_TTY} 
