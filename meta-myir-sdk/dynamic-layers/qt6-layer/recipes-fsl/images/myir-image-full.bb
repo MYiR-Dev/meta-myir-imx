@@ -35,6 +35,7 @@ IMAGE_INSTALL += " \
     tslib-tests \
     u-boot-imx \
     u-boot-imx-env \
+    expand-part \
 "
 
 IMAGE_INSTALL_OPENCV              = ""

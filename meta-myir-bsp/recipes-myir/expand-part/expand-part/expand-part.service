@@ -1,0 +1,12 @@
+[Unit]
+Description=start process control system for UNIX
+After=getty@tty1.service
+
+[Service]
+Type=forking
+ExecStart=/etc/expand_part.sh
+ExecStop=/bin/bash -c 'rm /etc/expand_part.sh; systemctl disable expand-part'
+TimeoutSec=0
+
+[Install]
+WantedBy=multi-user.target

@@ -76,4 +76,5 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     tslib-tests \
     u-boot-imx \
     u-boot-imx-env \
+    expand-part \
 "
