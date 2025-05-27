@@ -11301,3 +11301,354 @@ state.sofwm8962audio {
 		}
 	}
 }
+state.SGTL5000Card {
+	control.1 {
+		iface MIXER
+		name 'PCM Playback Volume'
+		value.0 144
+		value.1 144
+		comment {
+			access 'read write'
+			type INTEGER
+			count 2
+			range '0 - 192'
+		}
+	}
+	control.2 {
+		iface MIXER
+		name 'Capture Volume'
+		value.0 12
+		value.1 12
+		comment {
+			access 'read write'
+			type INTEGER
+			count 2
+			range '0 - 15'
+		}
+	}
+	control.3 {
+		iface MIXER
+		name 'Capture Attenuate Switch (-6dB)'
+		value false
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 1
+		}
+	}
+	control.4 {
+		iface MIXER
+		name 'Capture ZC Switch'
+		value true
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 1
+		}
+	}
+	control.5 {
+		iface MIXER
+		name 'Capture Switch'
+		value true
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 1
+		}
+	}
+	control.6 {
+		iface MIXER
+		name 'Headphone Playback Volume'
+		value.0 127
+		value.1 127
+		comment {
+			access 'read write'
+			type INTEGER
+			count 2
+			range '0 - 127'
+			dbmin -5150
+			dbmax 1200
+			dbvalue.0 1200
+			dbvalue.1 1200
+		}
+	}
+	control.7 {
+		iface MIXER
+		name 'Headphone Playback Switch'
+		value true
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 1
+		}
+	}
+	control.8 {
+		iface MIXER
+		name 'Headphone Playback ZC Switch'
+		value true
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 1
+		}
+	}
+	control.9 {
+		iface MIXER
+		name 'Mic Volume'
+		value 3
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 3'
+			dbmin 0
+			dbmax 4000
+			dbvalue.0 4000
+		}
+	}
+	control.10 {
+		iface MIXER
+		name 'Lineout Playback Volume'
+		value.0 18
+		value.1 18
+		comment {
+			access 'read write'
+			type INTEGER
+			count 2
+			range '0 - 31'
+			dbmin -1550
+			dbmax 0
+			dbvalue.0 -650
+			dbvalue.1 -650
+		}
+	}
+	control.11 {
+		iface MIXER
+		name 'Lineout Playback Switch'
+		value false
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 1
+		}
+	}
+	control.12 {
+		iface MIXER
+		name 'DAP Main channel'
+		value 32768
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 65535'
+			dbmin 0
+			dbmax 65535
+			dbvalue.0 32768
+		}
+	}
+	control.13 {
+		iface MIXER
+		name 'DAP Mix channel'
+		value 0
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 65535'
+			dbmin 0
+			dbmax 65535
+			dbvalue.0 0
+		}
+	}
+	control.14 {
+		iface MIXER
+		name 'AVC Switch'
+		value false
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 1
+		}
+	}
+	control.15 {
+		iface MIXER
+		name 'AVC Hard Limiter Switch'
+		value false
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 1
+		}
+	}
+	control.16 {
+		iface MIXER
+		name 'AVC Max Gain Volume'
+		value 1
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 2'
+			dbmin 0
+			dbmax 1200
+			dbvalue.0 600
+		}
+	}
+	control.17 {
+		iface MIXER
+		name 'AVC Integrator Response'
+		value 1
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 3'
+		}
+	}
+	control.18 {
+		iface MIXER
+		name 'AVC Threshold Volume'
+		value 12
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 96'
+			dbmin 0
+			dbmax 9600
+			dbvalue.0 1200
+		}
+	}
+	control.19 {
+		iface MIXER
+		name 'BASS 0'
+		value 47
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 95'
+			dbmin -1175
+			dbmax 1200
+			dbvalue.0 0
+		}
+	}
+	control.20 {
+		iface MIXER
+		name 'BASS 1'
+		value 47
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 95'
+			dbmin -1175
+			dbmax 1200
+			dbvalue.0 0
+		}
+	}
+	control.21 {
+		iface MIXER
+		name 'BASS 2'
+		value 47
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 95'
+			dbmin -1175
+			dbmax 1200
+			dbvalue.0 0
+		}
+	}
+	control.22 {
+		iface MIXER
+		name 'BASS 3'
+		value 47
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 95'
+			dbmin -1175
+			dbmax 1200
+			dbvalue.0 0
+		}
+	}
+	control.23 {
+		iface MIXER
+		name 'BASS 4'
+		value 47
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 95'
+			dbmin -1175
+			dbmax 1200
+			dbvalue.0 0
+		}
+	}
+	control.24 {
+		iface MIXER
+		name 'Capture Mux'
+		value MIC_IN
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 MIC_IN
+			item.1 LINE_IN
+		}
+	}
+	control.25 {
+		iface MIXER
+		name 'Headphone Mux'
+		value DAC
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 DAC
+			item.1 LINE_IN
+		}
+	}
+	control.26 {
+		iface MIXER
+		name 'Digital Input Mux'
+		value I2S
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 ADC
+			item.1 I2S
+			item.2 Rsvrd
+			item.3 DAP
+		}
+	}
+	control.27 {
+		iface MIXER
+		name 'DAP Mux'
+		value ADC
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 ADC
+			item.1 I2S
+		}
+	}
+	control.28 {
+		iface MIXER
+		name 'DAP MIX Mux'
+		value ADC
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 ADC
+			item.1 I2S
+		}
+	}
+}
