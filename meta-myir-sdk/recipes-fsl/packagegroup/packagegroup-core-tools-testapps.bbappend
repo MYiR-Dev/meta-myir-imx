@@ -24,3 +24,8 @@ RDEPENDS:${PN} += " \
     libgpiod-tools \
     ${PIPEWIRE_TOOLS} \
 "
+RDEPENDS:${PN}:remove = " \
+    connman-tools \
+    connman-tests \
+    connman-client \
+"
