@@ -32,6 +32,7 @@ IMAGE_INSTALL += " \
     ${@bb.utils.contains('MACHINENAME', 'myd-lmx9x', 'tf-upgrade', '', d)} \
     ${DOCKER} \
     board-info \
+    u-boot-imx-fw-utils \
 "
 
 
