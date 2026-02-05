@@ -20,21 +20,27 @@ check_root_part_cmdline()
 
 }
 
-check_need_repalce_env()
-{
-        echo ${current_rootfs}
-        result=$(echo ${current_rootfs} | grep "mmcblk")
-        if [[ ${result} != "" ]];then
-                bootdev=${current_rootfs%p*}
-                #echo bootdev ${bootdev}
-                if [[ `grep ${bootdev} /etc/fw_env.config` == "" ]];then
-                        sed -i "s/mmcblk[0-9]*/${bootdev}/g" /etc/fw_env.config
-                fi
+check_need_replace_env() {
+    local current_rootfs="$1" 
 
+    if [[ -z "$current_rootfs" ]]; then
+        current_rootfs=$(sed -n 's/.*root=\([^ ]*\).*/\1/p' /proc/cmdline)
+    fi
+
+    echo "Current rootfs: $current_rootfs"
+
+    if [[ $current_rootfs =~ ^/dev/mmcblk ]]; then
+        bootdev=${current_rootfs%%p*}
+
+        if ! grep -qF "$bootdev" /etc/fw_env.config; then
+            echo "Updating fw_env.config to use $bootdev"
+            sed -i "s|^/dev/mmcblk[0-9]*|${bootdev}|" /etc/fw_env.config
+            echo "New content:"
+            cat /etc/fw_env.config
+        else
+            echo "Already correct, no change needed."
         fi
-
-
-
+    fi
 }
 
 
@@ -66,7 +72,7 @@ function_on_different_part()
 
 check_root_part_cmdline
 
-check_need_repalce_env
+check_need_replace_env
 
 function_on_different_part
 
