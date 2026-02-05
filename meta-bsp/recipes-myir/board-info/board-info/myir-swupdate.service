@@ -1,6 +1,6 @@
 [Unit]
 Description=SWUpdate daemon
-After=swupdate.service
+After=systemd-journald.service
 
 [Service]
 ExecStart=/etc/myir-swupdate.sh
