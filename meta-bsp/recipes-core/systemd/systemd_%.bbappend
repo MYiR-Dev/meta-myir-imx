@@ -6,6 +6,8 @@ SRC_URI += "file://0001-units-systemd-udevd-Set-PrivateMounts-to-no.patch \
 
 PACKAGECONFIG[unmanaged-network] = ""
 
+WATCHDOG_RUNTIME_SEC ??= "30"
+
 do_install:append () {
 
     # Disable the assignment of the fixed network interface name
@@ -23,5 +25,12 @@ do_install:append () {
 # i.MX specific touchscreen rules
 SUBSYSTEM=="input", KERNEL=="event[0-9]*", ENV{ID_INPUT_TOUCHSCREEN}=="1", SYMLINK+="input/touchscreen0"
 EOF
+    fi
+
+    if [ -f "${D}${sysconfdir}/systemd/system.conf" ]; then
+	sed -i -e 's/#RuntimeWatchdogSec=off/RuntimeWatchdogSec=${WATCHDOG_RUNTIME_SEC}/' \
+		"${D}${sysconfdir}/systemd/system.conf" || bbwarn "Failed to set RuntimeWatchdogSec"
+    else
+	bbwarn "system.conf not found in do_install, RuntimeWatchdogSec not set"
     fi
 }
