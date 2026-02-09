@@ -7,7 +7,7 @@ UBOOT_SRC ?= "git://github.com/MYiR-Dev/myir-imx-uboot.git;protocol=https"
 SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH}"
 SRCBRANCH = "develop_2023.04"
 LOCALVERSION ?= "-${SRCBRANCH}"
-SRCREV = "0d202df47f8343c9fe19a24e1fb28dcb41215732"
+SRCREV = "9baac3e995fa2e184a7a0baa237851e3cb38da61"
 
 
 DEPENDS += " \
