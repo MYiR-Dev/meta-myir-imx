@@ -1,0 +1,11 @@
+[Unit]
+Description=auto run zlibtest
+After=weston-graphical-session.service
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/zlibtest
+
+
+[Install]
+WantedBy=multi-user.target

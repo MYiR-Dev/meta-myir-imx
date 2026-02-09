@@ -9,10 +9,6 @@ S = "${WORKDIR}"
 SRC_URI = "file://licenses/GPL-2 \
 		   file://usr/sbin/adl10-e \
 		   file://usr/sbin/adl10-e_client \
-                   file://usr/sbin/uart_test  \
-                   file://usr/sbin/uart_test_485  \
-                   file://usr/sbin/uart_test_232  \
-                   file://usr/sbin/watchdog_test  \
                    file://etc/myir_test/myir_audio_play  \
                    file://etc/myir_test/myir_camera_play  \
                    file://etc/myir_test/myir_dial  \
@@ -48,10 +44,6 @@ do_install (){
         install -m 755 ${WORKDIR}/etc/myir_test/myir_dial ${D}/etc/myir_test
         install -m 755 ${WORKDIR}/etc/myir_test/wifi_on_ap ${D}/etc/myir_test
         install -m 755 ${WORKDIR}/etc/myir_test/wifi_on_sta ${D}/etc/myir_test	
-        install -m 755 ${WORKDIR}${ROOT_HOME}/uart_test ${D}${ROOT_HOME}/uart_test
-        install -m 755 ${WORKDIR}${ROOT_HOME}/uart_test_485 ${D}${ROOT_HOME}/uart_test_485
-        install -m 755 ${WORKDIR}${ROOT_HOME}/uart_test_232 ${D}${ROOT_HOME}/uart_test_232
-        install -m 755 ${WORKDIR}${ROOT_HOME}/watchdog_test ${D}${ROOT_HOME}/watchdog_test
 	install -m 755 ${WORKDIR}${ROOT_HOME}/adl10-e ${D}${ROOT_HOME}/adl10-e
 	install -m 755 ${WORKDIR}${ROOT_HOME}/adl10-e_client ${D}${ROOT_HOME}/adl10-e_client
 

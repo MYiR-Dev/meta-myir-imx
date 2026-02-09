@@ -67,4 +67,5 @@ IMAGE_INSTALL_PARSEC = " \
     readline  \
     tftp-hpa  \
     myir-utils \
+    myir-test-function \
     ${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'optee-client optee-os', '', d)}"
