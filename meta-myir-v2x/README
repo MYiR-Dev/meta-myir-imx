@@ -1,0 +1,42 @@
+i.MX Linux Yocto BSP layer for V2X support
+==========================================
+
+This layer provides support for i.MX-based Vehicle-to-Everything (V2X)
+Communications, leveraging the internal HSM implementation in SECO / V2X IPs.
+
+This layer applies to i.MX 8DXL parts only.
+
+To use the layer add the following line to $BUILDDIR/conf/bblayers.conf:
+
+BBLAYERS += "${BSPDIR}/sources/meta-myir/meta-myir-v2x"
+
+For enabling profiling and tracing capabilities add the following in local.conf:
+#
+BBMASK:remove = "meta-myir-v2x/recipes-kernel/"
+PACKAGECONFIG:pn-v2xsehsm:append = " lttng"
+PACKAGECONFIG:pn-vtest:append = " lttng"
+IMAGE_INSTALL:append = " lttng-tools"
+#
+
+The layer depends on:
+
+URI: git://git.openembedded.org/meta-openembedded
+branch: zeus
+revision: Reference to the release manifest file (.xml) in the imx-manifest.git
+
+URI: git://git.yoctoproject.org/meta-freescale
+branch: zeus
+revision: Reference to the release manifest file (.xml) in the imx-manifest.git
+
+URI: git://git.yoctoproject.org/meta-freescale-distro
+branch: zeus
+revision: Reference to the release manifest file (.xml) in the imx-manifest.git
+
+URI: git://github.com/nxp-imx/meta-myir
+subdirectory: meta-myir-bsp
+branch: the same branch as this layer
+revision: the same revision as this layer
+
+subdirectory: meta-myir-sdk
+branch: the same branch as this layer
+revision: the same revision as this layer

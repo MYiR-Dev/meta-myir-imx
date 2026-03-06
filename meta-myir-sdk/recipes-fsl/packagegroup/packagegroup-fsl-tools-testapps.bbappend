@@ -1,0 +1,89 @@
+# Add needed Freescale packages and definitions
+
+PACKAGES += " \
+    ${PN}-fslcodec-testapps \
+"
+
+RDEPENDS:${PN}-fslcodec-testapps += " \
+    imx-codec-test-bin \
+    imx-codec-test-source \
+    ${RDEPENDS_CODEC_SRC} \
+"
+RDEPENDS_CODEC_SRC             = ""
+RDEPENDS_CODEC_SRC:mx9-nxp-bsp = " \
+    nxp-ssrc-test-source \
+"
+
+ALLOW_EMPTY:${PN}-fslcodec-testapps = "1"
+
+# Update SOC_TOOLS_TEST defined in meta-freescale-distro
+SOC_TOOLS_TEST:append:imx-nxp-bsp    = " \
+    imx-kobs \
+    kernel-tools-iio \
+    kernel-tools-pci \
+    kernel-tools-virtio \
+    kernel-tools-vsock \
+    ${PN}-fslcodec-testapps \
+"
+
+SOC_TOOLS_TEST:append:mx8qm-nxp-bsp  = " dvbapp-tests"
+
+SOC_TOOLS_TEST:imxgpu  = "imx-test ${SOC_TOOLS_TEST_VIVANTE}"
+SOC_TOOLS_TEST_VIVANTE             = ""
+SOC_TOOLS_TEST_VIVANTE:mx6-nxp-bsp = "imx-gpu-viv-demos"
+SOC_TOOLS_TEST_VIVANTE:mx7-nxp-bsp = "imx-gpu-viv-demos"
+SOC_TOOLS_TEST_VIVANTE:mx8-nxp-bsp = "imx-gpu-viv-demos"
+
+WLAN_SDK_TOOLS = "nxp-wlan-apps"
+WLAN_SDK_TOOLS:mx6-nxp-bsp = ""
+WLAN_SDK_TOOLS:mx7-nxp-bsp = ""
+
+RDEPENDS:${PN} += " \
+    bridge-utils \
+    can-utils \
+    can-utils-access \
+    can-utils-cantest \
+    can-utils-slcan \
+    coreutils \
+    cpufrequtils \
+    cryptodev-module \
+    cryptodev-tests \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'dpdk', '${RDEPENDS_DPDK}', '', d)} \
+    e2fsprogs-resize2fs \
+    gnutls-bin \
+    iw \
+    libp11 \
+    linuxptp \
+    media-ctl \
+    minicom \
+    mmc-utils \
+    nano \
+    ntp \
+    openssl-bin \
+    openssl-engines \
+    parted \
+    pciutils \
+    procps \
+    ptpd \
+    python3-pip \
+    screen \
+    spidev-test \
+    tmux \
+    udev-extraconf \
+    vlan \
+    ${WLAN_SDK_TOOLS} \
+    zstd \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'tk', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'weston-examples', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'wifi', 'hostapd sigma-dut', '', d)} \
+"
+
+RDEPENDS_DPDK ?= "dpdk ${RDEPENDS_DPDK_FPR} ${RDEPENDS_MTCP_DPDK}"
+RDEPENDS_DPDK_FPR = ""
+RDEPENDS_DPDK_FPR:mx93-nxp-bsp = "dpdk-fpr"
+RDEPENDS_DPDK_FPR:mx943-nxp-bsp = "dpdk-fpr"
+RDEPENDS_DPDK_FPR:mx95-nxp-bsp = "dpdk-fpr"
+
+RDEPENDS_MTCP_DPDK = ""
+RDEPENDS_MTCP_DPDK:mx943-nxp-bsp = "mtcp-dpdk"
+RDEPENDS_MTCP_DPDK:mx95-nxp-bsp = "mtcp-dpdk"

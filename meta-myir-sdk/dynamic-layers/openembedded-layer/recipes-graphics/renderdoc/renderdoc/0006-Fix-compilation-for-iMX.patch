@@ -1,0 +1,28 @@
+From f8343b5262ad5ec53654f552b44817d192f52a6e Mon Sep 17 00:00:00 2001
+From: Jerome Evillard <jerome.evillard@nxp.com>
+Date: Fri, 18 Jun 2021 15:56:08 +0200
+Subject: [PATCH 6/6] Fix compilation for iMX
+
+Upstream-Status: Inappropriate [i.MX specific]
+
+---
+ CMakeLists.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 127cee3..7de58f1 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -365,7 +365,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+         -Wno-type-limits
+         -Wno-missing-field-initializers
+         -Wno-unknown-pragmas
+-        -Wno-reorder)
++        -Wno-reorder
++        -Wno-string-compare)
+     if(CMAKE_COMPILER_IS_GNUCXX)
+         list(APPEND warning_flags -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-class-memaccess)
+ 
+-- 
+2.7.4
+

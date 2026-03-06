@@ -1,0 +1,97 @@
+From 34a185854c0a8ce0f748785f08c76a4258ec4549 Mon Sep 17 00:00:00 2001
+From: "Maxin B. John" <maxin.john@intel.com>
+Date: Mon, 30 Jul 2018 17:23:29 +0300
+Subject: [PATCH] Don't build demos with questionably licensed data
+
+Some of the models don't have open source compatible licenses:
+don't build demos using those. Also don't build demos that need
+resources that are not included.
+
+ssao:
+scenerendering:
+        Sibenik model, no license found
+
+deferred:
+deferredmultisampling:
+deferredshadows:
+        armor model, CC-BY-3.0
+
+vulkanscene:
+imgui:
+shadowmapping:
+        vulkanscene model, no license found
+
+indirectdraw:
+        plant model, no license found
+
+hdr:
+pbribl:
+pbrtexture:
+        Require external Vulkan Asset Pack
+
+Upstream-Status: Inappropriate [configuration]
+
+Signed-off-by: Jussi Kukkonen <jussi.kukkonen@intel.com>
+Signed-off-by: Maxin B. John <maxin.john@intel.com>
+---
+ examples/CMakeLists.txt | 13 -------------
+ 1 file changed, 13 deletions(-)
+
+diff --git a/examples/CMakeLists.txt b/examples/CMakeLists.txt
+index 3e95b6cd..136229fb 100644
+--- a/examples/CMakeLists.txt
++++ b/examples/CMakeLists.txt
+@@ -97,9 +97,6 @@ set(EXAMPLES
+ 	conservativeraster
+ 	debugprintf
+ 	debugutils
+-	deferred
+-	deferredmultisampling
+-	deferredshadows
+ 	descriptorbuffer
+ 	descriptorindexing
+ 	descriptorsets
+@@ -114,10 +111,7 @@ set(EXAMPLES
+ 	gltfscenerendering
+ 	gltfskinning
+ 	graphicspipelinelibrary
+-	hdr
+ 	hostimagecopy
+-	imgui
+-	indirectdraw
+ 	inlineuniformblocks
+ 	inputattachments
+ 	instancing
+@@ -132,8 +126,6 @@ set(EXAMPLES
+ 	parallaxmapping
+ 	particlesystem
+ 	pbrbasic
+-	pbribl
+-	pbrtexture
+ 	pipelines
+ 	pipelinestatistics
+ 	pushconstants
+@@ -152,12 +144,8 @@ set(EXAMPLES
+ 	renderheadless
+ 	screenshot
+ 	shaderobjects
+-	shadowmapping
+-	shadowmappingomni
+-	shadowmappingcascade
+ 	specializationconstants
+ 	sphericalenvmapping
+-	ssao
+ 	stencilbuffer
+ 	subpasses
+ 	terraintessellation
+@@ -174,7 +162,6 @@ set(EXAMPLES
+ 	variablerateshading
+ 	vertexattributes
+ 	viewportarray
+-	vulkanscene
+ )
+ 
+ buildExamples()
+-- 
+2.34.1
+
