@@ -33,4 +33,18 @@ EOF
     else
 	bbwarn "system.conf not found in do_install, RuntimeWatchdogSec not set"
     fi
+
+#This creates a drop-in config for timesyncd to set custom NTP servers
+    if [ ! -f "${D}${sysconfdir}/systemd/timesyncd.conf" ]; then
+        echo "# Custom NTP configuration" > "${D}${sysconfdir}/systemd/timesyncd.conf"
+        echo "[Time]" >> "${D}${sysconfdir}/systemd/timesyncd.conf"
+    fi
+
+    if ! grep -q "^NTP=" "${D}${sysconfdir}/systemd/timesyncd.conf"; then
+        echo "NTP=ntp.ntsc.ac.cn cn.ntp.org.cn" >> "${D}${sysconfdir}/systemd/timesyncd.conf"
+    else
+        sed -i 's/^NTP=.*/NTP=ntp.ntsc.ac.cn cn.ntp.org.cn/' "${D}${sysconfdir}/systemd/timesyncd.conf"
+    fi
+
+    chmod 0644 "${D}${sysconfdir}/systemd/timesyncd.conf"
 }
