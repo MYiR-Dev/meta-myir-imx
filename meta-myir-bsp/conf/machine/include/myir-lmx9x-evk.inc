@@ -8,10 +8,8 @@ MACHINE_FEATURES:append:use-nxp-bsp = " optee jailhouse  dpdk "
 
 MACHINE_FIRMWARE:append:use-nxp-bsp = " "
 
-KERNEL_DEVICETREE = " \
-    myir/${KERNEL_DEVICETREE_BASENAME}.dtb \
-"
-UBOOT_DTB_NAME = "${KERNEL_DEVICETREE_BASENAME}.dtb"
+
+
 
 IMX_DEFAULT_BOOTLOADER:use-nxp-bsp = "u-boot-imx"
 IMX_DEFAULT_BOOTLOADER:use-mainline-bsp = "u-boot-fslc"
@@ -27,18 +25,11 @@ SPL_BINARY = "spl/u-boot-spl.bin"
 ATF_PLATFORM = "imx93"
 
 
-
-UBOOT_CONFIG[sd_1g]      = "myd_lmx93x_11x11_defconfig,sdcard"
-#UBOOT_CONFIG[sd_1g]      = "myd_lmx93x_11x11_1g_defconfig,sdcard"
-UBOOT_CONFIG[sd_2g]      = "myd_lmx93x_11x11_2g_defconfig,sdcard"
-
 IMXBOOT_TARGETS = \
     "${@bb.utils.contains('UBOOT_CONFIG',   'sd', '${IMXBOOT_TARGETS_SD}', \
     		bb.utils.contains('UBOOT_CONFIG',  'sd_1g', '${IMXBOOT_TARGETS_SD}', \
     		bb.utils.contains('UBOOT_CONFIG',  'sd_2g', '${IMXBOOT_TARGETS_SD}', \
-        bb.utils.contains('UBOOT_CONFIG',  'ecc', '${IMXBOOT_TARGETS_ECC}', \
-        bb.utils.contains('UBOOT_CONFIG', 'fspi', '${IMXBOOT_TARGETS_FSPI}', \
-                                                  'INVALID', d),d),d), d), d)}"
+                                                  'INVALID',d), d), d)}"
 # Note different SD targets for different Glitch Detection (GDET) modes:
 # | Target                     | Glitch Detection                                 |
 # | flash_singleboot           | None                                             |
