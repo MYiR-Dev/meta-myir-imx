@@ -35,6 +35,10 @@ IMAGE_INSTALL += " \
     ${CLINFO} \
     v4l-utils \
     tcpdump \
+    u-boot-imx-env \
+    libubootenv \
+    libubootenv-bin \
+    uboot-env \
 "
 
 CLINFO              ?= ""

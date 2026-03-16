@@ -1,0 +1,25 @@
+From 6d866b24f793b23cfdce438ea29739a749ac5bcf Mon Sep 17 00:00:00 2001
+From: duxy <568988005@qq.com>
+Date: Mon, 16 Mar 2026 19:22:47 +0800
+Subject: [PATCH] FEAT:change default env file to /etc/u-boot-imx-initial-env
+Upstream-Status: Inappropriate [MYIR specific configuration]
+---
+ src/fw_printenv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/fw_printenv.c b/src/fw_printenv.c
+index ef95b32..9a8858b 100644
+--- a/src/fw_printenv.c
++++ b/src/fw_printenv.c
+@@ -21,7 +21,7 @@
+ #endif
+ 
+ #ifndef DEFAULT_ENV_FILE
+-#define DEFAULT_ENV_FILE "/etc/u-boot-initial-env"
++#define DEFAULT_ENV_FILE "/etc/u-boot-imx-initial-env"
+ #endif
+ 
+ #define PROGRAM_SET	"fw_setenv"
+-- 
+2.25.1
+
