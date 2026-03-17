@@ -39,6 +39,7 @@ IMAGE_INSTALL += " \
     libubootenv \
     libubootenv-bin \
     uboot-env \
+    tzdata \
 "
 
 CLINFO              ?= ""
