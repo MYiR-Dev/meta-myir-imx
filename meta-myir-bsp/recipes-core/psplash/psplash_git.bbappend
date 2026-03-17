@@ -1,6 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI:append:imx-generic-bsp = " file://imx.conf"
+SPLASH_IMAGES = "file://myir_logo.png;outsuffix=default"
 
 PACKAGECONFIG:remove:imx-generic-bsp = "${PACKAGECONFIG_REMOVE}"
 PACKAGECONFIG_REMOVE ?= " \
