@@ -51,4 +51,4 @@ DOCKER            ?= ""
 DOCKER:mx8-nxp-bsp = "docker"
 DOCKER:mx9-nxp-bsp = "docker"
 
-export IMAGE_BASENAME = "myir-image-core"
+export IMAGE_BASENAME = "myir-image-emmc"
