@@ -52,6 +52,7 @@ IMAGE_INSTALL += " \
     sqlite3 \
     auto-wifi \
     hostapd \
+    autorun-script \
 "
 
 CLINFO              ?= ""
