@@ -55,6 +55,7 @@ IMAGE_INSTALL += " \
     autorun-script \
     ppp \
     ppp-quectel \
+    myir-test-function \
 "
 
 CLINFO              ?= ""
