@@ -40,6 +40,16 @@ IMAGE_INSTALL += " \
     libubootenv-bin \
     uboot-env \
     tzdata \
+    tslib \
+    tslib-calibrate \
+    tslib-conf \
+    tslib-uinput \
+    tslib-tests \
+    iperf3 \
+    alsa-utils \
+    serialcheck \
+    libdrm-tests \
+    sqlite3 \
 "
 
 CLINFO              ?= ""
