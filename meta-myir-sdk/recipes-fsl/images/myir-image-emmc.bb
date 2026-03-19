@@ -53,6 +53,8 @@ IMAGE_INSTALL += " \
     auto-wifi \
     hostapd \
     autorun-script \
+    ppp \
+    ppp-quectel \
 "
 
 CLINFO              ?= ""
