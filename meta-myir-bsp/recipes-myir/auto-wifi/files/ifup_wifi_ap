@@ -1,0 +1,60 @@
+#!/usr/bin/env sh
+
+ETH=eth0
+WLAN=wlan0
+WLAN_IP=192.168.10.1
+DHCP_FILE=/etc/myir_udhcpd.conf
+HOSTAPD_FILE=/etc/myir_hostapd.conf
+
+
+clean_stage(){
+    killall udhcpc
+    killall wpa_supplicant
+
+    killall hostapd
+    killall udhcpd
+    sleep 1
+}
+
+
+enable_wifi(){
+    T_HCI="phy0"
+    RFKILL_SYS_PATH="/sys/class/rfkill/"
+    dir=`ls ${RFKILL_SYS_PATH}`
+    for i in ${dir}
+    do
+	if [ ${T_HCI} == `cat ${RFKILL_SYS_PATH}${i}/name` ];then
+	    echo 0 > ${RFKILL_SYS_PATH}${i}/state
+	    echo "find ${T_HCI} enable it"
+	    sleep 1
+	    echo 1 > ${RFKILL_SYS_PATH}${i}/state
+	    
+	fi
+    done
+
+}
+
+
+
+
+
+enable_sta_mode(){
+
+    ifconfig ${WLAN} up ${WLAN_IP}
+
+    echo "1" > /proc/sys/net/ipv4/ip_forward
+    iptables -t nat -A POSTROUTING -s ${WLAN_IP}/24 -o ${ETH} -j MASQUERADE
+
+    sleep 1
+
+    udhcpd ${DHCP_FILE}
+    hostapd -B ${HOSTAPD_FILE}
+    
+}
+
+
+
+clean_stage
+enable_wifi
+enable_sta_mode
+

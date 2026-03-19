@@ -50,6 +50,8 @@ IMAGE_INSTALL += " \
     serialcheck \
     libdrm-tests \
     sqlite3 \
+    auto-wifi \
+    hostapd \
 "
 
 CLINFO              ?= ""
