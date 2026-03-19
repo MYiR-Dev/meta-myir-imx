@@ -22,4 +22,19 @@ do_install:append () {
 SUBSYSTEM=="input", KERNEL=="event[0-9]*", ENV{ID_INPUT_TOUCHSCREEN}=="1", SYMLINK+="input/touchscreen0"
 EOF
     fi
+    
+    
+		#This creates a drop-in config for timesyncd to set custom NTP servers
+    if [ ! -f "${D}${sysconfdir}/systemd/timesyncd.conf" ]; then
+        echo "# Custom NTP configuration" > "${D}${sysconfdir}/systemd/timesyncd.conf"
+        echo "[Time]" >> "${D}${sysconfdir}/systemd/timesyncd.conf"
+    fi
+
+    if ! grep -q "^NTP=" "${D}${sysconfdir}/systemd/timesyncd.conf"; then
+        echo "NTP=ntp.ntsc.ac.cn cn.ntp.org.cn" >> "${D}${sysconfdir}/systemd/timesyncd.conf"
+    else
+        sed -i 's/^NTP=.*/NTP=ntp.ntsc.ac.cn cn.ntp.org.cn/' "${D}${sysconfdir}/systemd/timesyncd.conf"
+    fi
+
+    chmod 0644 "${D}${sysconfdir}/systemd/timesyncd.conf"
 }
