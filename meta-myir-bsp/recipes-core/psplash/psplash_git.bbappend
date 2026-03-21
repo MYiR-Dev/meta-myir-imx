@@ -2,7 +2,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI:append:imx-generic-bsp = " file://imx.conf"
 SPLASH_IMAGES = "file://myir_logo.png;outsuffix=default"
-
+SRC_URI += "file://0001-FEAT-set-psplash-backgroup-black.patch"
 PACKAGECONFIG:remove:imx-generic-bsp = "${PACKAGECONFIG_REMOVE}"
 PACKAGECONFIG_REMOVE ?= " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'progress-bar', '', d)}"

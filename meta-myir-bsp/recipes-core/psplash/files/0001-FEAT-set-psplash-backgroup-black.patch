@@ -1,0 +1,25 @@
+From cd82b7035b1fb94a6c6f236eec682867e0d7b669 Mon Sep 17 00:00:00 2001
+From: duxy <568988005@qq.com>
+Date: Sat, 21 Mar 2026 16:42:49 +0800
+Subject: [PATCH] FEAT: set psplash backgroup black
+Upstream-Status: Inappropriate [MYIR specific configuration]
+---
+ psplash-colors.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/psplash-colors.h b/psplash-colors.h
+index 82a9893..14d6eff 100644
+--- a/psplash-colors.h
++++ b/psplash-colors.h
+@@ -12,7 +12,7 @@
+ #define _HAVE_PSPLASH_COLORS_H
+ 
+ /* This is the overall background color */
+-#define PSPLASH_BACKGROUND_COLOR 0xec,0xec,0xe1
++#define PSPLASH_BACKGROUND_COLOR 0x0,0x0,0x0
+ 
+ /* This is the color of any text output */
+ #define PSPLASH_TEXT_COLOR 0x6d,0x6d,0x70
+-- 
+2.25.1
+
