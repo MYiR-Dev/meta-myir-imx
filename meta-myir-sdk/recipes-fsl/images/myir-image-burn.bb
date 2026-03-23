@@ -32,6 +32,7 @@ IMAGE_INSTALL += " \
     uboot-env \
     iperf3 \
     myir-fac-burn \
+    mmc-utils \
 "
 IMAGE_INSTALL:remove = "udev-extraconf"
 
