@@ -56,6 +56,7 @@ IMAGE_INSTALL += " \
     ppp \
     ppp-quectel \
     myir-test-function \
+    ${SWUPDATE} \
 "
 
 CLINFO              ?= ""
@@ -67,4 +68,7 @@ DOCKER            ?= ""
 DOCKER:mx8-nxp-bsp = "docker"
 DOCKER:mx9-nxp-bsp = "docker"
 
+
+SWUPDATE          ?= ""
+SWUPDATE:mx9-nxp-bsp = "lua swupdate swupdate-www swupdate-progress swupdate-client swupdate-tools-ipc systemd-swusys json-c"
 export IMAGE_BASENAME = "myir-image-emmc"
