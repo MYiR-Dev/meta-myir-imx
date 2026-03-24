@@ -73,6 +73,11 @@ SOC_FAMILY:mx943-generic-bsp  = "mx943"
 SOC_FAMILY:mx95-generic-bsp   = "mx95"
 
 REV_OPTION ?= "REV=${IMX_SOC_REV_UPPER}"
+do_compile[depends] += "cst-signing-tools:do_deploy"
+# Add kernel deploy dependency if kernel container target is used
+do_compile[depends] += "${@'virtual/kernel:do_deploy' if bb.utils.contains('KERNEL_CONTAINER_TARGETS', '1', True, False, d) else ''}"
+
+# Define kernel container targets (can be overridden in machine config)
 
 MKIMAGE_EXTRA_ARGS ?= ""
 MKIMAGE_EXTRA_ARGS:mx943-nxp-bsp ?= " \
@@ -254,6 +259,66 @@ do_compile() {
 
                 for target in ${IMXBOOT_TARGETS}; do
                     compile_${SOC_FAMILY}
+
+		    if [ "${UBOOT_SIGN_ENABLE}" = "1" ];then
+                        # Kernel container handling
+                        bbnote "Building kernel container for target: $target"
+
+                        # Copy kernel image (assumed to be 'Image') to BOOT_STAGING as 'linux.bin' (expected by imx-mkimage)
+                        if [ ! -f ${DEPLOY_DIR_IMAGE}/Image ]; then
+                            bbfatal "Kernel image 'Image' not found in ${DEPLOY_DIR_IMAGE}"
+                        fi
+                        cp ${DEPLOY_DIR_IMAGE}/Image ${BOOT_STAGING}
+                        
+              
+                        
+         dtb_files="${KERNEL_DEVICETREE}"
+				 for dtb in $dtb_files; do
+				    dtb_name=$(basename "$dtb")
+				    dtb_base=${dtb_name%.dtb}
+				
+				    suffix=${dtb_base#${MACHINE}}
+				
+				    if [ "$suffix" = "$dtb_base" ]; then
+				        suffix=""
+				    fi
+				
+				    suffix_clean=${suffix#-}
+				
+				    if [ -z "$suffix_clean" ]; then
+				        outname="flash_os.bin"
+				        signedname="os_cntr_signed.bin"
+				        csfname="csf_linux_img.txt"
+				    else
+				        outname="flash_os_${suffix_clean}.bin"
+				        signedname="os_cntr_signed_${suffix_clean}.bin"
+				        csfname="csf_linux_${suffix_clean}_img.txt"
+				    fi
+				
+				    echo "$dtb_name -> $outname"
+	
+    
+		
+
+    			cp ${DEPLOY_DIR_IMAGE}/$dtb_name ${BOOT_STAGING}/imx93-11x11-evk.dtb
+    			make SOC=${IMX_BOOT_SOC_TARGET} ${REV_OPTION} ${MKIMAGE_EXTRA_ARGS} dtbs=imx93-11x11-evk.dtb flash_kernel
+    			mv ${BOOT_STAGING}/flash.bin ${BOOT_STAGING}/${outname}
+
+    			if [ "${UBOOT_SIGN_ENABLE}" = "1" ]; then
+       		 		CST="${DEPLOY_DIR_IMAGE}/cst-signing/linux64/bin/cst"
+        			CSF_PATH="${DEPLOY_DIR_IMAGE}/cst-signing/${csfname}"
+        			ln -sfn ${DEPLOY_DIR_IMAGE}/cst-signing/keys ${BOOT_STAGING}/keys
+        			ln -sfn ${DEPLOY_DIR_IMAGE}/cst-signing/crts ${BOOT_STAGING}/crts
+        			#cp ${BOOT_STAGING}/$outname ${BOOT_STAGING}/linux_container.bin
+        			cd ${BOOT_STAGING}
+        			${CST} -i ${CSF_PATH} -o ${S}/${signedname}
+        			#mv signed_container.bin ${S}/${signedname}
+        			cd -
+    			 fi
+		  done
+		fi
+
+
                     case $target in
                     *no_v2x)
                         # Special target build for i.MX 8DXL with V2X off
@@ -274,9 +339,58 @@ do_compile() {
                         ;;
                     esac
 
-                    if [ -e "${BOOT_STAGING}/flash.bin" ]; then
-                        cp ${BOOT_STAGING}/flash.bin ${S}/${BOOT_CONFIG_MACHINE_EXTRA}-${target}
-                    fi
+                    # Secure boot handling
+                    if [ "${UBOOT_SIGN_ENABLE}" = "1" ] && [ -x "${DEPLOY_DIR_IMAGE}/cst-signing/linux64/bin/cst" ]; then
+                        CST="${DEPLOY_DIR_IMAGE}/cst-signing/linux64/bin/cst"
+                        CSF_UBOOT_ATF="${DEPLOY_DIR_IMAGE}/cst-signing/csf_uboot_atf.txt"
+                        CSF_BOOT="${DEPLOY_DIR_IMAGE}/cst-signing/csf_boot_image.txt"
+
+                        # Create symlinks in BOOT_STAGING pointing to keys and crts in deploy directory
+                        ln -sfn ${DEPLOY_DIR_IMAGE}/cst-signing/keys ${BOOT_STAGING}/keys
+                        ln -sfn ${DEPLOY_DIR_IMAGE}/cst-signing/crts ${BOOT_STAGING}/crts
+
+                        # Sign u-boot-atf-container.img if it exists
+                        if [ -f "${BOOT_STAGING}/u-boot-atf-container.img" ]; then
+                            bbnote "Signing u-boot-atf-container.img..."
+                            cd ${BOOT_STAGING}
+                            ${CST} -i ${CSF_UBOOT_ATF} -o signed-u-boot-atf-container.img
+                            mv signed-u-boot-atf-container.img u-boot-atf-container.img
+                            cd -
+                        else
+                            bbwarn "u-boot-atf-container.img not found, skipping container signing"
+                        fi
+
+                        # Second build: regenerate flash.bin with signed container
+                        bbnote "Second build with signed container..."
+                        case $target in
+                        *no_v2x)
+                            make SOC=${IMX_BOOT_SOC_TARGET} ${REV_OPTION} V2X=NO dtbs=${UBOOT_DTB_NAME_EXTRA} flash_linux_m4
+                            ;;
+                        *stmm_capsule)
+                            make SOC=${IMX_BOOT_SOC_TARGET} TEE=tee.bin-stmm ${MKIMAGE_EXTRA_ARGS} dtbs=${UBOOT_DTB_NAME} ${REV_OPTION} ${target}
+                            ;;
+                        *)
+                            make SOC=${IMX_BOOT_SOC_TARGET} ${REV_OPTION} ${MKIMAGE_EXTRA_ARGS} dtbs=${UBOOT_DTB_NAME} ${target}
+                            ;;
+                        esac
+
+                        # Sign the final flash.bin
+                        if [ -f "${BOOT_STAGING}/flash.bin" ]; then
+                            bbnote "Signing flash.bin..."
+                            cd ${BOOT_STAGING}
+                            ${CST} -i ${CSF_BOOT} -o signed-flash.bin
+                            cd -
+                            # Copy the signed binary as the target image
+                            cp ${BOOT_STAGING}/signed-flash.bin ${S}/${BOOT_CONFIG_MACHINE_EXTRA}-${target}
+                        else
+                            bbfatal "flash.bin not found after second build"
+                        fi
+                    else
+
+                    	if [ -e "${BOOT_STAGING}/flash.bin" ]; then
+                      	   cp ${BOOT_STAGING}/flash.bin ${S}/${BOOT_CONFIG_MACHINE_EXTRA}-${target}
+                    	fi
+		   fi
                 done
 
                 unset UBOOT_CONFIG_EXTRA
@@ -437,6 +551,10 @@ do_deploy() {
             fi
             install -m 0644 ${S}/${BOOT_CONFIG_MACHINE_EXTRA}-${target} ${DEPLOYDIR}
         done
+
+       if [ "${UBOOT_SIGN_ENABLE}" = "1" ]; then
+		install -m 0644 ${S}/os_cntr_signed* ${DEPLOYDIR}
+       fi
 
         # The first UBOOT_CONFIG listed will be the imx-boot binary
         if [ ! -f "${DEPLOYDIR}/imx-boot" ]; then

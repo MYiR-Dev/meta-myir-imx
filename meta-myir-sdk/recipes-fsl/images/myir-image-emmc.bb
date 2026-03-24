@@ -57,6 +57,7 @@ IMAGE_INSTALL += " \
     ppp-quectel \
     myir-test-function \
     ${SWUPDATE} \
+    ${OPTEE_TEST} \
 "
 
 CLINFO              ?= ""
@@ -71,4 +72,8 @@ DOCKER:mx9-nxp-bsp = "docker"
 
 SWUPDATE          ?= ""
 SWUPDATE:mx9-nxp-bsp = "lua swupdate swupdate-www swupdate-progress swupdate-client swupdate-tools-ipc systemd-swusys json-c"
+
+OPTEE_TEST          ?= ""
+OPTEE_TEST:mx9-nxp-bsp = "lvm2 optee-test python3-cryptography optee-examples openssl"
+
 export IMAGE_BASENAME = "myir-image-emmc"

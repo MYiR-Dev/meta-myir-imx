@@ -74,7 +74,7 @@ mksdcard() {
 	node=$1
 	#partition size in 10M
 	BOOT_ROM_SIZE=10
-	KERNEL_DTB_SIZE=100
+	KERNEL_DTB_SIZE=200
 	RESERVED_SIZE=50
 	ALIGN_FIX=8
 	

@@ -79,7 +79,7 @@ cmd_check()
 mksdcard(){
     #partition size in 10M
     BOOT_ROM_SIZE=10
-    KERNEL_DTB_SIZE=100
+    KERNEL_DTB_SIZE=200
 
     if [   $# -lt 1 ];then
 	echo format node not exist
