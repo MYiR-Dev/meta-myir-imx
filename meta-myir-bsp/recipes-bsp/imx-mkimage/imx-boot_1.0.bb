@@ -73,9 +73,11 @@ SOC_FAMILY:mx943-generic-bsp  = "mx943"
 SOC_FAMILY:mx95-generic-bsp   = "mx95"
 
 REV_OPTION ?= "REV=${IMX_SOC_REV_UPPER}"
-do_compile[depends] += "cst-signing-tools:do_deploy"
-# Add kernel deploy dependency if kernel container target is used
-do_compile[depends] += "${@'virtual/kernel:do_deploy' if bb.utils.contains('KERNEL_CONTAINER_TARGETS', '1', True, False, d) else ''}"
+# Secure Boot signing dependencies
+do_compile[depends] += "${@bb.utils.contains('UBOOT_SIGN_ENABLE', '1', 'cst-signing-tools:do_deploy', '', d)}"
+
+# Kernel container target dependency (optional, only when needed)
+do_compile[depends] += "${@bb.utils.contains('KERNEL_CONTAINER_TARGETS', '1', 'virtual/kernel:do_deploy', '', d)}"
 
 # Define kernel container targets (can be overridden in machine config)
 
