@@ -1,0 +1,17 @@
+#!/bin/sh
+echo "Please choose the file type to play:"
+echo "1. Play mp3 file"
+echo "2. Play wav file"
+read choice
+
+case $choice in
+    1)
+        gst-play-1.0 /usr/share/myir/Music/song.mp3
+        ;;
+    2)
+        gst-play-1.0 /usr/share/myir/Music/song.wav
+        ;;
+    *)
+	    echo "Invalid choice."
+        ;;
+esac

@@ -59,6 +59,7 @@ IMAGE_INSTALL += " \
     ${SWUPDATE} \
     ${OPTEE_TEST} \
     myir-lvgl \
+    myir-tools \
 "
 
 CLINFO              ?= ""
