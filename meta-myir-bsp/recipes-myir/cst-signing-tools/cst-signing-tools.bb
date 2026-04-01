@@ -77,3 +77,4 @@ do_deploy() {
 }
 
 addtask deploy before do_build after do_generate_keys
+do_generate_keys[depends] += "openssl-native:do_populate_sysroot"
