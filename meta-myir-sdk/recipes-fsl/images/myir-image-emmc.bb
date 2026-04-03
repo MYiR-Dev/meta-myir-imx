@@ -60,6 +60,7 @@ IMAGE_INSTALL += " \
     ${OPTEE_TEST} \
     myir-lvgl \
     myir-tools \
+    board-info \
 "
 
 CLINFO              ?= ""

@@ -33,6 +33,7 @@ IMAGE_INSTALL += " \
     iperf3 \
     myir-fac-burn \
     mmc-utils \
+    board-info \
 "
 IMAGE_INSTALL:remove = "udev-extraconf"
 

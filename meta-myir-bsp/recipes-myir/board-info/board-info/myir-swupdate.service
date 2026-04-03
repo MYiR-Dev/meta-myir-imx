@@ -1,0 +1,10 @@
+[Unit]
+Description=SWUpdate daemon
+After=systemd-journald.service
+
+[Service]
+ExecStart=/etc/myir-swupdate.sh
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target
