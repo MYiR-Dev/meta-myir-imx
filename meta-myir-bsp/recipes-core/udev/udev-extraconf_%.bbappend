@@ -6,6 +6,8 @@ SRC_URI:append:mx7-nxp-bsp = " file://blacklist.conf"
 SRC_URI:append:mx8-nxp-bsp = " file://blacklist.conf"
 SRC_URI:append:mx9-nxp-bsp = " file://blacklist.conf"
 
+SRC_URI += "file://mount.sh"
+
 do_install:prepend () {
     if [ -e "${UNPACKDIR}/blacklist.conf" ]; then
         install -d ${D}${sysconfdir}/modprobe.d
