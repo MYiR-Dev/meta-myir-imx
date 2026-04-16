@@ -22,7 +22,7 @@ LINUX_IMX_SRC ?= "git://github.com/MYiR-Dev/myir-imx-linux.git;protocol=https;br
 SRCBRANCH = "develop_6.12.49"
 KBRANCH = "${SRCBRANCH}"
 LOCALVERSION = "-lts-next"
-SRCREV = "a5d4142d80bf2f27df5291ea799370062cfa6c91"
+SRCREV = "6d0e8cd9ab1d64e7b8c9ac124c9dd0c233f9642a"
 #SRCREV = "${AUTOREV}"
 
 # PV is defined in the base in linux-imx.inc file and uses the LINUX_VERSION definition
