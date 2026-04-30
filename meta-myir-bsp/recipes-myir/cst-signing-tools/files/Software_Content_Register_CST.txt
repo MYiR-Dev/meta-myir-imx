@@ -1,0 +1,70 @@
+NXP Software Content Register
+
+Package:                   cst-4.0.1.tgz
+Version:                   4.0.1
+Outgoing License:          BSD-3-Clause
+License File:              COPYING
+Type of content:           Source code and binaries
+Description and comments:  Code Signing Tool - used for signing images for IMX platforms
+Release Location:          https://www.nxp.com/webapp/sps/download/license.jsp?colCode=IMX_CST_TOOL_NEW
+Origin:                    NXP (BSD-3-Clause)
+
+--------------------------------------------
+Components
+--------------------------------------------
+
+Package Name:             OpenSSL
+Package License:          Apache-2.0
+License File:             ./licenses/LICENSE.openssl
+Version:                  3.2.0
+Release location:         https://github.com/openssl
+Description:              Core cryptographic library for encryption, signing, and hashing
+Origin:                   The OpenSSL Project
+
+Package Name:             oqsprovider
+Package License:          MIT
+License File:             ./licenses/LICENSE.oqsprovider
+Version:                  0.8.0
+Release location:         https://github.com/open-quantum-safe/oqs-provider
+Description:              OpenSSL provider for post-quantum and hybrid cryptography
+Origin:                   Open Quantum Safe Project
+
+Package Name:             liboqs
+Package License:          MIT
+License File:             ./licenses/LICENSE.liboqs
+Version:                  0.13.0
+Release location:         https://github.com/open-quantum-safe/liboqs
+Description:              Post-quantum cryptographic algorithm library
+Origin:                   Open Quantum Safe Project
+
+Package Name:             json-c
+Package License:          MIT
+License File:             ./licenses/LICENSE.json-c
+Version:                  0.17
+Release location:         https://github.com/json-c/json-c
+Description:              Lightweight JSON parser generator
+Origin:                   json-c community
+
+Package Name:             libp11
+Package License:          LGPL-2.1
+License File:             ./licenses/LICENSE.libp11
+Version:                  0.4.12
+Release location:         https://github.com/OpenSC/libp11
+Description:              PKCS#11 engine for hardware-backed crypto in OpenSSL
+Origin:                   OpenSC Project
+
+Package Name:             hidapi
+Package License:          BSD-3-Clause
+License File:             ./licenses/LICENSE.hidapi
+Version:                  0.13.0
+Release location:         https://github.com/libusb/hidapi
+Description:              Interface for HID devices
+Origin:                   libusb Project
+
+Package Name:             libusb
+Package License:          LGPL-2.1
+License File:             ./licenses/LICENSE.libusb
+Version:                  1.0.27
+Release location:         https://github.com/libusb/libusb
+Description:              Generic USB device communication library
+Origin:                   libusb Project

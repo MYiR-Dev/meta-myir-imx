@@ -1,0 +1,542 @@
+                CST 4.0.1 Release Notes
+
+PROJECT(S): CST
+DATE: June, 2025
+
+COPYRIGHT 2017-2025 NXP
+
+1 READ ME FIRST
+    This is the NXP Code Signing Tool (CST) for the High
+    Assurance Boot (HAB) library and the Advanced High Assurance
+    Boot (AHAB) subsystem. The CST provides software code
+    signing support designed for use with NXP processors that
+    integrate the HAB library in the internal boot ROM or the
+    AHAB subsystem. This release provides the features required
+    for the code signing for SoC supporting HAB version 4 and AHAB.
+
+1.1 REQUIREMENTS
+    This release supports Linux and Windows hosts.
+    For Linux, the CST is known to work on Ubuntu 18.04 and later.
+    For Windows, the CST is known to work on Windows 7 and later.
+    For MacOS, the CST is no longer released with supported binaries,
+    but the build system support for the MacOS target is retained in
+    the source code.
+
+    Most Linux distributions should work but they have not been fully
+    tested. If you run into issues the source code is included and can
+    be recompiled.
+
+1.2 PROBLEM REPORTING INSTRUCTIONS
+    Problems with this release may be reported to your local NXP
+    representative or at community.nxp.com.
+
+2 KNOWN ISSUES
+
+    1. Version `GLIBC_2.xx' not found (required by cst): This package includes
+    precompiled binaries for Linux, dynamically linked with the libc version on
+    Ubuntu 20.04. Please note that these binaries may not function on newer
+    Linux distributions with updated libc versions. To ensure compatibility,
+    it is recommended to recompile the source code on your own system. Refer to
+    the BUILD.md document for detailed build instructions.
+
+    2. CST requires administrative privileges on Windows hosts: Please note that
+    when compiling CST using MSYS2/MinGW for Windows hosts, and depending on the
+    version, the resulting executable may require elevation to run properly.
+    This requirement arises because temporary files, created using the tmpfile()
+    function, might be written to the root directory, necessitating
+    administrative privileges. To avoid this potential issue, it is recommended
+    to cross-compile CST for Windows on Linux instead with MinGW.
+
+3 Current Release Notes
+
+  Release 4.0.1:
+    ** Key Updates **
+        1.  Use the final ML-DSA standards as published in FIPS 203 and FIPS 204.
+
+	    Dilithium support is retained in this release but is expected to be
+	    removed in future versions.
+
+	2.  Added CSF arguments to support new container version 2 flags.
+
+	    - Check All Signature: Defines the container's signatures
+	      verification policy.
+	    - Fast Boot: Enable/Disable fast boot features.
+
+	3.  Enforce explicit output length for SHAKE algorithm:
+
+	    Support of SHAKE128-256 and SHAKE256-512 in srktool
+	    and ahab_pki_tree.
+
+	4.  PKCS#11 support is now disabled by default in CST.
+
+	    To enable it, you will need to recompile CST with PKCS#11 support.
+
+	5.  USB support is now disabled by default in CST.
+
+	    If you need to use hab_log_parser,you may need to recompile CST with
+	    USB support enabled.
+
+    ** Bug Fixes **
+        1. Ensured CST preserves fast boot bits in the container header during
+	   signing.
+
+	2. Resolved intermittent crash on Windows when using the PKCS#11 backend.
+
+	3. Correct SRK key data size calculation for RSA keys in container
+	   version 2.
+
+    ** Documentation **
+        1. Added notes about newly introduced fuses and known limitations in
+	   certain target processors.
+
+	2. Documented newly introduced CSF flags for signature verification
+	   policy and fast boot feature in AHAB container version 2.
+
+	3. Added note about using CST with PKCS#11 back-end.
+
+	4. Fixed minor inconsistencies in the user's guide.
+
+    ** Miscellaneous Changes **
+        1. Added one-go image verification and new container version 2 flag
+	   parsing inahab_image_verifier.
+
+	2. Added verbose option -g to cst.
+
+    ** Distribution **
+	1. Transition CST to fully open-source model and discontinue binary
+	   releases.
+
+	   Starting with the next release, we may no longer provide pre-built
+	   binaries. Instead, only the source code will be made available, and
+	   users will be expected to compile CST themselves. This change is
+	   motivated by several factors, including the increasing complexity of
+	   maintaining and distributing binaries across diverse systems,
+	   frequent compatibility issues related to different versions of system
+	   libraries such as libc, and the desire to simplify licensing
+	   considerations. Moving to a source-only release model also aligns
+	   better with opensource principles, encouraging transparency and
+	   enabling users to build and customize the tool according to their
+	   specific environments.
+
+4. Historical Release Notes
+
+  Release 4.0.0:
+    ** New Features **
+        1. Added support of AHAB hybrid container format.
+
+	2. Added support of Post-Quantum Cryptography (PQC) and Hybrid
+	   algorithms: Enabled support for ML-DSA, Dilithium, and hybrid keys
+	   in SRK Tool and CST, with functionality for generating and managing
+	   PQC and hybrid PKI trees, SRK tables, SRK fuse values, and hybrid
+	   container signing.
+
+	3. Added support for SHA-3 and SHAKE hash algorithms, including,
+	   SHA3-256, SHA3-384, SHA3-512, SHAKE128 output 256, and SHAKE256
+	   output 512.
+
+	4. Improved PKCS#11 support by allowing static compilation of OpenSSL
+	   PKCS#11 engine with CST.
+
+	5. Added support of NXP proprietary certificate format version 2 fields
+	   in CSF for AHAB debug authentication.
+
+	6. Added a CSF miscellaneous command "Signature Size" to manage CMS
+	   signature buffer size in HSM mode, accommodating larger CMS
+	   structures.
+
+	7. Switched to CMake as the primary build system and restructured
+	   the source tree.
+
+	8. Introduced build.sh script to simplify the build process and manage
+	   dependencies.
+
+	10. Upgraded Dockerfile and Dockerfile.hsm to Ubuntu 22.04 to support
+	    OpenSSL 3.
+
+	11. Added compatibility for cross-compiling for Windows 64-bit
+	    environments using MinGW64, enabling support for 64-bit PKCS#11
+	    modules.
+
+	12. Introduced new tools for AHAB and HABv4:
+            - ahab_pki_tree: A new tool designed to mimic the functionality of
+	    the original ahab_pki_tree.sh and .bat scripts while adding support
+	    for PQC and hybrid key management.
+            - ahab_signed_message: Added to assist in generating signed messages
+	      for SECO devices.
+            - ahab_split_container: Splits NXP-signed AHAB containers into ELE
+	      and V2X containers, to support OEM double signing/authentication
+	      feature.
+            - ahab_image_verifier: Parses and verifies AHAB containers.
+            - hab4_mac_dump: Formerly mac_dump, this utility tool dumps the
+	      location and size of MAC data from a HABv4 CSF binary data file.
+            - hab4_image_verifier: Parses HABv4 images.
+            - hab4_pki_tree: Mimics the old hab4_pki_tree.sh and .bat scripts,
+	      providing basic HABv4 PKI generation.
+
+        13. Implemented a CI/CD pipeline with automated testing in a board farm
+	    for continuous integration and validation.
+
+	14. Updated usage instructions across various tools, Reformatted
+	    documentation into the official NXP template.
+
+	15. Minor code refinements, updated warning messages, introduced a code
+	    formatting configuration to enforce consistent styling.
+
+
+    ** Bug Fixes **
+        1. Resolved issues related to signing in HSM mode, specifically
+	   addressing RSA, RSA-PSS, and ECDSA signature verification.
+
+	2. Fixed an issue with serial number calculations in X.509 certificates
+	   when the serial number is negative.
+
+        3. Resolved an issue in HSM mode where identical tags were generated
+	   for CSF and IMG due to a seeding issue with the random number
+	   generator.
+
+  Release 3.4.1:
+    ** New Features **
+        -NONE-
+
+    ** Bug Fixes **
+        1. Fixes issue with HABv4 Encrypted boot failure using CST 3.3.2 and
+	   CST 3.4.0: Following the prescribed procedure for encrypting and
+	   signing a bootloader image for i.MX8M family devices using CST 3.3.2
+	   or CST 3.4.0, the resulting image does not work. This problem is
+	   attributed to an incorrect MAC/Nonce calculation offset, resulting
+	   from a prior bug fix affecting ECDSA signature size on Windows hosts.
+	   To address this misalignment issue, this CST version proposes a tool
+	   (mac_dump) to dump the MAC data location and size from a HABv4 CSF
+	   binary data file. It iterates over the tags in the binary CSF,
+	   looking for the position of the HAB_TAG_MAC tag. By doing this we
+	   receive the right offset of the nonce/MAC and hence, we can construct
+	   a correct signed encrypted image.
+
+  Release 3.4.0:
+    ** New Features **
+        1. OpenSSL 3 Support:
+           - Transitioned to OpenSSL 3, following OpenSSL 1.1.1 End Of Life in
+             Sept 2023. No more public security fixes for 1.1.1 post that date.
+           - Compiled with OpenSSL 3.2.0 for enhanced security and features.
+
+        2. PKCS#11 Backend:
+           - Simplified the PKCS#11 backend, eliminating redundant code.
+           - Introduced Dockerfile.hsm for experimenting with the PKCS#11
+             backend.
+           - PKCS#11 generation scripts now located in the 'keys' folder.
+           - Removed repetitive PIN requests in PKI generation scripts.
+           - The backend now supports RSA PSS.
+
+        3. Enhanced Makefile and Build System:
+           - Improved build system for efficiency and ease of use.
+           - Updated Dockerfile; relocated to top folder alongside Makefile for
+             easier access and build management.
+
+        4. Platform Support:
+           - Added support for 32-bit Linux in the hab_log_parser tool.
+           - Removed OSX binaries; however, the build system and sources still
+             support it.
+
+        5. Documentation:
+           - Added BUILD.md with instructions for CST building using Docker.
+           - Code-Signing Tool User's Guide updated with instructions on using
+             the PKCS#11 backend and notes about i.MX9x devices.
+
+    ** Bug Fixes **
+        -NONE-
+
+  Release 3.3.2:
+    ** New Features **
+        1. Added new backend to support pkcs11 interface. The backend can
+           be select using the '-b pkcs11' parameter on the command line when
+           invoking CST. CST will use the standard backend by default.
+
+        2. Updated srktool to generate 256-bit fuse configuration supporting
+           i.MX8ULP and i.MX9x devices.
+
+        3. Added support for RSA-PSS (only supported for specific devices
+           refer to SoC reference manual)
+
+        4. Release compiled with OpenSSL 1.1.1t
+           OpenSSL 3 support will be added in next release.
+
+    ** Bug Fixes **
+        1. Fixed an issue with large image encryption.
+
+        2. Fixed segmentation fault in hab_log_parser
+
+        3. Fixed Windows host ECDSA signature size issue causing invalid
+           CST to generate invalid CSF binaries for HABv4 targets.
+
+        4. Fixed build issue when using newer build tools due to weaken linking
+           option being used.
+
+
+  Release 3.3.1:
+    ** New Features **
+        1. Binaries now built using OpenSSL 1.1.1g
+
+        2. Increased error checking to CSF input file parsing logic
+            The error checking has been extended to more input file issues
+            resulting in an issue with the resulting binary when attempted on
+            the target.
+
+        3. HABv4 log parsing utility for OSX and Windows
+            The log parsing utility previously only supported Linux. The OSX
+            and Windows versions have been added, but won't support the USB SDP
+            feature.
+
+        4. PKI reference script updates
+            Added options to output to directories besides hardcoded crts/keys.
+
+        5. Added user feedback output to the srktool utility
+
+        6. Removed the frontend library. Historically, it was inluded to support
+           relinking to a user modified backend. The frontend library can now be
+           built from the included source.
+
+    ** Bug Fixes **
+        1. Bug fixes for issues with non-portable variable types used for size
+            parameters. A big thanks to Andrej Shadura for the debug effort and
+            patches addressing the issue.
+        2. Fixed issue when adding keys to PKI in Windows platform.
+
+
+  Release 3.3.0:
+    ** New Features **
+        1. MacOS Support
+            This version of the CST package includes support for macOS.
+
+            The executables are provided in the 'osx' directory.
+            The Makefile included with the source code includes the build support
+            for macOS.
+
+            To build on macOS:
+            Please change your working directory.
+                cd <CST install directory>/code/cst/
+
+            The Makefile includes a build target for OpenSSL. The OpenSSL project should
+            be downloaded and built with this build target.
+                make OSTYPE=mingw32 OPENSSL_PATH=<OpenSSL git repository> openssl
+
+            To rebuild the CST binaries:
+                make OSTYPE=osx rel_bin
+            with OpenSSL dependencies:
+                make OSTYPE=osx OPENSSL_PATH=<OpenSSL git repository> rel_bin
+
+            The generated binaries can be found in:
+               <CST install directory>/code/cst/release/osx/bin
+
+        2. Encryption Support Enabled in Release Binaries
+            This version of the CST is released with encryption support
+            enabled by default.
+
+        3. PKI Generation Script Updated
+            The version of the CST package includes updated PKI generation scripts
+            supporting command line input of parameters. Previously the scripts
+            interactively queried the user for input options.
+
+        4. Dockerfile Added to Source Code
+            This version of the CST package include a 'Dockerfile' in the source
+            code directory to provide the environment for building the source.
+
+        5. AHAB Signature Block Parser
+            This version of the CST package includes a new AHAB Signature Block Parser
+            utility. The parser evaluates an image and dumps details about the AHAB
+            signatures.
+
+            The parser is found at:
+               <CST install directory>/code/ahab_signature_block_parser
+
+    ** Bug Fixes **
+        -NONE-
+
+
+  Release 3.2.0:
+    ** New Features **
+        1. HAB3 support
+            This version of the CST package removes support for HAB3.
+
+        2. Encrypted boot support for AHAB
+
+        3. CST source code
+            This version of the CST package includes the CST source code. To
+            rebuild on Ubuntu 16.04 machines, please first install the packages:
+                gcc
+                make
+                git
+                byacc
+                flex
+                mingw-w64
+                g++-multilib
+                libssl-dev
+                libssl-dev:i386
+
+            Please change your working directory.
+                cd <CST install directory>/code/cst/
+
+            The Makefile includes the possibilty to recompile OpenSSL. This is mainly
+            interesting when cross-compiling CST (e.g. for Win32 builds).
+                make OSTYPE=mingw32 OPENSSL_PATH=<OpenSSL git repository> openssl
+
+            To rebuild the CST binaries:
+                make OSTYPE=linux64 rel_bin
+            with OpenSSL dependencies:
+                make OSTYPE=mingw32 OPENSSL_PATH=<OpenSSL git repository> rel_bin
+
+            Existing OS types (OSTYPE) are: linux32 | linux64 | mingw32.
+
+            The generated binaries can be found in <CST install directory>/code/cst/release
+    ** Bug Fixes **
+
+        -NONE-
+
+
+  Release 3.1.0:
+    ** New Features **
+        1. ECDSA support for HAB4
+            This version of CST adds support for ECDSA for HAB4.
+            ECDSA support was added in HAB 4.5
+
+        2. OpenSSL 1.1.0
+            This version of CST adds support for OpenSSL 1.1.0.
+            Even if OpenSSL 1.0.2 is known to work with CST, OpenSSL 1.1.0
+            or later is recommended.
+
+        3. Add-ons
+            This version of the CST package includes additional tools.
+            Please refer to the CST User Guide for more information.
+                - HSM Back-End support
+                - HABv4 log parser tool
+                - HABv4 CSF parser tool
+                - HABv4 SRKTool scripts
+
+    ** Bug Fixes **
+        -NONE-
+
+
+  Release 3.0.0:
+    ** New Features **
+        1. AHAB support
+            This version of CST adds support for AHAB.
+
+    ** Bug Fixes **
+        -NONE-
+
+
+  Release 2.3.3:
+    ** New Features **
+        1. Windows support
+            This version of CST adds support for Microsoft Windows.
+
+        2. Removed several commands
+            This version of CST removed support for the following commands:
+                Write Data
+                Clear Mask
+                Set Mask
+                Check All Clear
+                Check All Set
+                Check Any Clear
+                Check Any Set
+                Set MID
+
+    ** Bug Fixes **
+        -NONE-
+
+
+  Release 2.3.2
+    ** New Features **
+        1. Changed CST input file handling
+            Previous versions of CST got the CSF input file on standard
+            input. This has changed. Now the input filename is supplied as a
+            command line argument.
+
+            Example:
+               cst --output csf.bin --input input.csf
+
+            This was added in CST 2.3.2
+
+        2. Added unlock command for Manufacturing Protection
+            The new unlock command will cause HAB to keep the manufacturing
+            protection key in internal CAAM memory after boot.
+
+    ** Bug Fixes **
+        1. Fixed INIT RNG  Unlock Command
+
+
+Release 2.3.1:
+    ** New Features **
+        1. Encrypted Boot support
+            This version of CST allows the user to relink the executable
+            to include support for generating encrypted boot images.
+
+            To relink on Ubuntu 14.04 machines, please first install binutils 2.26:
+                sudo apt-get install binutils-2.26
+                export PATH=/usr/lib/binutils-2.26/bin:${PATH}
+
+            To relink on 32 bit Linux machines:
+               This requires the GCC compiler and the OpenSSL header files and
+               library. For example on Ubuntu machines:
+               sudo apt-get install gcc libssl-dev
+
+               cd <CST install directory>/code/back_end/src
+               gcc -o cst -I ../hdr -L ../../../linux32/lib *.c \
+                   -lfrontend -lcrypto
+               cp cst ../../../linux32
+
+            To relink on 64 bit Linux machines:
+               This requires the GCC compiler and the OpenSSL header files and
+               library. For example on Ubuntu machines:
+               sudo apt-get install gcc libssl-dev
+
+               cd <CST install directory/code/back_end/src
+               gcc -o cst -I ../hdr -L ../../../linux64/lib *.c -lfrontend -lcrypto
+               cp cst ../../../linux64
+
+            To relink on Windows machines:
+               This requires the MINGW compiler and OpenSSL header files and
+               library. The easiest way to get them is to install Cygwin
+
+               cd <CST install directory/code/back_end/src
+               i686-w64-mingw32-gcc -o cst.exe -I ../hdr -L ../../../mingw32/lib \
+                 *.c -lfrontend -lcrypto -static -lgdi32 -lws2_32 -lz
+               cp cst.exe ../../../mingw32
+
+               If cst.exe crashes, please try to relink with the small C snippet
+               applink.c provided by OpenSSL (if applicable to your platform).
+               To do so, please add the compilation flag -DUSE_APPLINK.
+
+               i686-w64-mingw32-gcc -o cst.exe -I ../hdr -L ../../../mingw32/lib \
+                 *.c -lfrontend -lcrypto -static -lgdi32 -lws2_32 -lz -DUSE_APPLINK
+
+                Please refer to https://www.openssl.org/docs/man1.1.0/crypto/OPENSSL_Applink.html
+                and https://www.openssl.org/docs/faq.html#PROG3
+
+        2. Issue INIT RNG command
+            On closed i.MX devices with CAAM, HAB will initialize the RNG by
+            default. If the RNG trim fuses have not been set correctly, RNG
+            iniatialization will fail, causing the boot to fail.
+
+            To prevent HAB from initializing the RNG, you can add an UNLOCK
+            command to the CST input file.
+
+            This version of CST will add that command automatically if the CSF
+            includes "Engine = CAAM" in the header unless
+            explicitly told otherwise. The way to disable this behavior is to
+            add the following to the CST input file:
+                [Init]
+                     Engine = CAAM
+                     Features = RNG
+
+    ** Bug Fixes **
+        -NONE-
+
+
+  Release 2.3.0
+    ** New Features **
+        1. 64 bit native binaries
+            CST now includes both 32 and 64 bit native binaries. They are
+            located in the linux32 and linux64 directories, respectively.
+
+    ** Bug Fixes **
+        -NONE-
