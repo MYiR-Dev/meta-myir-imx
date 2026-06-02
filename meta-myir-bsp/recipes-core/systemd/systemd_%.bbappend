@@ -1,6 +1,9 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-SRC_URI += "file://0001-units-systemd-udevd-Set-PrivateMounts-to-no.patch"
+SRC_URI += "\
+    file://0001-units-systemd-udevd-Set-PrivateMounts-to-no.patch \
+    file://debug-console.conf \
+"
 
 PACKAGECONFIG:append = " sysvinit"
 
@@ -37,4 +40,10 @@ EOF
     fi
 
     chmod 0644 "${D}${sysconfdir}/systemd/timesyncd.conf"
+
+    # Install serial-getty drop-in for dumb terminal (TERM=dumb, no reset)
+    install -d ${D}${sysconfdir}/systemd/system/serial-getty@.service.d
+    install -m 0644 ${UNPACKDIR}/debug-console.conf ${D}${sysconfdir}/systemd/system/serial-getty@.service.d/
 }
+
+FILES:${PN} += "${sysconfdir}/systemd/system/serial-getty@.service.d/debug-console.conf"
