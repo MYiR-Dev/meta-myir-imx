@@ -107,6 +107,10 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     myir-tools \
     board-info \
     vim \
+    nxp-bt-init \
+    pstore-conf \
+    aw-xm729 \
+    quectel-cm \
 "
 
 export IMAGE_BASENAME = "myir-image-emmc"
