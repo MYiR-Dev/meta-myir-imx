@@ -28,6 +28,8 @@ PACKAGE_EXCLUDE = " \
 IMAGE_INSTALL += " \
     curl \
     packagegroup-qt6-imx \
+    qtvirtualkeyboard \
+    qtimageformats \
     tzdata \
     ${IMAGE_INSTALL_OPENCV} \
     ${IMAGE_INSTALL_PARSEC} \
