@@ -1,0 +1,9 @@
+[Unit]
+Description=clean up update status
+
+[Service]
+Type=oneshot
+ExecStart=sh -c 'if [ $(fw_printenv -n  upgrade_available) -eq 1 ]; then fw_setenv upgrade_available 0 && fw_setenv bootcount 0 ; fi'
+
+[Install]
+WantedBy=multi-user.target

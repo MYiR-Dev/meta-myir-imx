@@ -1,0 +1,37 @@
+--- git.orig/web-app/sysinfo.cgi       1970-01-01 08:00:00.000000000 +0800
++++ git/web-app/sysinfo.cgi    2021-06-08 23:07:45.582795235 +0800
+@@ -0,0 +1,15 @@
++#!/bin/bash
++
++echo "Content-type: text/html"
++echo ""
++echo '<html>'
++echo '<head>'
++echo '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'
++echo '<title>system information</title>'
++echo '</head>'
++echo '<body>'
++echo "$(uname -a) </br>"
++echo $(cat /proc/cmdline)
++echo '</body>'
++echo '</html>'
++exit 0
+
+--- git.orig/examples/www/v2/sysinfo.cgi       1970-01-01 08:00:00.000000000 +0800
++++ git/examples/www/v2/sysinfo.cgi    2021-06-08 23:07:45.582795235 +0800
+@@ -0,0 +1,15 @@
++#!/bin/bash
++
++echo "Content-type: text/html"
++echo ""
++echo '<html>'
++echo '<head>'
++echo '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'
++echo '<title>system information</title>'
++echo '</head>'
++echo '<body>'
++echo "$(uname -a) </br>"
++echo $(cat /proc/cmdline)
++echo '</body>'
++echo '</html>'
++exit 0

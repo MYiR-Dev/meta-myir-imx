@@ -1,0 +1,15 @@
+Upstream-Status: Inappropriate [i.MX swupdate specific enablement]
+Signed-off-by: Anda-Alexandra Despotovici <anda-alexandra.dorneanu@nxp.com>
+
+diff --git a/mongoose/Makefile b/mongoose/Makefile
+index c42f1e76..82b9eb5a 100644
+--- a/mongoose/Makefile
++++ b/mongoose/Makefile
+@@ -10,6 +10,7 @@ KBUILD_CFLAGS += -DMG_ENABLE_POSIX_FS=1
+ KBUILD_CFLAGS += -DMG_ENABLE_LOG=0
+ KBUILD_CFLAGS += -DMG_ENABLE_MD5=1
+ KBUILD_CFLAGS += -DMG_MAX_RECV_SIZE=262144
++KBUILD_CFLAGS += -DMG_ENABLE_HTTP_CGI=1
+ ifneq ($(CONFIG_MONGOOSEIPV6),)
+ KBUILD_CFLAGS += -DMG_ENABLE_IPV6=1
+ endif
