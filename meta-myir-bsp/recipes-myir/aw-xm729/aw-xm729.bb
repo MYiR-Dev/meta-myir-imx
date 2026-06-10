@@ -11,13 +11,6 @@ FW_DIR ?= "firmware"
 
 inherit module
 
-# Populate Module "moal" configure file as modprobe.d/moal.conf
-KERNEL_MODULE_PROBECONF += "moal"
-module_conf_moal = "options moal mod_para=nxp/wifi_mod_para.conf"
-
-# Auto-loading module "moal" during boot
-KERNEL_MODULE_AUTOLOAD += "moal"
-
 EXTRA_OEMAKE = "KERNELDIR=${STAGING_KERNEL_BUILDDIR} -C ${STAGING_KERNEL_BUILDDIR} M=${S}"
 
 do_install:append() {

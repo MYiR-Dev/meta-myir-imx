@@ -111,6 +111,7 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     pstore-conf \
     aw-xm729 \
     quectel-cm \
+    libmodbus \
 "
 
 export IMAGE_BASENAME = "myir-image-emmc"
