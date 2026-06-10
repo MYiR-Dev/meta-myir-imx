@@ -33,11 +33,25 @@ EOF
         echo "[Time]" >> "${D}${sysconfdir}/systemd/timesyncd.conf"
     fi
 
-    if ! grep -q "^NTP=" "${D}${sysconfdir}/systemd/timesyncd.conf"; then
-        echo "NTP=ntp.ntsc.ac.cn cn.ntp.org.cn" >> "${D}${sysconfdir}/systemd/timesyncd.conf"
-    else
-        sed -i 's/^NTP=.*/NTP=ntp.ntsc.ac.cn cn.ntp.org.cn/' "${D}${sysconfdir}/systemd/timesyncd.conf"
-    fi
+    #if ! grep -q "^NTP=" "${D}${sysconfdir}/systemd/timesyncd.conf"; then
+    #    echo "NTP=ntp.ntsc.ac.cn cn.ntp.org.cn" >> "${D}${sysconfdir}/systemd/timesyncd.conf"
+    #else
+    #    sed -i 's/^NTP=.*/NTP=ntp.ntsc.ac.cn cn.ntp.org.cn/' "${D}${sysconfdir}/systemd/timesyncd.conf"
+    #fi
+
+    # Set NTP servers
+   if ! grep -q "^NTP=" "${D}${sysconfdir}/systemd/timesyncd.conf"; then
+       echo "NTP=ntp.aliyun.com ntp.tencent.com cn.pool.ntp.org" >> "${D}${sysconfdir}/systemd/timesyncd.conf"
+   else
+       sed -i 's/^NTP=.*/NTP=ntp.aliyun.com ntp.tencent.com cn.pool.ntp.org/' "${D}${sysconfdir}/systemd/timesyncd.conf"
+   fi
+
+   # Set FallbackNTP servers
+   if ! grep -q "^FallbackNTP=" "${D}${sysconfdir}/systemd/timesyncd.conf"; then
+      echo "FallbackNTP=ntp.ntsc.ac.cn cn.ntp.org.cn time.google.com" >> "${D}${sysconfdir}/systemd/timesyncd.conf"
+   else
+      sed -i 's/^FallbackNTP=.*/FallbackNTP=ntp.ntsc.ac.cn cn.ntp.org.cn time.google.com/' "${D}${sysconfdir}/systemd/timesyncd.conf"
+   fi
 
     chmod 0644 "${D}${sysconfdir}/systemd/timesyncd.conf"
 
