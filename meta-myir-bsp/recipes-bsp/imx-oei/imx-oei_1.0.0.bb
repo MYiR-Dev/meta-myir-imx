@@ -7,9 +7,9 @@ INHIBIT_DEFAULT_DEPS = "1"
 DEPENDS = "gcc-arm-none-eabi-native"
 
 SRC_URI = "${IMX_OEI_SRC};branch=${SRCBRANCH}"
-IMX_OEI_SRC ?= "git://github.com/nxp-imx/imx-oei.git;protocol=https"
-SRCBRANCH = "master"
-SRCREV = "49bfaa93e9d1fe213866bcb9507927a59a9ede5a"
+IMX_OEI_SRC ?= "git://github.com/MYD-JMX95/imx-oei.git;protocol=https"
+SRCBRANCH = "feature_jmx95_walnascar"
+SRCREV = "846834fb0d4649587fb8b0db6132b1179ccff852"
 
 S = "${WORKDIR}/git"
 

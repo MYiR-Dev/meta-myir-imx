@@ -18,12 +18,11 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 DEPENDS += "coreutils-native"
 
 SRC_URI = "${LINUX_IMX_SRC}"
-LINUX_IMX_SRC ?= "git://github.com/MYiR-Dev/myir-imx-linux.git;protocol=https;branch=${SRCBRANCH}"
+LINUX_IMX_SRC ?= "git://github.com/MYD-JMX95/myir-imx-linux.git;protocol=https;branch=${SRCBRANCH}"
 SRCBRANCH = "develop_6.12.49"
 KBRANCH = "${SRCBRANCH}"
 LOCALVERSION = "-lts-next"
-SRCREV = "6d0e8cd9ab1d64e7b8c9ac124c9dd0c233f9642a"
-#SRCREV = "${AUTOREV}"
+SRCREV = "24047d9454f82a0ad63d35d758f0a00798a10972"
 
 # PV is defined in the base in linux-imx.inc file and uses the LINUX_VERSION definition
 # required by kernel-yocto.bbclass.
