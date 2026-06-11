@@ -6,13 +6,13 @@ UBOOT_FILE=/root/mfgimage/imx-boot
 KERNEL_DTB_DIR=/root/mfgimage/kernel_dtb
 ROOTFS_FILE_EXT4=/root/mfgimage/rootfs-full.ext4
 
-MYD_NAME="myd-jmx95-15x15-lpddr5"
+MYD_NAME="myd-jmx95-15x15"
 
 
 HOSTNAME=`cat /etc/hostname`
 
-led1=93x:led1
-led2=93x:led2
+led1=user-led
+
 
 
 
