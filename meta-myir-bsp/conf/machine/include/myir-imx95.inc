@@ -2,7 +2,7 @@ require conf/machine/include/imx-base.inc
 require conf/machine/include/arm/armv8-2a/tune-cortexa55.inc
 
 MACHINE_FEATURES += "pci wifi bluetooth optee"
-MACHINE_FEATURES:append:use-nxp-bsp = " nxpwifi-all-pcie nxpwifi-all-sdio jailhouse dpdk xen"
+MACHINE_FEATURES:append:use-nxp-bsp = " jailhouse dpdk xen"
 
 KERNEL_DEVICETREE = " \
     myir/${KERNEL_DEVICETREE_BASENAME}.dtb \
