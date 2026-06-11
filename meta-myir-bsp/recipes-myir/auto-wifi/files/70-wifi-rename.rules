@@ -1,0 +1,3 @@
+# Rename mlan0 to wlan0 by kernel name (no MAC dependency)
+# Fallback: if module param sta_name=wlan0 doesn't take effect
+SUBSYSTEM=="net", ACTION=="add", KERNEL=="mlan0", NAME="wlan0"

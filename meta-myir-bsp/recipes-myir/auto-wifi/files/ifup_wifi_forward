@@ -1,0 +1,297 @@
+#!/usr/bin/env sh
+#
+# ifup_wifi_forward - STA + AP forwarding setup
+#   wlan0 (STA) connects to external WiFi
+#   uap0  (AP)  creates hotspot for clients
+#   Traffic from uap0 clients is NAT-forwarded through wlan0
+
+STA_SSID=
+STA_PASSWD=
+AP_SSID=NXP_AP_2G
+AP_PASSWD=12345678
+AP_IP=192.168.3.1
+WLAN_STA=wlan0
+WLAN_AP=uap0
+DRIVER_NAME=nl80211
+WPA_FILE=/etc/wpa_supplicant/wpa_supplicant-forward.conf
+HOSTAPD_FILE=/etc/hostapd_forward.conf
+UDHCPD_FILE=/etc/udhcpd_forward.conf
+
+usage(){
+    echo "Usage: $0 -sta_ssid <ssid> -sta_passwd <password>"
+    echo "              [-ap_ssid <ssid>] [-ap_passwd <password>]"
+    echo "              [-ap_ip <ip>] [-driver <name>]"
+    echo ""
+    echo "  -sta_ssid    External WiFi SSID to connect to (required)"
+    echo "  -sta_passwd  External WiFi password (required, >=8 chars)"
+    echo "  -ap_ssid     Hotspot SSID to create (default: NXP_AP_2G)"
+    echo "  -ap_passwd   Hotspot password (default: 12345678)"
+    echo "  -ap_ip       Hotspot gateway IP (default: 192.168.3.1)"
+    echo "  -driver      WiFi driver: nl80211 or wext (default: nl80211)"
+    exit 1
+}
+
+clean_stage(){
+    echo "Cleaning up previous state..."
+    killall udhcpc 2>/dev/null
+    killall wpa_supplicant 2>/dev/null
+    killall hostapd 2>/dev/null
+    killall udhcpd 2>/dev/null
+
+    # Clean policy routing
+    ip rule del from ${AP_IP%.*}.0/24 table 100 2>/dev/null
+    ip route flush table 100 2>/dev/null
+
+    # Clean iptables
+    iptables -t nat -F POSTROUTING 2>/dev/null
+    iptables -t filter -F FORWARD 2>/dev/null
+
+    # Clean interfaces
+    ip link set ${WLAN_STA} down 2>/dev/null
+    ip link set ${WLAN_AP} down 2>/dev/null
+    sleep 1
+}
+
+enable_wifi(){
+    T_HCI="phy0"
+    RFKILL_SYS_PATH="/sys/class/rfkill/"
+    if [ -d "$RFKILL_SYS_PATH" ]; then
+        for i in $(ls ${RFKILL_SYS_PATH}); do
+            if [ "${T_HCI}" = "$(cat ${RFKILL_SYS_PATH}${i}/name 2>/dev/null)" ]; then
+                echo 0 > ${RFKILL_SYS_PATH}${i}/state
+                echo "RFKILL: enable ${T_HCI}"
+                sleep 1
+                echo 1 > ${RFKILL_SYS_PATH}${i}/state
+            fi
+        done
+    fi
+}
+
+parse_input_info(){
+    while [ $# -gt 0 ]; do
+        case $1 in
+            -sta_ssid)
+                STA_SSID="$2"
+                shift
+            ;;
+            -sta_passwd)
+                STA_PASSWD="$2"
+                if [ ${#STA_PASSWD} -lt 8 ]; then
+                    echo "ERROR: password must be 8..64 characters"
+                    exit 1
+                fi
+                shift
+            ;;
+            -ap_ssid)
+                AP_SSID="$2"
+                shift
+            ;;
+            -ap_passwd)
+                AP_PASSWD="$2"
+                if [ ${#AP_PASSWD} -lt 8 ]; then
+                    echo "ERROR: password must be 8..64 characters"
+                    exit 1
+                fi
+                shift
+            ;;
+            -ap_ip)
+                AP_IP="$2"
+                shift
+            ;;
+            -driver)
+                DRIVER_NAME="$2"
+                shift
+            ;;
+            -h|--help)
+                usage
+            ;;
+            *)
+                echo "Unknown option: $1"
+                usage
+            ;;
+        esac
+        shift $(( $# > 0 ? 1 : 0))
+    done
+
+    if [ -z "${STA_SSID}" ] || [ -z "${STA_PASSWD}" ]; then
+        echo "ERROR: -sta_ssid and -sta_passwd are required"
+        echo ""
+        usage
+    fi
+
+    echo "STA: ${STA_SSID} -> ${WLAN_STA}"
+    echo "AP:  ${AP_SSID} -> ${WLAN_AP} (${AP_IP}/24)"
+    echo "Driver: ${DRIVER_NAME}"
+}
+
+connect_sta(){
+    echo ""
+    echo "[1/3] Connecting ${WLAN_STA} to ${STA_SSID}..."
+
+    ip link set ${WLAN_STA} up
+
+    # Generate wpa_supplicant config
+    mkdir -p $(dirname ${WPA_FILE})
+    cat > ${WPA_FILE} << EOF
+ctrl_interface=/var/run/wpa_supplicant
+ctrl_interface_group=0
+update_config=1
+
+EOF
+    wpa_passphrase "${STA_SSID}" "${STA_PASSWD}" >> ${WPA_FILE}
+
+    # Add freq_list to lock to 2.4GHz (prevents AP from being forced to 5GHz)
+    sed -i '/^\tpsk=/a\\tfreq_list=2412 2417 2422 2427 2432 2437 2442 2447 2452 2457 2462 2467 2472 2484' ${WPA_FILE}
+
+    wpa_supplicant -B -i ${WLAN_STA} -c ${WPA_FILE} -D ${DRIVER_NAME} >/dev/null 2>&1
+
+    # Wait for connection
+    timeout=40
+    while [ $timeout -gt 0 ]; do
+        state=$(wpa_cli -i ${WLAN_STA} -p /var/run/wpa_supplicant status 2>/dev/null | grep wpa_state | awk -F= '{print $2}')
+        if [ "${state}" = "COMPLETED" ]; then
+            freq=$(wpa_cli -i ${WLAN_STA} -p /var/run/wpa_supplicant status 2>/dev/null | grep 'freq=' | awk -F= '{print $2}')
+            echo "    Connected to ${STA_SSID} on ${freq}MHz"
+            break
+        fi
+        timeout=$((timeout - 1))
+        sleep 1
+    done
+
+    if [ "${state}" != "COMPLETED" ]; then
+        echo "    ERROR: Connection failed (state=${state})"
+        exit 1
+    fi
+
+    # Get DHCP
+    udhcpc -i ${WLAN_STA} -n -q >/dev/null 2>&1
+    STA_IP=$(ip addr show ${WLAN_STA} | grep 'inet ' | awk '{print $2}' | cut -d/ -f1)
+    STA_GW=$(ip route show dev ${WLAN_STA} | grep 'default' | awk '{print $3}')
+
+    if [ -z "${STA_IP}" ]; then
+        echo "    ERROR: Failed to get IP on ${WLAN_STA}"
+        exit 1
+    fi
+    echo "    IP: ${STA_IP}, GW: ${STA_GW:-none}"
+}
+
+start_ap(){
+    echo ""
+    echo "[2/3] Starting AP on ${WLAN_AP}..."
+
+    ip link set ${WLAN_AP} up
+    ip addr flush dev ${WLAN_AP} 2>/dev/null
+    ip addr add ${AP_IP}/24 dev ${WLAN_AP}
+
+    # Generate hostapd config
+    cat > ${HOSTAPD_FILE} << EOF
+interface=${WLAN_AP}
+driver=nl80211
+ssid=${AP_SSID}
+hw_mode=g
+channel=6
+ieee80211n=1
+ieee80211ac=0
+wmm_enabled=1
+auth_algs=1
+wpa=2
+wpa_passphrase=${AP_PASSWD}
+wpa_key_mgmt=WPA-PSK
+wpa_pairwise=CCMP
+rsn_pairwise=CCMP
+EOF
+
+    hostapd -B ${HOSTAPD_FILE} >/dev/null 2>&1
+    sleep 2
+
+    if ! pgrep hostapd > /dev/null; then
+        echo "    ERROR: hostapd failed to start"
+        exit 1
+    fi
+
+    CHAN=$(iw dev ${WLAN_AP} info 2>/dev/null | grep channel | awk '{print $2}')
+    echo "    SSID: ${AP_SSID}, Channel: ${CHAN}MHz, Password: ${AP_PASSWD}"
+
+    # Generate DHCP config
+    DHCP_START=${AP_IP%.*}.100
+    DHCP_END=${AP_IP%.*}.200
+    cat > ${UDHCPD_FILE} << EOF
+start ${DHCP_START}
+end ${DHCP_END}
+interface ${WLAN_AP}
+option subnet 255.255.255.0
+option router ${AP_IP}
+option dns 8.8.8.8
+option dns 8.8.4.4
+option lease 3600
+EOF
+
+    touch /var/run/udhcpd.leases
+    udhcpd ${UDHCPD_FILE} 2>/dev/null
+    echo "    DHCP: ${DHCP_START} - ${DHCP_END}"
+}
+
+setup_forward(){
+    echo ""
+    echo "[3/3] Setting up NAT and forwarding..."
+
+    AP_NET=${AP_IP%.*}.0/24
+
+    # Enable IP forwarding
+    echo 1 > /proc/sys/net/ipv4/ip_forward
+
+    # Policy routing: force traffic from AP subnet through STA interface.
+    # This is critical when another interface (e.g. eth1) has a
+    # higher-priority default route.
+    if [ -n "${STA_GW}" ]; then
+        ip rule del from ${AP_NET} table 100 2>/dev/null
+        ip rule add from ${AP_NET} table 100
+        ip route replace default via ${STA_GW} dev ${WLAN_STA} table 100
+        echo "    Policy routing: ${AP_NET} -> ${WLAN_STA} via ${STA_GW}"
+    fi
+
+    # NAT: masquerade AP subnet traffic through STA interface
+    iptables -t nat -F POSTROUTING 2>/dev/null
+    iptables -t nat -A POSTROUTING -s ${AP_NET} -o ${WLAN_STA} -j MASQUERADE
+
+    # Forward rules
+    iptables -t filter -F FORWARD 2>/dev/null
+    iptables -t filter -A FORWARD -i ${WLAN_STA} -o ${WLAN_AP} -m state --state RELATED,ESTABLISHED -j ACCEPT
+    iptables -t filter -A FORWARD -i ${WLAN_AP} -o ${WLAN_STA} -j ACCEPT
+
+    echo "    NAT: ${AP_NET} -> MASQUERADE via ${WLAN_STA}"
+    echo "    Forward: ${WLAN_AP} <-> ${WLAN_STA}"
+}
+
+# Main
+if [ "$1" = "stop" ]; then
+    echo "Stopping WiFi forwarding..."
+    clean_stage
+    echo "Done."
+    exit 0
+fi
+
+if [ "$1" = "status" ]; then
+    echo "=== WiFi Forward Status ==="
+    echo "STA (${WLAN_STA}): $(ip addr show ${WLAN_STA} 2>/dev/null | grep 'inet ' | awk '{print $2}')"
+    echo "AP  (${WLAN_AP}): $(ip addr show ${WLAN_AP} 2>/dev/null | grep 'inet ' | awk '{print $2}')"
+    echo "hostapd: $(pgrep -c hostapd 2>/dev/null || echo 0) running"
+    echo "udhcpd:  $(pgrep -c udhcpd 2>/dev/null || echo 0) running"
+    echo "NAT:     $(iptables -t nat -L POSTROUTING -n 2>/dev/null | grep -c MASQUERADE) rules"
+    echo "ARP:"
+    ip neigh show dev ${WLAN_AP} 2>/dev/null
+    exit 0
+fi
+
+parse_input_info "$@"
+clean_stage
+enable_wifi
+connect_sta
+start_ap
+setup_forward
+
+echo ""
+echo "=== Forwarding Ready ==="
+echo "Connect clients to '${AP_SSID}' (password: ${AP_PASSWD})"
+echo "Stop:  $0 stop"
+echo "Status: $0 status"
