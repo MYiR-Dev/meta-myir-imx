@@ -112,6 +112,8 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     aw-xm729 \
     quectel-cm \
     libmodbus \
+    myir-regulatory \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'hailo', 'hailo-pci hailo-firmware packagegroup-hailo-hailort', '', d)} \
 "
 
 export IMAGE_BASENAME = "myir-image-emmc"

@@ -1,0 +1,3 @@
+# Prevent ILITEK touchscreen (222a:0001) USB autosuspend
+# The controller firmware is unstable and self-disconnects on power state changes
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="222a", ATTR{idProduct}=="0001", TEST=="power/control", ATTR{power/control}="on"

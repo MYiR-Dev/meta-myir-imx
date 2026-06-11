@@ -1,0 +1,99 @@
+#!/bin/sh
+# check-touch-mapping - verify touch-to-output mapping for dual display
+
+echo "=== Display Outputs ==="
+for c in /sys/class/drm/card0-*; do
+    name=$(basename $c | sed 's/card0-//')
+    status=$(cat $c/status 2>/dev/null)
+    modes=$(cat $c/modes 2>/dev/null | tr '\n' ' ')
+    case $status in
+        connected) sym="[+]";;
+        *) sym="[-]";;
+    esac
+    echo "$sym $name  $status  ($modes)"
+done
+
+echo ""
+echo "=== Touch Input Devices ==="
+found=0
+while IFS= read -r line; do
+    case "$line" in
+        I:*)
+            bus=$(echo "$line" | sed 's/.*Bus=//' | awk '{print $1}')
+            ;;
+        N:*)
+            name=$(echo "$line" | cut -d'"' -f2)
+            ;;
+        S:*)
+            sysfs=$(echo "$line" | awk '{print $2}' | cut -d= -f2)
+            ;;
+        H:*)
+            handlers=$(echo "$line" | cut -d= -f2)
+            event=$(echo "$handlers" | grep -o 'event[0-9]*' | head -1)
+            if [ -n "$event" ]; then
+                # Check if this is a touchscreen
+                props=$(cat /sys/class/input/$event/device/properties 2>/dev/null)
+                # Bit 0 = INPUT_PROP_POINTER, Bit 1 = INPUT_PROP_DIRECT (touchscreen)
+                if [ -n "$props" ] && [ $((props & 2)) -eq 2 ]; then
+                    found=$((found + 1))
+                    [ -n "$name" ] && echo "  Name: $name"
+                    [ -n "$sysfs" ] && echo "  Sysfs: $sysfs"
+                    echo "  Event: /dev/input/$event (Bus=$bus)"
+
+                    # Check udev WL_OUTPUT tag
+                    wl_out=$(udevadm info -q property -n /dev/input/$event 2>/dev/null | grep WL_OUTPUT | cut -d= -f2)
+                    echo "  WL_OUTPUT: ${wl_out:-NOT SET}"
+
+                    # Detect bus type
+                    case "$sysfs" in
+                        *i2c*|*I2C*)
+                            echo "  Type: I2C -> should map to LVDS-1"
+                            [ "$wl_out" = "LVDS-1" ] && echo "  [OK] Mapped correctly" || echo "  [MISS] Need udev rule"
+                            ;;
+                        *usb*|*USB*)
+                            echo "  Type: USB -> should map to HDMI-A-1"
+                            [ "$wl_out" = "HDMI-A-1" ] && echo "  [OK] Mapped correctly" || echo "  [MISS] Need udev rule"
+                            ;;
+                        *)
+                            echo "  Type: Unknown bus - manual mapping needed"
+                            echo "  Run: udevadm info -q all -n /dev/input/$event"
+                            ;;
+                    esac
+                    echo ""
+                fi
+            fi
+            ;;
+    esac
+done < /proc/bus/input/devices
+
+if [ $found -eq 0 ]; then
+    echo "  No touchscreen devices found."
+    echo "  Please connect touch devices and run this script again."
+fi
+
+echo ""
+echo "=== Weston Output-Touch Matrix ==="
+echo "Assignments (from udev):"
+for event in /dev/input/event*; do
+    wl_out=$(udevadm info -q property -n $event 2>/dev/null | grep WL_OUTPUT | cut -d= -f2)
+    name=$(cat /sys/class/input/${event#/dev/input/}/device/name 2>/dev/null)
+    [ -n "$wl_out" ] && echo "  $event ($name) -> $wl_out"
+done
+echo ""
+
+echo "=== Udev Rule Status ==="
+if [ -f /etc/udev/rules.d/80-touch-output.rules ]; then
+    echo "  /etc/udev/rules.d/80-touch-output.rules: INSTALLED"
+    cat /etc/udev/rules.d/80-touch-output.rules
+else
+    echo "  /etc/udev/rules.d/80-touch-output.rules: NOT FOUND"
+fi
+
+echo ""
+if [ $found -gt 0 ]; then
+    echo "=== Next Steps ==="
+    echo "If WL_OUTPUT shows 'NOT SET', run:"
+    echo "  udevadm control --reload-rules"
+    echo "  udevadm trigger"
+    echo "Then restart Weston: systemctl restart weston"
+fi

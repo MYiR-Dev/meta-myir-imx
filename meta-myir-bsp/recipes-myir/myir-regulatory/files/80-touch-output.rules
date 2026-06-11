@@ -1,0 +1,6 @@
+# Touch-to-output mapping for dual display (Weston WL_OUTPUT)
+# I2C touch -> LVDS panel display
+# USB touch -> HDMI external display
+
+SUBSYSTEM=="input", ENV{ID_INPUT_TOUCHSCREEN}=="1", DEVPATH=="*/i2c*", ENV{WL_OUTPUT}="LVDS-1"
+SUBSYSTEM=="input", ENV{ID_INPUT_TOUCHSCREEN}=="1", DEVPATH=="*/usb*", ENV{WL_OUTPUT}="HDMI-A-1"
