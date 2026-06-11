@@ -29,3 +29,8 @@ SRC_URI:append = " \
     ${@bb.utils.contains('MYIR_AHAB_ENABLE', '1', \
         'file://disable-bootmeths.cfg', '', d)} \
 "
+UBOOT_CONFIG_FRAGMENT:append = "${@bb.utils.contains('DISTRO_FEATURES', 'sec_boot', ' u-boot-hab.cfg', '', d)}"
+UBOOT_CONFIG_FRAGMENT:append = "${@bb.utils.contains('DISTRO_FEATURES', 'sec_boot', ' u-boot-secure-boot.cfg', '', d)}"
+UBOOT_CONFIG_FRAGMENT:append = "${@bb.utils.contains('DISTRO_FEATURES', 'sec_boot', ' disable-bootmeths.cfg', '', d)}"
+UBOOT_CONFIG_FRAGMENT:append = "${@bb.utils.contains('UBOOT_SIGN_ENABLE', '1', ' file://fit-signature.cfg', '', d)}"
+
