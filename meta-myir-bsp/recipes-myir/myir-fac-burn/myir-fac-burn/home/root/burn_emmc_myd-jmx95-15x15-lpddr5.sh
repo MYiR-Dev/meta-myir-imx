@@ -6,7 +6,7 @@ UBOOT_FILE=/root/mfgimage/imx-boot
 KERNEL_DTB_DIR=/root/mfgimage/kernel_dtb
 ROOTFS_FILE_EXT4=/root/mfgimage/rootfs-full.ext4
 
-MYD_NAME="myd-jmx95-15x15"
+MYD_NAME="myd-jmx95-15x15-lpddr5"
 
 
 HOSTNAME=`cat /etc/hostname`

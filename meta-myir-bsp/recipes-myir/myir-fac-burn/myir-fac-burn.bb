@@ -7,7 +7,6 @@ LIC_FILES_CHKSUM = "file://licenses/GPL-2;md5=94d55d512a9ba36caa9b7df079bae19f"
 inherit systemd
 DUAL_ROOTFS ?=""
 SIGNED_BOOT ?=""
-BURN_SCRIPT = "burn_emmc_${MACHINE}_${DUAL_ROOTFS}.sh"
 ROOTFS_IMAGE ?= "myir-image-emmc"
 
 SRC_URI = " \
@@ -16,6 +15,8 @@ SRC_URI = " \
     file://licenses/GPL-2;subdir=${BP} \
 "
 BOOT_IMAGE_NAME = "${@'imx-boot-signed' if d.getVar('SIGNED_BOOT') == 'signed' else 'imx-boot'}"
+BURN_SCRIPT = "${@('burn_emmc_%s_%s.sh' % (d.getVar('MACHINE'), d.getVar('DUAL_ROOTFS') or '')) if d.getVar('SIGN_BOOT') == 'signed' else ('burn_emmc_%s.sh' % d.getVar('MACHINE'))}"
+
 
 do_install[depends] += "${ROOTFS_IMAGE}:do_image_complete"
 do_install[depends] += "virtual/kernel:do_deploy"
