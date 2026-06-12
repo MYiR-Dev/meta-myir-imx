@@ -84,6 +84,7 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     u-boot-imx-env \
     libubootenv \
     libubootenv-bin \
+    uboot-env \
     tzdata \
     tslib \
     tslib-calibrate \
