@@ -1,0 +1,76 @@
+#!/bin/sh
+# setup-touch-clone - dynamically set touch-to-output mapping and calibration
+# Reads weston.ini clone-mode config and generates correct WL_OUTPUT rules + calibration
+
+WESTON_INI=/etc/xdg/weston/weston.ini
+RULES_FILE=/etc/udev/rules.d/80-touch-output.rules
+
+# Parse weston.ini
+CLONE_MODE=$(sed -n '/^\[core\]/,/^\[/{s/^clone-mode=//p}' $WESTON_INI 2>/dev/null)
+CLONE_SRC=$(sed -n '/^\[core\]/,/^\[/{s/^clone-connector-id=//p}' $WESTON_INI 2>/dev/null)
+CLONE_EXTEND=$(sed -n '/^\[core\]/,/^\[/{s/^extend-connector-id=//p}' $WESTON_INI 2>/dev/null)
+
+# Remove existing calibrator sections (everything between [touchscreen-calibrator] and the next [section])
+awk '
+    BEGIN { skip=0 }
+    /^\[touchscreen-calibrator\]/ { skip=1; next }
+    /^\[/ && skip { skip=0 }
+    !skip
+' "$WESTON_INI" > "$WESTON_INI.tmp" && mv "$WESTON_INI.tmp" "$WESTON_INI"
+
+add_calib() {
+    # $1=name, $2=output, $3=sx, $4=sy
+    cat >> "$WESTON_INI" << EOF
+
+[touchscreen-calibrator]
+name=$1
+output=$2
+calibration_matrix=$3 0.0 0.0 0.0 $4 0.0
+EOF
+}
+
+if [ "$CLONE_MODE" = "1" ] && [ -n "$CLONE_SRC" ] && [ "$CLONE_SRC" != "0" ]; then
+    case "$CLONE_SRC" in
+        53) SOURCE_OUT="LVDS-1" ;;
+        42) SOURCE_OUT="HDMI-A-1" ;;
+        *)  SOURCE_OUT="LVDS-1" ;;
+    esac
+
+    if [ "$CLONE_EXTEND" = "0" ] || [ -z "$CLONE_EXTEND" ]; then
+        cat > $RULES_FILE << EOF
+# Clone mode: all touchscreens -> $SOURCE_OUT
+SUBSYSTEM=="input", ENV{ID_INPUT_TOUCHSCREEN}=="1", ENV{WL_OUTPUT}="$SOURCE_OUT"
+EOF
+
+        if [ "$SOURCE_OUT" = "LVDS-1" ]; then
+            add_calib "generic ft5x06 (79)" "LVDS-1" "1.0" "1.0"
+            add_calib "ILITEK ILITEK-TP" "LVDS-1" "0.5333" "0.5555"
+        else
+            add_calib "ILITEK ILITEK-TP" "HDMI-A-1" "1.0" "1.0"
+            add_calib "generic ft5x06 (79)" "HDMI-A-1" "1.875" "1.8"
+        fi
+        echo "touch-clone: clone($SOURCE_OUT source), all touches -> $SOURCE_OUT"
+
+    else
+        cat > $RULES_FILE << EOF
+# Clone+extend mode
+SUBSYSTEM=="input", ENV{ID_INPUT_TOUCHSCREEN}=="1", DEVPATH=="*/i2c*", ENV{WL_OUTPUT}="$SOURCE_OUT"
+SUBSYSTEM=="input", ENV{ID_INPUT_TOUCHSCREEN}=="1", DEVPATH=="*/usb*", ENV{WL_OUTPUT}="HDMI-A-1"
+EOF
+        add_calib "generic ft5x06 (79)" "$SOURCE_OUT" "1.0" "1.0"
+        add_calib "ILITEK ILITEK-TP" "HDMI-A-1" "1.0" "1.0"
+        echo "touch-clone: clone+extend"
+    fi
+else
+    cat > $RULES_FILE << EOF
+# Extend mode: I2C -> LVDS, USB -> HDMI
+SUBSYSTEM=="input", ENV{ID_INPUT_TOUCHSCREEN}=="1", DEVPATH=="*/i2c*", ENV{WL_OUTPUT}="LVDS-1"
+SUBSYSTEM=="input", ENV{ID_INPUT_TOUCHSCREEN}=="1", DEVPATH=="*/usb*", ENV{WL_OUTPUT}="HDMI-A-1"
+EOF
+    add_calib "generic ft5x06 (79)" "LVDS-1" "1.0" "1.0"
+    add_calib "ILITEK ILITEK-TP" "HDMI-A-1" "1.0" "1.0"
+    echo "touch-clone: extend mode, I2C->LVDS-1, USB->HDMI-A-1"
+fi
+
+udevadm control --reload-rules
+udevadm trigger --subsystem-match=input
