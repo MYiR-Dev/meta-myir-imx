@@ -55,6 +55,9 @@ SWUPDATE:mx9-nxp-bsp = "lua swupdate swupdate-www swupdate-progress swupdate-cli
 OPTEE_TEST          ?= ""
 OPTEE_TEST:mx9-nxp-bsp = "lvm2 optee-test python3-cryptography optee-examples openssl"
 
+EEPROM_PNSN      ?= ""
+EEPROM_PNSN:mx95-nxp-bsp  = "eeprom-pnsn"
+
 G2D_SAMPLES              = ""
 G2D_SAMPLES:imxgpu2d     = "imx-g2d-samples"
 G2D_SAMPLES:mx93-nxp-bsp = "imx-g2d-samples"
@@ -114,6 +117,7 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     quectel-cm \
     libmodbus \
     myir-regulatory \
+    ${EEPROM_PNSN} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'hailo', 'hailo-pci hailo-firmware packagegroup-hailo-hailort', '', d)} \
 "
 
