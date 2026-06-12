@@ -1,0 +1,1048 @@
+Upstream-Status: Pending
+Signed-off-by: coin.du <coin.du@myirtech.cn>
+diff --git a/frontend/main.c b/frontend/main.c
+index bea7ad51..86765fa1 100644
+--- a/frontend/main.c
++++ b/frontend/main.c
+@@ -3401,6 +3401,48 @@ drm_backend_shell_configure(struct weston_compositor *c,
+ 	}
+ }
+ 
++#if defined(ENABLE_IMXG2D)
++static void
++load_cloneoutput(struct weston_config *wc, struct weston_drm_backend_config *config)
++{
++	struct weston_config_section *section = NULL;
++	const char *section_name;
++	uint32_t conn_id;
++	int output_num = 0;
++	int output_index = 0;
++
++	config->cloneoutput = malloc(sizeof(struct cloneoutput *));
++
++	while (weston_config_next_section(wc, &section, &section_name)) {
++		char *s;
++		int n;
++		uint32_t width = 0;
++		uint32_t height = 0;
++
++		if (strcmp(section_name, "cloneoutput") != 0)
++			continue;
++
++		weston_config_section_get_string(section, "mode", &s, NULL);
++		if (strcmp(s, "off") == 0)
++			continue;
++
++		n = sscanf(s, "%dx%d", &width, &height);
++		output_num++;
++		output_index = output_num - 1;
++
++		config->cloneoutput = realloc(config->cloneoutput, (output_num) * sizeof(config->cloneoutput[0]));
++		weston_config_section_get_uint(section, "conn_id", &conn_id, 0);
++		config->cloneoutput[output_index].conn_id = conn_id;
++		if (n == 2 && width > 0 && height > 0) {
++			config->cloneoutput[output_index].width = width;
++			config->cloneoutput[output_index].height = height;
++		}
++		free(s);
++		config->modecount = output_num;
++	}
++}
++#endif
++
+ static int
+ load_drm_backend(struct weston_compositor *c, int *argc, char **argv,
+ 		 struct weston_config *wc, enum weston_renderer_type renderer)
+@@ -3437,6 +3479,9 @@ load_drm_backend(struct weston_compositor *c, int *argc, char **argv,
+ 		{ WESTON_OPTION_BOOLEAN, "use-pixman", 0, &force_pixman },
+ #if defined(ENABLE_IMXG2D)
+ 		{ WESTON_OPTION_BOOLEAN, "use-g2d", 0, &use_g2d },
++		{ WESTON_OPTION_INTEGER, "clone-mode", 0, &config.clone_mode },
++		{ WESTON_OPTION_INTEGER, "clone-connector-id", 0, &config.clone_connid },
++		{ WESTON_OPTION_INTEGER, "extend-connector-id", 0, &config.clone_extend },
+ #endif
+ 		{ WESTON_OPTION_BOOLEAN, "continue-without-input", false, &without_input }
+ 	};
+@@ -3464,6 +3509,12 @@ load_drm_backend(struct weston_compositor *c, int *argc, char **argv,
+ 	                               &config.pageflip_timeout, 0);
+ 	weston_config_section_get_bool(section, "pixman-shadow",
+ 				       &config.use_pixman_shadow, true);
++#if defined(ENABLE_IMXG2D)
++			uint32_t cmode = 0; weston_config_section_get_uint(section, "clone-mode", &cmode, 0); config.clone_mode = cmode;
++	weston_config_section_get_uint(section, "clone-connector-id", &config.clone_connid, 0);
++	weston_config_section_get_uint(section, "extend-connector-id", &config.clone_extend, 0);
++	load_cloneoutput(wc, &config);
++#endif
+ 	if (without_input)
+ 		c->require_input = !without_input;
+ 
+diff --git a/include/libweston/backend-drm.h b/include/libweston/backend-drm.h
+index 300726e9..357ec5c0 100644
+--- a/include/libweston/backend-drm.h
++++ b/include/libweston/backend-drm.h
+@@ -193,6 +193,12 @@ weston_drm_virtual_output_get_api(struct weston_compositor *compositor)
+ 	return (const struct weston_drm_virtual_output_api *)api;
+ }
+ 
++struct cloneoutput{
++	uint32_t width;
++	uint32_t height;
++	uint32_t conn_id;
++};
++
+ /** The backend configuration struct.
+  *
+  * weston_drm_backend_config contains the configuration used by a DRM
+@@ -265,6 +271,14 @@ struct weston_drm_backend_config {
+ 	/** Desktop shell size */
+ 	uint32_t shell_width;
+ 	uint32_t shell_height;
++
++#if defined(ENABLE_IMXG2D)
++	bool clone_mode;
++	int clone_connid;
++	int clone_extend;
++	struct cloneoutput *cloneoutput;
++	int modecount;
++#endif
+ };
+ 
+ #ifdef  __cplusplus
+diff --git a/libweston/backend-drm/drm-gbm.c b/libweston/backend-drm/drm-gbm.c
+index 3c03e3b2..e8772c36 100644
+--- a/libweston/backend-drm/drm-gbm.c
++++ b/libweston/backend-drm/drm-gbm.c
+@@ -365,6 +365,74 @@ init_g2d(struct drm_backend *b)
+ 	return 0;
+ }
+ 
++int
++drm_clone_output_add(struct drm_output *output, struct drm_backend *b, int connector_id)
++{
++	struct drm_device *device = b->drm;
++	drmModeRes *resources;
++	resources = drmModeGetResources(device->drm.fd);
++	uint32_t format = output->format->format;
++	enum g2d_format g2dFormat;
++	drmModeConnector *conn = drmModeGetConnector(device->drm.fd, connector_id);
++	int clonedmafd = 0;
++	int ret = 0;
++
++	switch (format) {
++	case DRM_FORMAT_XRGB8888:
++		g2dFormat = G2D_BGRX8888;
++		break;
++	case DRM_FORMAT_RGB565:
++		g2dFormat = G2D_RGB565;
++		break;
++	default:
++		weston_log("Unsupported pixman format 0x%x\n", format);
++		return -1;
++	}
++
++	b->clone_conn++;
++	if (conn->connection == DRM_MODE_CONNECTED) {
++		int count = b->clone_conn - 1;
++		int i;
++		for (i = 0; i < ARRAY_LENGTH(output->dumb); i++) {
++			struct clonebuf_list *p = output->dumb[i]->clonebuf;
++			int image_index = i + count * 3;
++			struct g2d_surfaceEx *g2dCloneSurface = &(output->g2d_cloneimage[image_index]);
++			int clone_width, clone_height;
++			clone_width = b->clone_info[count].mode.hdisplay;
++			clone_height = b->clone_info[count].mode.vdisplay;
++
++			while (p->next != NULL)
++				p = p->next;
++
++			struct clonebuf_list *newp = malloc(sizeof(struct clonebuf_list));
++			if (newp == NULL) {
++				weston_log("Create clonebuf list node fail;\n");
++			}
++			newp->next = NULL;
++			p->next = newp;
++			newp->prev = p;
++			p->conn_id = connector_id;
++			p->clonedumb = drm_fb_create_dumb(device, clone_width, clone_height, format);
++			ret = drmPrimeHandleToFD(device->drm.fd, p->clonedumb->handles[0], DRM_CLOEXEC, &clonedmafd);
++
++			if (ret < 0) {
++				free(newp);
++			}
++			const struct weston_renderer *renderer = b->compositor->renderer;
++			ret = renderer->g2d->create_g2d_image(g2dCloneSurface, g2dFormat,
++					p->clonedumb->map,
++					clone_width, clone_height,
++					p->clonedumb->strides[0],
++					p->clonedumb->size,
++					clonedmafd);
++			p->clonedumb->dmafd = clonedmafd;
++		}
++	}
++	drmModeFreeResources(resources);
++	drmModeFreeConnector(conn);
++	return 0;
++}
++
+ int
+ drm_output_init_g2d(struct drm_output *output, struct drm_backend *b)
+ {
+@@ -392,6 +460,10 @@ drm_output_init_g2d(struct drm_output *output, struct drm_backend *b)
+ 			return -1;
+ 	}
+ 
++	if (b->clone_mode) {
++		output->g2d_cloneimage = malloc((2 * 3) * sizeof(struct g2d_surfaceEx));
++	}
++
+ 	struct g2d_renderer_output_options options = {
+ 		.formats = output->format,
+ 		.formats_count = 1,
+@@ -423,6 +495,50 @@ drm_output_init_g2d(struct drm_output *output, struct drm_backend *b)
+ 						output->dumb_dmafd[i]);
+ 		if (ret < 0)
+ 			goto err;
++
++		if (b->clone_mode) {
++			int clonedmafd = 0;
++			output->dumb[i]->clonebuf = malloc(sizeof(struct clonebuf_list));
++			output->dumb[i]->clonebuf->prev = NULL;
++			output->dumb[i]->clonebuf->next = NULL;
++
++			for (int j = 0; j < b->clone_conn; j++) {
++				struct clonebuf_list *p = output->dumb[i]->clonebuf;
++				int image_index = i + j * 3;
++				struct g2d_surfaceEx *g2dCloneSurface = &(output->g2d_cloneimage[image_index]);
++				int clone_width, clone_height;
++				clone_width = b->clone_info[j].mode.hdisplay;
++				clone_height = b->clone_info[j].mode.vdisplay;
++
++				while (p->next != NULL)
++					p = p->next;
++
++				struct clonebuf_list *newp = malloc(sizeof(struct clonebuf_list));
++				if (newp == NULL) {
++					weston_log("Create clonebuf list node fail;\n");
++				}
++				newp->next = NULL;
++				p->next = newp;
++				newp->prev = p;
++				p->conn_id = b->clone_info[j].conn_id;
++				p->clonedumb = drm_fb_create_dumb(device, clone_width, clone_height, format);
++
++				ret = drmPrimeHandleToFD(device->drm.fd, p->clonedumb->handles[0], DRM_CLOEXEC, &clonedmafd);
++				if (ret < 0)
++					goto err;
++
++				ret = renderer->g2d->create_g2d_image(g2dCloneSurface, g2dFormat,
++						p->clonedumb->map,
++						clone_width, clone_height,
++						p->clonedumb->strides[0],
++						p->clonedumb->size,
++						clonedmafd);
++				if (ret < 0)
++					goto err;
++
++				p->clonedumb->dmafd = clonedmafd;
++			}
++		}
+ 	}
+ 
+ 	if (renderer->g2d->output_create(&output->base, &options) < 0)
+@@ -434,6 +550,10 @@ drm_output_init_g2d(struct drm_output *output, struct drm_backend *b)
+ 
+ err:
+ 	weston_log("drm_output_init_g2d failed.\n");
++	if (b->clone_mode) {
++		free(output->g2d_cloneimage);
++		output->g2d_cloneimage = NULL;
++	}
+ 	for (i = 0; i < ARRAY_LENGTH(output->dumb); i++) {
+ 		if (output->dumb[i])
+ 			drm_fb_unref(output->dumb[i]);
+@@ -482,6 +602,10 @@ drm_output_render_g2d(struct drm_output_state *state, pixman_region32_t *damage)
+ 
+ 	renderer->g2d->output_set_buffer(&output->base,
+ 					  &output->g2d_image[output->current_image]);
++	if (b->clone_mode) {
++		renderer->g2d->clone_set_buffer(&output->base, output->g2d_cloneimage,
++				output->current_image, b->clone_conn);
++	}
+ 
+ 	ec->renderer->repaint_output(&output->base, &total_damage, NULL);
+ 
+diff --git a/libweston/backend-drm/drm-internal.h b/libweston/backend-drm/drm-internal.h
+index 89c0a722..12b7a0cd 100644
+--- a/libweston/backend-drm/drm-internal.h
++++ b/libweston/backend-drm/drm-internal.h
+@@ -277,6 +277,16 @@ struct drm_backend {
+ 	struct weston_log_scope *debug;
+ 
+ 	struct weston_drm_format_array supported_formats;
++
++#if defined(ENABLE_IMXG2D)
++	bool clone_mode;
++	struct clone_info *clone_info;
++	int clone_conn;
++	int clone_connid;   /* Clone-mode: use this if the preferred mode is not modes[0] */
++	int clone_extend;   /* Use this as a extended window index if needed. */
++	struct drmcloneoutput *cloneoutput;
++	int modecount;
++#endif
+ };
+ 
+ struct drm_mode {
+@@ -285,6 +295,29 @@ struct drm_mode {
+ 	uint32_t blob_id;
+ };
+ 
++struct clone_info{
++	drmModeModeInfo mode;
++	uint32_t conn_id;
++	uint32_t crtc_id;
++	uint32_t plane_id;
++	uint32_t width;
++	uint32_t height;
++};
++
++struct drmcloneoutput{
++	uint32_t width;
++	uint32_t height;
++	uint32_t conn_id;
++};
++
++struct clonebuf_list{
++	int conn_id;
++	struct g2d_surfaceEx *g2dcloneImage;
++	struct drm_fb *clonedumb;
++	struct clonebuf_list *prev;
++	struct clonebuf_list *next;
++};
++
+ enum drm_fb_type {
+ 	BUFFER_INVALID = 0, /**< never used */
+ 	BUFFER_CLIENT, /**< directly sourced from client */
+@@ -322,6 +355,10 @@ struct drm_fb {
+ 	void *map;
+ 
+ 	uint64_t dtrc_meta;
++
++	uint32_t dmafd;
++	struct drm_fb **clonedumb;
++	struct clonebuf_list *clonebuf;
+ };
+ 
+ struct drm_buffer_fb {
+@@ -596,6 +633,7 @@ struct drm_output {
+ 	struct weston_renderbuffer *renderbuffer[3];
+ #if defined(ENABLE_IMXG2D)
+ 	struct g2d_surfaceEx g2d_image[3];
++	struct g2d_surfaceEx *g2d_cloneimage;
+ 	int dumb_dmafd[3];
+ #endif
+ 	int current_image;
+@@ -926,6 +964,9 @@ init_g2d(struct drm_backend *b);
+ int
+ drm_output_init_g2d(struct drm_output *output, struct drm_backend *b);
+ 
++int
++drm_clone_output_add(struct drm_output *output, struct drm_backend *b, int connector_id);
++
+ void
+ drm_output_fini_g2d(struct drm_output *output);
+ 
+diff --git a/libweston/backend-drm/drm.c b/libweston/backend-drm/drm.c
+index e3085aed..1a7365ff 100644
+--- a/libweston/backend-drm/drm.c
++++ b/libweston/backend-drm/drm.c
+@@ -3214,7 +3214,8 @@ drm_backend_add_connector(struct drm_device *device, drmModeConnector *conn,
+ 	return ret;
+ }
+ 
+-/** Find all connectors of the fd and create drm_head or drm_writeback objects
++/**
++ * Find all connectors of the fd and create drm_head or drm_writeback objects
+  * (depending on the type of connector they are) for each of them
+  *
+  * These objects are added to the DRM-backend lists of heads and writebacks.
+@@ -3224,22 +3225,106 @@ drm_backend_add_connector(struct drm_device *device, drmModeConnector *conn,
+  * @param resources The DRM resources, it is taken with drmModeGetResources
+  * @return 0 on success, -1 on failure
+  */
++
++#if defined(ENABLE_IMXG2D)
++static drmModeModeInfo
++find_mode(struct drm_backend *b, uint32_t conn_id,
++	  drmModeConnector *conn)
++{
++	int i, j;
++	for (i = 0; i < b->modecount; i++) {
++		if (b->cloneoutput[i].conn_id == conn_id) {
++			for (j = 0; j < conn->count_modes; j++) {
++				if (conn->modes[j].hdisplay == b->cloneoutput[i].width &&
++				    conn->modes[j].vdisplay == b->cloneoutput[i].height) {
++					return conn->modes[j];
++				}
++			}
++		}
++	}
++	return conn->modes[0];
++}
++#endif
++
+ static int
+ drm_backend_discover_connectors(struct drm_device *device,
+ 				struct udev_device *drm_device,
+ 				drmModeRes *resources)
+ {
++	struct drm_backend *b = device->backend;
+ 	drmModeConnector *conn;
+-	int i, ret;
++	int i, j, ret;
+ 
+ 	device->min_width  = resources->min_width;
+ 	device->max_width  = resources->max_width;
+ 	device->min_height = resources->min_height;
+ 	device->max_height = resources->max_height;
+ 
++#if defined(ENABLE_IMXG2D)
++	b->clone_conn = 0;
++	static uint32_t clonesrc_index = 0;
++	static uint32_t clonesrc_width = INT32_MAX;
++	drmModePlaneRes *plane_res = NULL;
++
++	if (b->clone_mode) {
++		plane_res = drmModeGetPlaneResources(device->drm.fd);
++		/* Find clone source connector index */
++		for (i = 0; i < resources->count_connectors; i++) {
++			uint32_t connector_id = resources->connectors[i];
++			uint32_t width;
++
++			if (b->clone_connid) {
++				clonesrc_index = b->clone_connid;
++				break;
++			}
++			conn = drmModeGetConnector(device->drm.fd, connector_id);
++			if (!conn)
++				continue;
++			if (conn->connection == DRM_MODE_CONNECTED && connector_id != (uint32_t)b->clone_extend) {
++				width = conn->modes[0].vdisplay;
++				if (clonesrc_width > width && conn->connection == DRM_MODE_CONNECTED) {
++					clonesrc_width = width;
++					clonesrc_index = connector_id;
++				}
++			}
++			drmModeFreeConnector(conn);
++		}
++	}
++	b->clone_connid = clonesrc_index;
++#endif
++
+ 	for (i = 0; i < resources->count_connectors; i++) {
+ 		uint32_t connector_id = resources->connectors[i];
+ 
++#if defined(ENABLE_IMXG2D)
++		if (b->clone_mode && connector_id != clonesrc_index &&
++		    connector_id != (uint32_t)b->clone_extend) {
++			static int clone_index = 0;
++			conn = drmModeGetConnector(device->drm.fd, connector_id);
++			if (!conn)
++				continue;
++			if (conn->connection == DRM_MODE_CONNECTED) {
++				drmModeEncoder *encoder = drmModeGetEncoder(device->drm.fd, conn->encoder_id);
++				b->clone_info = realloc(b->clone_info, (clone_index + 1) * sizeof(b->clone_info[0]));
++				for (j = 0; j < (int)plane_res->count_planes; j++) {
++					drmModePlanePtr plane = drmModeGetPlane(device->drm.fd, plane_res->planes[j]);
++					if (plane->crtc_id == encoder->crtc_id) {
++						b->clone_info[clone_index].plane_id = plane_res->planes[j];
++					}
++					drmModeFreePlane(plane);
++				}
++				b->clone_info[clone_index].crtc_id = encoder->crtc_id;
++				b->clone_info[clone_index].conn_id = connector_id;
++				b->clone_info[clone_index].mode = find_mode(b, connector_id, conn);
++				b->clone_conn++;
++				clone_index++;
++				drmModeFreeEncoder(encoder);
++			}
++			drmModeFreeConnector(conn);
++			continue;
++		}
++#endif
++
+ 		conn = drmModeGetConnector(device->drm.fd, connector_id);
+ 		if (!conn)
+ 			continue;
+@@ -3249,6 +3334,11 @@ drm_backend_discover_connectors(struct drm_device *device,
+ 			drmModeFreeConnector(conn);
+ 	}
+ 
++#if defined(ENABLE_IMXG2D)
++	if (plane_res)
++		drmModeFreePlaneResources(plane_res);
++#endif
++
+ 	return 0;
+ }
+ 
+@@ -3274,7 +3364,7 @@ drm_backend_update_connectors(struct drm_device *device,
+ 	struct drm_head *head;
+ 	struct drm_writeback *writeback, *writeback_next;
+ 	uint32_t connector_id;
+-	int i, ret;
++	int i, j, k, ret;
+ 
+ 	resources = drmModeGetResources(device->drm.fd);
+ 	if (!resources) {
+@@ -3282,10 +3372,28 @@ drm_backend_update_connectors(struct drm_device *device,
+ 		return;
+ 	}
+ 
++#if defined(ENABLE_IMXG2D)
++	drmModePlaneRes *plane_res = drmModeGetPlaneResources(device->drm.fd);
++#endif
++
+ 	/* collect new connectors that have appeared, e.g. MST */
+ 	for (i = 0; i < resources->count_connectors; i++) {
+ 		connector_id = resources->connectors[i];
+ 
++#if defined(ENABLE_IMXG2D)
++		bool NewConn = true;
++		if (b->clone_mode && connector_id != (uint32_t)b->clone_connid) {
++			for (j = 0; j < b->clone_conn; j++) {
++				if (b->clone_info[j].conn_id == connector_id) {
++					NewConn = false;
++					break;
++				}
++			}
++		}
++		if (!NewConn)
++			continue;
++#endif
++
+ 		conn = drmModeGetConnector(device->drm.fd, connector_id);
+ 		if (!conn)
+ 			continue;
+@@ -3298,12 +3406,65 @@ drm_backend_update_connectors(struct drm_device *device,
+ 		assert(head == NULL || writeback == NULL);
+ 
+ 		if (head) {
+-			ret = drm_head_update_info(head, conn);
+-			if (head->base.device_changed)
+-				drm_head_log_info(head, "updated");
++#if defined(ENABLE_IMXG2D)
++			if (!b->clone_mode || connector_id == (uint32_t)b->clone_extend)
++#endif
++			{
++				ret = drm_head_update_info(head, conn);
++				if (head->base.device_changed)
++					drm_head_log_info(head, "updated");
++			}
+ 		} else if (writeback) {
+ 			ret = drm_writeback_update_info(writeback, conn);
+ 		} else {
++#if defined(ENABLE_IMXG2D)
++			if (b->clone_mode && connector_id != (uint32_t)b->clone_connid &&
++			    connector_id != (uint32_t)b->clone_extend) {
++				int clone_index = b->clone_conn;
++				conn = drmModeGetConnector(device->drm.fd, connector_id);
++				if (!conn)
++					continue;
++
++				if (conn->connection == DRM_MODE_CONNECTED) {
++					backlight_init(drm_device, conn->connector_type);
++					b->clone_info = realloc(b->clone_info, (clone_index + 1) * sizeof(b->clone_info[0]));
++					drmModeEncoder *encoder;
++					int crtc_id;
++
++					for (j = 0; j < conn->count_encoders; j++) {
++						encoder = drmModeGetEncoder(device->drm.fd, conn->encoders[j]);
++						for (k = 0; k < resources->count_crtcs; k++) {
++							if (encoder->possible_crtcs & (1 << k)) {
++								crtc_id = resources->crtcs[k];
++								if (crtc_id > 0) {
++									b->clone_info[clone_index].crtc_id = crtc_id;
++								}
++							}
++						}
++					}
++					for (j = 0; j < (int)plane_res->count_planes; j++) {
++						drmModePlanePtr plane = drmModeGetPlane(device->drm.fd, plane_res->planes[j]);
++						if (plane->possible_crtcs == encoder->possible_crtcs) {
++							b->clone_info[clone_index].plane_id = plane->plane_id;
++						}
++						drmModeFreePlane(plane);
++					}
++
++					b->clone_info[clone_index].conn_id = connector_id;
++					b->modecount++;
++					b->clone_info[clone_index].mode = conn->modes[0];
++					drmSetClientCap(device->drm.fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1);
++					drmSetClientCap(device->drm.fd, DRM_CLIENT_CAP_ATOMIC, 1);
++					drmModeFreeEncoder(encoder);
++
++					struct drm_output *output;
++					wl_list_for_each(output, &b->compositor->output_list, base.link)
++						drm_clone_output_add(output, b, connector_id);
++				}
++				drmModeFreeConnector(conn);
++				continue;
++			}
++#endif
+ 			ret = drm_backend_add_connector(device, conn, drm_device);
+ 		}
+ 
+@@ -3311,24 +3472,29 @@ drm_backend_update_connectors(struct drm_device *device,
+ 			drmModeFreeConnector(conn);
+ 	}
+ 
+-	/* Destroy head objects of connectors (except writeback connectors) that
+-	 * have disappeared. */
+-	wl_list_for_each_safe(base, base_next,
+-			      &b->compositor->head_list, compositor_link) {
+-		head = to_drm_head(base);
+-		if (!head)
+-			continue;
+-		connector_id = head->connector.connector_id;
++#if defined(ENABLE_IMXG2D)
++	if (!b->clone_mode)
++#endif
++	{
++		/* Destroy head objects of connectors (except writeback connectors) that
++		 * have disappeared. */
++		wl_list_for_each_safe(base, base_next,
++				      &b->compositor->head_list, compositor_link) {
++			head = to_drm_head(base);
++			if (!head)
++				continue;
++			connector_id = head->connector.connector_id;
+ 
+-		if (head->connector.device != device)
+-			continue;
++			if (head->connector.device != device)
++				continue;
+ 
+-		if (resources_has_connector(resources, connector_id))
+-			continue;
++			if (resources_has_connector(resources, connector_id))
++				continue;
+ 
+-		weston_log("DRM: head '%s' (connector %d) disappeared.\n",
+-			   head->base.name, connector_id);
+-		drm_head_destroy(base);
++			weston_log("DRM: head '%s' (connector %d) disappeared.\n",
++				   head->base.name, connector_id);
++			drm_head_destroy(base);
++		}
+ 	}
+ 
+ 	/* Destroy writeback objects of writeback connectors that have
+@@ -3345,6 +3511,10 @@ drm_backend_update_connectors(struct drm_device *device,
+ 		drm_writeback_destroy(writeback);
+ 	}
+ 
++#if defined(ENABLE_IMXG2D)
++	drmModeFreePlaneResources(plane_res);
++#endif
++
+ 	drmModeFreeResources(resources);
+ }
+ 
+@@ -3566,6 +3736,12 @@ drm_destroy(struct weston_backend *backend)
+ 	}
+ 	free(device->drm.filename);
+ 	free(device);
++#if defined(ENABLE_IMXG2D)
++	if (b->clone_mode) {
++		free(b->clone_info);
++		free(b->cloneoutput);
++	}
++#endif
+ 	free(b);
+ }
+ 
+@@ -4254,6 +4430,21 @@ drm_backend_create(struct weston_compositor *compositor,
+ 	b->use_pixman_shadow = config->use_pixman_shadow;
+ 	b->has_underlay = false;
+ 
++#if defined(ENABLE_IMXG2D)
++	b->clone_mode = config->clone_mode;
++	b->clone_connid = config->clone_connid;
++	b->clone_extend = config->clone_extend;
++	b->cloneoutput = (struct drmcloneoutput *)config->cloneoutput;
++	b->modecount = config->modecount;
++	if (b->clone_mode) {
++		weston_log("clone mode enable!\n");
++		weston_log("clonesrc_id:%d clone_extend_id:%d\n", b->clone_connid, config->clone_extend);
++		weston_log("b modecount:%d, config modecount:%d\n", b->modecount, config->modecount);
++	} else {
++		weston_log("extend mode enable!\n");
++	}
++#endif
++
+ 	b->debug = weston_compositor_add_log_scope(compositor, "drm-backend",
+ 						   "Debug messages from DRM/KMS backend\n",
+ 						   NULL, NULL, NULL);
+@@ -4519,6 +4710,12 @@ err_compositor:
+ #endif
+ 	hash_table_destroy(device->gem_handle_refcnt);
+ err_device:
++#if defined(ENABLE_IMXG2D)
++	if (b->clone_mode) {
++		free(b->clone_info);
++		free(b->cloneoutput);
++	}
++#endif
+ 	free(device);
+ err_backend:
+ 	free(b);
+diff --git a/libweston/backend-drm/fb.c b/libweston/backend-drm/fb.c
+index ab17a1a7..33aad557 100644
+--- a/libweston/backend-drm/fb.c
++++ b/libweston/backend-drm/fb.c
+@@ -644,6 +644,20 @@ drm_fb_unref(struct drm_fb *fb)
+ 
+ 	switch (fb->type) {
+ 	case BUFFER_PIXMAN_DUMB:
++		if (fb->clonedumb) {
++			int i;
++			struct clonebuf_list *p = fb->clonebuf;
++			struct clonebuf_list *del;
++			for (i = 0; i < fb->backend->clone_conn; i++) {
++				if (!p)
++					break;
++				del = p->next;
++				drm_fb_destroy_dumb(p->clonedumb);
++				p->clonedumb = NULL;
++				free(p);
++				p = del;
++			}
++		}
+ 		drm_fb_destroy_dumb(fb);
+ 		break;
+ #ifdef BUILD_DRM_GBM
+diff --git a/libweston/backend-drm/kms.c b/libweston/backend-drm/kms.c
+index 6cdafbf9..e72e83f7 100644
+--- a/libweston/backend-drm/kms.c
++++ b/libweston/backend-drm/kms.c
+@@ -1214,6 +1214,96 @@ drm_connector_set_colorspace(struct drm_connector *connector,
+ 				  WDRM_CONNECTOR_COLORSPACE, enum_info->value);
+ }
+ 
++#if defined(ENABLE_IMXG2D)
++static uint32_t
++get_property_id(int fd_drm, drmModeObjectProperties *props, const char *prop_name)
++{
++	drmModePropertyPtr property;
++	uint32_t id = 0;
++
++	for (uint32_t i = 0; i < props->count_props; i++) {
++		property = drmModeGetProperty(fd_drm, props->props[i]);
++		if (!strcmp(property->name, prop_name))
++			id = property->prop_id;
++		drmModeFreeProperty(property);
++
++		if (id)
++			break;
++	}
++
++	return id;
++}
++
++static int
++drm_clone_state_apply_atomic(int fd_id, drmModeAtomicReq *req,
++			      struct drm_backend *b, int index)
++{
++	int fd_drm = b->drm->drm.fd;
++	uint32_t conn_id = b->clone_info[index].conn_id;
++	uint32_t crtc_id = b->clone_info[index].crtc_id;
++	uint32_t plane_id = b->clone_info[index].plane_id;
++	uint32_t width = b->clone_info[index].mode.hdisplay;
++	uint32_t height = b->clone_info[index].mode.vdisplay;
++
++	drmModeObjectProperties *props;
++	uint32_t property_crtc_id;
++	uint32_t property_active;
++	uint32_t property_mode_id;
++	uint32_t property_crtc_x;
++	uint32_t property_crtc_y;
++	uint32_t property_crtc_w;
++	uint32_t property_crtc_h;
++	uint32_t property_src_x;
++	uint32_t property_src_y;
++	uint32_t property_src_w;
++	uint32_t property_src_h;
++	uint32_t property_fb_id;
++	uint32_t blob_id;
++
++	props = drmModeObjectGetProperties(fd_drm, conn_id, DRM_MODE_OBJECT_CONNECTOR);
++	property_crtc_id = get_property_id(fd_drm, props, "CRTC_ID");
++	drmModeFreeObjectProperties(props);
++
++	drmModeCreatePropertyBlob(fd_drm, &b->clone_info[index].mode,
++			sizeof(b->clone_info[index].mode), &blob_id);
++
++	props = drmModeObjectGetProperties(fd_drm, crtc_id, DRM_MODE_OBJECT_CRTC);
++	property_active = get_property_id(fd_drm, props, "ACTIVE");
++	property_mode_id = get_property_id(fd_drm, props, "MODE_ID");
++	drmModeFreeObjectProperties(props);
++
++	drmModeAtomicAddProperty(req, crtc_id, property_active, 1);
++	drmModeAtomicAddProperty(req, conn_id, property_crtc_id, crtc_id);
++	drmModeAtomicAddProperty(req, crtc_id, property_mode_id, blob_id);
++
++	props = drmModeObjectGetProperties(fd_drm, plane_id, DRM_MODE_OBJECT_PLANE);
++	property_crtc_id = get_property_id(fd_drm, props, "CRTC_ID");
++	property_fb_id = get_property_id(fd_drm, props, "FB_ID");
++	property_crtc_x = get_property_id(fd_drm, props, "CRTC_X");
++	property_crtc_y = get_property_id(fd_drm, props, "CRTC_Y");
++	property_crtc_w = get_property_id(fd_drm, props, "CRTC_W");
++	property_crtc_h = get_property_id(fd_drm, props, "CRTC_H");
++	property_src_x = get_property_id(fd_drm, props, "SRC_X");
++	property_src_y = get_property_id(fd_drm, props, "SRC_Y");
++	property_src_w = get_property_id(fd_drm, props, "SRC_W");
++	property_src_h = get_property_id(fd_drm, props, "SRC_H");
++	drmModeFreeObjectProperties(props);
++
++	drmModeAtomicAddProperty(req, plane_id, property_crtc_id, crtc_id);
++	drmModeAtomicAddProperty(req, plane_id, property_fb_id, fd_id);
++	drmModeAtomicAddProperty(req, plane_id, property_crtc_x, 0);
++	drmModeAtomicAddProperty(req, plane_id, property_crtc_y, 0);
++	drmModeAtomicAddProperty(req, plane_id, property_crtc_w, width);
++	drmModeAtomicAddProperty(req, plane_id, property_crtc_h, height);
++	drmModeAtomicAddProperty(req, plane_id, property_src_x, 0);
++	drmModeAtomicAddProperty(req, plane_id, property_src_y, 0);
++	drmModeAtomicAddProperty(req, plane_id, property_src_w, width << 16);
++	drmModeAtomicAddProperty(req, plane_id, property_src_h, height << 16);
++
++	return 0;
++}
++#endif
++
+ static int
+ drm_output_apply_state_atomic(struct drm_output_state *state,
+ 			      drmModeAtomicReq *req,
+@@ -1233,6 +1323,7 @@ drm_output_apply_state_atomic(struct drm_output_state *state,
+ 	int ret = 0;
+ 	int in_fence_fd = -1;
+ 	int update = 0;
++	uint32_t conn_id = 0;
+ 
+ 	if(output->gbm_surface) {
+ 		/* in_fence_fd was not created when
+@@ -1288,6 +1379,7 @@ drm_output_apply_state_atomic(struct drm_output_state *state,
+ 			ret |= connector_add_prop(req, &head->connector,
+ 						  WDRM_CONNECTOR_CRTC_ID,
+ 						  crtc->crtc_id);
++			conn_id = head->connector.connector_id;
+ 		}
+ 
+ 		if (wb_screenshot_state == DRM_OUTPUT_WB_SCREENSHOT_PREPARE_COMMIT) {
+@@ -1374,6 +1466,24 @@ drm_output_apply_state_atomic(struct drm_output_state *state,
+ 		struct drm_plane *plane = plane_state->plane;
+ 		const struct pixel_format_info *pinfo = NULL;
+ 
++#if defined(ENABLE_IMXG2D)
++		{
++			static int fd_clone;
++			if (b->clone_mode && conn_id != (uint32_t)b->clone_extend) {
++				struct clonebuf_list *p = plane_state->fb ? plane_state->fb->clonebuf : NULL;
++				if (p) {
++					for (int j = 0; j < b->clone_conn; j++) {
++						fd_clone = p->clonedumb->fb_id;
++						p = p->next;
++						if (p == NULL)
++							break;
++						drm_clone_state_apply_atomic(fd_clone, req, b, j);
++					}
++				}
++			}
++		}
++#endif
++
+ 		ret |= plane_add_prop(req, plane, WDRM_PLANE_FB_ID,
+ 				      plane_state->fb ? plane_state->fb->fb_id : 0);
+ 		ret |= plane_add_prop(req, plane, WDRM_PLANE_CRTC_ID,
+@@ -1486,7 +1596,12 @@ drm_pending_state_apply_atomic(struct drm_pending_state *pending_state,
+ 		flags = 0;
+ 		break;
+ 	case DRM_STATE_APPLY_ASYNC:
+-		flags = DRM_MODE_PAGE_FLIP_EVENT | DRM_MODE_ATOMIC_NONBLOCK;
++#if defined(ENABLE_IMXG2D)
++		if (b->clone_mode)
++			flags = DRM_MODE_PAGE_FLIP_EVENT | DRM_MODE_ATOMIC_ALLOW_MODESET;
++		else
++#endif
++			flags = DRM_MODE_PAGE_FLIP_EVENT | DRM_MODE_ATOMIC_NONBLOCK;
+ 		break;
+ 	case DRM_STATE_TEST_ONLY:
+ 		flags = DRM_MODE_ATOMIC_TEST_ONLY;
+@@ -1535,6 +1650,10 @@ drm_pending_state_apply_atomic(struct drm_pending_state *pending_state,
+ 		}
+ 
+ 		wl_list_for_each(crtc, &device->crtc_list, link) {
++#if defined(ENABLE_IMXG2D)
++			if (b->clone_mode)
++				break;
++#endif
+ 			struct drm_property_info *info;
+ 			drmModeObjectProperties *props;
+ 			uint64_t active;
+diff --git a/libweston/renderer-g2d/g2d-renderer.c b/libweston/renderer-g2d/g2d-renderer.c
+index 5a02864b..3d5b8c2c 100644
+--- a/libweston/renderer-g2d/g2d-renderer.c
++++ b/libweston/renderer-g2d/g2d-renderer.c
+@@ -118,6 +118,9 @@ struct g2d_output_state {
+ 	struct weston_geometry area;
+ 	pixman_region32_t buffer_damage[BUFFER_DAMAGE_COUNT];
+ 	struct g2d_surfaceEx *drm_hw_buffer;
++	struct g2d_surfaceEx *clonebuffer;
++	int clone_conn;
++	int damage_empty;
+ 	int width;
+ 	int height;
+ 	/* struct g2d_renderbuffer::link */
+@@ -206,6 +209,40 @@ get_renderer(struct weston_compositor *ec)
+ 	return (struct g2d_renderer *)ec->renderer;
+ }
+ 
++static void
++clone_mode_g2d_blit(struct weston_compositor *ec, struct g2d_surfaceEx* srcg2dSurface, struct g2d_surfaceEx* dstg2dSurface)
++{
++	struct g2d_renderer *gr = get_renderer(ec);
++
++	srcg2dSurface->base.left = 0;
++	srcg2dSurface->base.right = srcg2dSurface->base.width;
++	srcg2dSurface->base.top = 0;
++	srcg2dSurface->base.bottom = srcg2dSurface->base.height;
++	srcg2dSurface->base.width = srcg2dSurface->base.width;
++	srcg2dSurface->base.height = srcg2dSurface->base.height;
++	srcg2dSurface->base.blendfunc = G2D_ONE;
++
++	if (dstg2dSurface->base.width < dstg2dSurface->base.height &&
++	    srcg2dSurface->base.width > srcg2dSurface->base.height) {
++		dstg2dSurface->base.rot = G2D_ROTATION_270;
++	} else {
++		dstg2dSurface->base.rot = G2D_ROTATION_0;
++	}
++	dstg2dSurface->base.blendfunc = G2D_ONE_MINUS_SRC_ALPHA;
++	dstg2dSurface->base.left = 0;
++	dstg2dSurface->base.right = dstg2dSurface->base.width;
++	dstg2dSurface->base.top = 0;
++	dstg2dSurface->base.bottom = dstg2dSurface->base.height;
++	dstg2dSurface->base.width = dstg2dSurface->base.width;
++	dstg2dSurface->base.height = dstg2dSurface->base.height;
++
++	g2d_set_clipping(gr->handle, 0, 0, dstg2dSurface->base.right, dstg2dSurface->base.height);
++
++	g2d_blitEx(gr->handle, srcg2dSurface, dstg2dSurface);
++	g2d_flush(gr->handle);
++	g2d_finish(gr->handle);
++}
++
+ #define max(a, b) (((a) > (b)) ? (a) : (b))
+ #define min(a, b) (((a) > (b)) ? (b) : (a))
+ 
+@@ -1211,8 +1248,8 @@ g2d_renderer_repaint_output(struct weston_output *output,
+ 	struct weston_compositor *compositor = output->compositor;
+ 	struct g2d_renderer *gr = get_renderer(compositor);
+ 	pixman_region32_t buffer_damage, total_damage;
+-#if G2D_VERSION_MAJOR >= 2 && defined(BUILD_DRM_COMPOSITOR)
+ 	struct g2d_output_state *go = get_output_state(output);
++#if G2D_VERSION_MAJOR >= 2 && defined(BUILD_DRM_COMPOSITOR)
+ 	struct g2d_renderbuffer *rb;
+ #endif
+ 	int fence_fd = -1;
+@@ -1238,6 +1275,13 @@ g2d_renderer_repaint_output(struct weston_output *output,
+ 
+ 	repaint_views(output, &total_damage);
+ 
++	for (int i = 0; i < go->clone_conn; i++) {
++		if (!go->damage_empty) {
++			clone_mode_g2d_blit(compositor, go->drm_hw_buffer,
++					&go->clonebuffer[i]);
++		}
++	}
++
+ 	pixman_region32_fini(&total_damage);
+ 	pixman_region32_fini(&buffer_damage);
+ 
+@@ -2169,6 +2213,11 @@ g2d_renderer_output_destroy(struct weston_output *output)
+ 		pixman_region32_fini(&go->buffer_damage[i]);
+ 	}
+ 
++	if (go->clonebuffer) {
++		free(go->clonebuffer);
++		go->clonebuffer = NULL;
++	}
++
+ #if G2D_VERSION_MAJOR >= 2 && defined(BUILD_DRM_COMPOSITOR)
+ 	fd_clear(&go->drm_hw_buffer->reserved[0]);
+ #endif
+@@ -2700,6 +2749,19 @@ g2d_renderer_output_set_buffer(struct weston_output *output, struct g2d_surfaceE
+ 	go->drm_hw_buffer = buffer;
+ }
+ 
++static void
++g2d_renderer_cloneoutput_set_buffer(struct weston_output *output, struct g2d_surfaceEx *g2d_cloneimage,
++			int index, int clone_conn)
++{
++	struct g2d_output_state *go = get_output_state(output);
++	int i, clone_idx;
++	for (i = 0; i < clone_conn; i++) {
++		clone_idx = index + i * 3;
++		go->clonebuffer[i] = g2d_cloneimage[clone_idx];
++	}
++	go->clone_conn = clone_conn;
++}
++
+ static int
+ g2d_renderer_get_surface_fence_fd(struct g2d_surfaceEx *buffer)
+ {
+@@ -2723,6 +2785,8 @@ g2d_renderer_output_create(struct weston_output *output,
+ 	for (i = 0; i < BUFFER_DAMAGE_COUNT; i++)
+ 		pixman_region32_init(&go->buffer_damage[i]);
+ 
++	go->clonebuffer = malloc(3 * sizeof(go->clonebuffer[0]));
++
+ 	if (!g2d_renderer_resize_output(output, &options->fb_size, &options->area)) {
+ 		weston_log("Output %s failed to create 16F shadow.\n",
+ 			   output->name);
+@@ -2767,7 +2831,20 @@ g2d_renderer_create_g2d_image(struct g2d_surfaceEx* g2dSurface,
+ 	return 0;
+ }
+ 
++static void
++clone_mode_g2d_clone(struct weston_compositor *ec, int dmafd1, int dmafd2, int size)
++{
++	struct g2d_renderer *gr = get_renderer(ec);
++	struct g2d_buf *d_buf = g2d_buf_from_fd(dmafd2);
++	struct g2d_buf *s_buf = g2d_buf_from_fd(dmafd1);
++	g2d_copy(gr->handle, d_buf, s_buf, size);
++	g2d_flush(gr->handle);
++}
++
+  WL_EXPORT struct g2d_renderer_interface g2d_renderer_interface = {
++	.clone = clone_mode_g2d_clone,
++	.blit = clone_mode_g2d_blit,
++	.clone_set_buffer = g2d_renderer_cloneoutput_set_buffer,
+ 	.create = g2d_renderer_create,
+ 	.display_create  = g2d_renderer_display_create,
+ 	.output_create   = g2d_renderer_output_create,
+diff --git a/libweston/renderer-g2d/g2d-renderer.h b/libweston/renderer-g2d/g2d-renderer.h
+index 513f207a..8ea5baa2 100644
+--- a/libweston/renderer-g2d/g2d-renderer.h
++++ b/libweston/renderer-g2d/g2d-renderer.h
+@@ -63,6 +63,12 @@ struct g2d_renderer_output_options {
+ };
+ 
+ struct g2d_renderer_interface {
++	void (*clone) (struct weston_compositor *ec, int dmafd1, int dmafd2, int size);
++	void (*blit) (struct weston_compositor *ec, struct g2d_surfaceEx* srcg2dSurface, struct g2d_surfaceEx* dstg2dSurface);
++
++	void (*clone_set_buffer)(struct weston_output *output, struct g2d_surfaceEx *g2d_cloneimage,
++			int index, int clone_conn);
++
+ 	int (*create)(struct weston_compositor *ec);
+ 
+ 	int (*display_create)(struct weston_compositor *ec,

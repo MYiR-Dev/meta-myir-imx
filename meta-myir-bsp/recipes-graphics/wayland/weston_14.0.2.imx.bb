@@ -166,6 +166,9 @@ SRCBRANCH = "weston-imx-14.0.2"
 SRCREV = "be99fd1adad7e77c8c31926b09520ade5cdaca35"
 S = "${WORKDIR}/git"
 
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+SRC_URI:append = " file://clone_difResolution14_addextend_display_v14.0.2.diff"
+
 PACKAGECONFIG:remove = "${PACKAGECONFIG_IMX_REMOVALS}"
 PACKAGECONFIG_IMX_REMOVALS ?= "wayland x11"
 
