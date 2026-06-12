@@ -202,6 +202,25 @@ fi
 echo BSPDIR=$BSPDIR
 echo BUILD_DIR=$BUILD_DIR
 
+# ==========================================================================
+# Auto-create build/keys symlink to layer's key material
+#
+# This creates a single symlink:
+#   ${BUILD_DIR}/keys  ->  sources/meta-myir/meta-myir-security/files/keys/
+#
+# All key material (CST tool + FIT signing keys + AHAB certs) is stored
+# under the Yocto layer at files/keys/ — no external paths needed.
+# ==========================================================================
+echo "Setting up secure boot keys symlink..."
+MYIR_KEYS_SRC="${CWD}/sources/meta-myir/meta-myir-security/files/keys"
+if [ -d "${MYIR_KEYS_SRC}" ]; then
+    ln -sfn "${MYIR_KEYS_SRC}" "${BUILD_DIR}/keys"
+    echo "  keys -> ${MYIR_KEYS_SRC}"
+else
+    echo "  WARNING: Keys not found at ${MYIR_KEYS_SRC}"
+fi
+echo ""
+
 cd  $BUILD_DIR
 clean_up
 unset FSLDISTRO
