@@ -1,0 +1,12 @@
+[Unit]
+Description=Read PN and SN Service
+After=network.target
+
+[Service]
+Type=froking
+ExecStart=/usr/bin/MEasyListen-DEV
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
