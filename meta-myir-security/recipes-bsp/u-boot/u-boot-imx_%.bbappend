@@ -3,7 +3,8 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 # AHAB boot support (i.MX95 only)
 SRC_URI:append:mx9-generic-bsp = " \
-    file://mx9-generic-bsp/u-boot-hab.cfg \
+   ${@bb.utils.contains('MYIR_AHAB_ENABLE', '1', \
+        'file://mx9-generic-bsp/u-boot-hab.cfg', '', d)} \
 "
 
 # Secure boot combined config
