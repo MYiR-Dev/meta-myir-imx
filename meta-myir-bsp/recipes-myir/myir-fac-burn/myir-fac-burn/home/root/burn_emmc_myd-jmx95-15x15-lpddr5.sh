@@ -18,30 +18,25 @@ led1=user-led
 
 ECHO_TTY="/dev/ttyLP0"
 
+burn_process() {
+    echo timer > /sys/class/leds/${led1}/trigger
 
-burn_process()
-{
-        echo timer > /sys/class/leds/${led1}/trigger
-        echo 200 >  /sys/class/leds/${led1}/delay_on
-        echo 200 >  /sys/class/leds/${led1}/delay_off
-
-        echo timer > /sys/class/leds/${led2}/trigger
-        echo 200 >  /sys/class/leds/${led2}/delay_on
-        echo 200 >  /sys/class/leds/${led2}/delay_off
+    while true; do
+        echo 200 > /sys/class/leds/${led1}/delay_on
+                sleep 1
+        echo 200 > /sys/class/leds/${led1}/delay_off
+        echo "Updating..." > /dev/ttyLP0
+        sleep 1
+        done
 
 
 }
-
 
 burn_sucesss()
 {
         echo timer > /sys/class/leds/${led1}/trigger
         echo 1 >  /sys/class/leds/${led1}/delay_on
         echo 0 >  /sys/class/leds/${led1}/delay_off
-        
-        echo timer > /sys/class/leds/${led2}/trigger
-        echo 1 >  /sys/class/leds/${led2}/delay_on
-        echo 0 >  /sys/class/leds/${led2}/delay_off
 
 }
 burn_fail()
@@ -50,9 +45,6 @@ burn_fail()
         echo 0 >  /sys/class/leds/${led1}/delay_on
         echo 1 >  /sys/class/leds/${led1}/delay_off
 
-        echo timer > /sys/class/leds/${led2}/trigger
-        echo 0 >  /sys/class/leds/${led2}/delay_on
-        echo 1 >  /sys/class/leds/${led2}/delay_off
 }
 
 
@@ -164,7 +156,8 @@ check_rootfs(){
 	fi
 }
 
-burn_process
+burn_process &
+LED_PID=$!
 
 echo_fun "start format mmc "
 mksdcard ${EMMC_NODE}
@@ -178,6 +171,12 @@ resize2fs_mmc
 check_rootfs
 enable_bootpart
 burn_sucesss
+
+echo "---------------------------update success---------------------------" > /dev/ttyLP0
+echo "---------------------------update success---------------------------" > /dev/ttyLP0
+echo "---------------------------update success---------------------------" > /dev/ttyLP0
+
+kill $LED_PID
 
 
 

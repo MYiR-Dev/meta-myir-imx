@@ -35,7 +35,7 @@ do_install() {
 
     # bootloader
     install -m 0644 ${DEPLOY_DIR_IMAGE}/${BOOT_IMAGE_NAME} \
-        ${D}${ROOT_HOME}/mfgimage/
+        ${D}${ROOT_HOME}/mfgimage/imx-boot
 
     # kernel + dtb
     for i in ${IMAGE_BOOT_FILES}; do
