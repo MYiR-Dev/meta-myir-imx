@@ -112,13 +112,13 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     board-info \
     vim \
     nxp-bt-init \
-    pstore-conf \
     aw-xm729 \
     quectel-cm \
     libmodbus \
     myir-regulatory \
     ${EEPROM_PNSN} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'hailo', 'hailo-pci hailo-firmware packagegroup-hailo-hailort', '', d)} \
+    myir-hmi \
 "
 
 export IMAGE_BASENAME = "myir-image-emmc"

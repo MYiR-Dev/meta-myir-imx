@@ -129,6 +129,7 @@ esac
 FSL_EULA_FILE=$CWD/sources/meta-myir/LICENSE.txt
 
 # Set up the basic yocto environment
+MYIR_TOP=$CWD
 DISTRO=$FSLDISTRO MACHINE=$MACHINE . ./$PROGNAME $BUILD_DIR
 
 # Point to the current directory since the last command changed the directory to $BUILD_DIR
@@ -183,6 +184,7 @@ echo "BBLAYERS += \"\${BSPDIR}/sources/meta-openembedded/meta-networking\"" >> $
 echo "BBLAYERS += \"\${BSPDIR}/sources/meta-openembedded/meta-filesystems\"" >> $BUILD_DIR/conf/bblayers.conf
 echo "BBLAYERS += \"\${BSPDIR}/sources/meta-openembedded/meta-perl\"" >> $BUILD_DIR/conf/bblayers.conf
 echo "BBLAYERS += \"\${BSPDIR}/sources/meta-qt6\"" >> $BUILD_DIR/conf/bblayers.conf
+echo "BBLAYERS += \"\${BSPDIR}/sources/meta-security\"" >> $BUILD_DIR/conf/bblayers.conf
 echo "BBLAYERS += \"\${BSPDIR}/sources/meta-security/meta-parsec\"" >> $BUILD_DIR/conf/bblayers.conf
 echo "BBLAYERS += \"\${BSPDIR}/sources/meta-security/meta-tpm\"" >> $BUILD_DIR/conf/bblayers.conf
 echo "BBLAYERS += \"\${BSPDIR}/sources/meta-virtualization\"" >> $BUILD_DIR/conf/bblayers.conf
@@ -199,7 +201,7 @@ if [ -d ../sources/meta-swupdate ]; then
     echo "BBLAYERS += \"\${BSPDIR}/sources/meta-swupdate\"" >> $BUILD_DIR/conf/bblayers.conf
 fi
 
-echo BSPDIR=$BSPDIR
+echo BSPDIR=${BSPDIR:-UNSET}
 echo BUILD_DIR=$BUILD_DIR
 
 # ==========================================================================
@@ -212,7 +214,7 @@ echo BUILD_DIR=$BUILD_DIR
 # under the Yocto layer at files/keys/ — no external paths needed.
 # ==========================================================================
 echo "Setting up secure boot keys symlink..."
-MYIR_KEYS_SRC="${CWD}/sources/meta-myir/meta-myir-security/files/keys"
+MYIR_KEYS_SRC="${MYIR_TOP}/sources/meta-myir/meta-myir-security/files/keys"
 if [ -d "${MYIR_KEYS_SRC}" ]; then
     ln -sfn "${MYIR_KEYS_SRC}" "${BUILD_DIR}/keys"
     echo "  keys -> ${MYIR_KEYS_SRC}"

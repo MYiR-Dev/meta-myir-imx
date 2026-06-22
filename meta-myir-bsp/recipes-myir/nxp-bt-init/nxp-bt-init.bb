@@ -12,6 +12,7 @@ SRC_URI = " \
 		file://nxp-bt-init.service \
 		file://nxp-bt-init.sh \
 "
+S = "${WORKDIR}"
 
 do_install (){
 	install -d ${D}${bindir}
