@@ -1,12 +1,28 @@
 DESCRIPTION = "MEasyLVGL GUI Library"
 LICENSE = "CLOSED"
 
-SRC_URI = "gitsm://github.com/MYiR-Dev/MEasyLVGL.git;protocol=https;branch=lf-6.12.y-myd-lmx9x-11x11"
-SRCREV = "95ddc7da6a83eebe90ece565d307a59bd5f55f81"
+SRC_URI = "gitsm://github.com/MYiR-Dev/MEasyLVGL.git;protocol=https;branch=release_v9.3"
+SRCREV = "c8a7754b26c8df76c8e16eeb15411d5bf00dffe5"
 
 S = "${WORKDIR}/git"
 
-inherit cmake
+inherit cmake pkgconfig
+
+# LVGL v9.5 build dependencies (based on lv_conf.h enabled backends):
+#   CONFIG_LV_USE_WAYLAND=1     -> wayland, wayland-protocols, libxkbcommon, wayland-native
+#   CONFIG_LV_USE_LINUX_DRM=1    -> libdrm
+#   CONFIG_LV_USE_EVDEV=1        -> libevdev
+#   CONFIG_LV_USE_LINUX_FBDEV=1  -> (no extra deps)
+#   LV_BUILD_SET_CONFIG_OPTS=ON -> python3-pcpp-native (preprocess lv_conf_internal.h)
+DEPENDS += " \
+    wayland \
+    wayland-native \
+    wayland-protocols \
+    libxkbcommon \
+    libdrm \
+    libevdev \
+    python3-pcpp-native \
+"
 
 EXTRA_OECMAKE += " \
     -DCMAKE_BUILD_TYPE=Release \
@@ -16,7 +32,8 @@ EXTRA_OECMAKE += " \
 do_install() {
 
     install -d ${D}${bindir}
-    install -m 0755 ${B}/myir_lvgl ${D}${bindir}/myir_lvgl
+    # CMakeLists.txt sets EXECUTABLE_OUTPUT_PATH to ${CMAKE_BINARY_DIR}/bin
+    install -m 0755 ${B}/bin/myir_lvgl ${D}${bindir}/myir_lvgl
 
 
     install -d ${D}${datadir}/myir/lv_demos
