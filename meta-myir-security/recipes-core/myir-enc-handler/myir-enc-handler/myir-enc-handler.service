@@ -1,0 +1,14 @@
+[Unit]
+Description=Encryption handler for MYIR i.MX95 modules
+DefaultDependencies=no
+@@DEPENDENCIES@@
+RequiresMountsFor=/tmp /var
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/myir-enc.sh start
+ExecStop=/usr/sbin/myir-enc.sh stop
+RemainAfterExit=yes
+
+[Install]
+WantedBy=local-fs.target

@@ -1,0 +1,37 @@
+# Based on myd-jmx95-15x15-lpddr5.wks.in and myd-jmx95-15x15-lpddr5-enc.wks.in
+#
+# short-description: SD card image with dm-verity rootfs + plain data partition
+# long-description:
+# Security image for MYIR i.MX95 platforms.
+# Uses AHAB-signed imx-boot container + FIT-signed kernel +
+# dm-verity integrity-protected rootfs + plain ext4 data partition (/data).
+#
+#
+# The disk layout used is:
+#  - ---------- -------------- ------------------------------- --------------
+# | | imx-boot |     boot     |   rootfs (dm-verity rawcopy)  |    /data     |
+#  - ---------- -------------- ------------------------------- --------------
+# ^ ^          ^              ^                                ^              ^
+# | |          |              |                                |              |
+# 0 |        8MiB          264MiB                      (auto)              2048MiB
+#   ${IMX_BOOT_SEEK} = 32 (i.MX95)                     (from file)         (default)
+#
+# Partition 1: imx-boot    (AHAB container, raw at offset ${IMX_BOOT_SEEK})
+# Partition 2: /boot        (FAT, kernel FIT image + DTBs, 256 MiB)
+# Partition 3: /             (dm-verity rootfs, size auto-detected from .verity file)
+# Partition 4: /data         (plain ext4, size = ${MYIR_DATA_PARTITION_SIZE}, default 2048 MiB)
+#
+#
+# Comparison with MYIR encrypted variant (-enc.wks.in):
+#   -enc.wks.in:  /run/encdata partition is encrypted with dm-crypt at first boot.
+#   -data.wks.in: /data partition is plain ext4, ready to use immediately.
+#
+# Override /data size in local.conf:
+#   MYIR_DATA_PARTITION_SIZE = "4096"
+#
+part u-boot --source rawcopy --sourceparams="file=imx-boot-signed" --ondisk mmcblk --no-table --align ${IMX_BOOT_SEEK}
+part /boot --source bootimg-partition --ondisk mmcblk --fstype=vfat --label boot --active --align 8192 --fixed-size 256
+part / --source rawcopy --ondisk mmcblk --sourceparams="file=${IMGDEPLOYDIR}/${DM_VERITY_IMAGE}-${MACHINE}${IMAGE_NAME_SUFFIX}.${DM_VERITY_IMAGE_TYPE}.verity"
+part /data --ondisk mmcblk --fstype=ext4 --label DATA --align 8192 --size ${MYIR_DATA_PARTITION_SIZE}
+
+bootloader --ptable msdos

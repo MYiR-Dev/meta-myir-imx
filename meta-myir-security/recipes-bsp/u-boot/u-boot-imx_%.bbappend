@@ -7,6 +7,12 @@ SRC_URI:append:mx9-generic-bsp = " \
         'file://mx9-generic-bsp/u-boot-hab.cfg', '', d)} \
 "
 
+# fitImage boot + FIT signature verification for i.MX95
+SRC_URI:append = " \
+    ${@bb.utils.contains("MYIR_AHAB_ENABLE", "1", \
+        "file://fitimage-boot.cfg", "", d)} \
+"
+
 # Secure boot combined config
 SRC_URI:append = " \
     ${@bb.utils.contains('MYIR_AHAB_ENABLE', '1', \
@@ -14,10 +20,10 @@ SRC_URI:append = " \
 "
 
 # FIT signature verification
-SRC_URI:append = " \
-    ${@bb.utils.contains('MYIR_AHAB_ENABLE', '1', \
-        'file://fit-signature.cfg', '', d)} \
-"
+#SRC_URI:append = " \
+#    ${@bb.utils.contains('MYIR_AHAB_ENABLE', '1', \
+#        'file://fit-signature.cfg', '', d)} \
+#"
 
 # Hardening (command whitelist, bootm/CLI/bootargs protection)
 SRC_URI:append = " \
@@ -30,8 +36,9 @@ SRC_URI:append = " \
     ${@bb.utils.contains('MYIR_AHAB_ENABLE', '1', \
         'file://disable-bootmeths.cfg', '', d)} \
 "
-UBOOT_CONFIG_FRAGMENT:append = "${@bb.utils.contains('DISTRO_FEATURES', 'sec_boot', ' u-boot-hab.cfg', '', d)}"
-UBOOT_CONFIG_FRAGMENT:append = "${@bb.utils.contains('DISTRO_FEATURES', 'sec_boot', ' u-boot-secure-boot.cfg', '', d)}"
-UBOOT_CONFIG_FRAGMENT:append = "${@bb.utils.contains('DISTRO_FEATURES', 'sec_boot', ' disable-bootmeths.cfg', '', d)}"
-UBOOT_CONFIG_FRAGMENT:append = "${@bb.utils.contains('UBOOT_SIGN_ENABLE', '1', ' file://fit-signature.cfg', '', d)}"
+#UBOOT_CONFIG_FRAGMENT:append = "${@bb.utils.contains('DISTRO_FEATURES', 'sec_boot', ' u-boot-hab.cfg', '', d)}"
+#UBOOT_CONFIG_FRAGMENT:append = "${@bb.utils.contains('DISTRO_FEATURES', 'sec_boot', ' u-boot-secure-boot.cfg', '', d)}"
+#UBOOT_CONFIG_FRAGMENT:append = "${@bb.utils.contains('DISTRO_FEATURES', 'sec_boot', ' fitimage-boot.cfg', '', d)}"
+#UBOOT_CONFIG_FRAGMENT:append = "${@bb.utils.contains('DISTRO_FEATURES', 'sec_boot', ' disable-bootmeths.cfg', '', d)}"
+#UBOOT_CONFIG_FRAGMENT:append = "${@bb.utils.contains('UBOOT_SIGN_ENABLE', '1', ' file://fit-signature.cfg', '', d)}"
 
