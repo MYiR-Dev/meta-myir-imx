@@ -9,7 +9,7 @@ SRC_URI:append:mx9-generic-bsp = " \
 
 # fitImage boot + FIT signature verification for i.MX95
 SRC_URI:append = " \
-    ${@bb.utils.contains("MYIR_AHAB_ENABLE", "1", \
+    ${@bb.utils.contains("ENABLE_FITIMAGE_SIGN", "1", \
         "file://fitimage-boot.cfg", "", d)} \
 "
 

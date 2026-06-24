@@ -15,7 +15,7 @@ SRC_URI = " \
     file://licenses/GPL-2;subdir=${BP} \
 "
 BOOT_IMAGE_NAME = "${@'imx-boot-signed' if d.getVar('SIGNED_BOOT') == 'signed' else 'imx-boot'}"
-BURN_SCRIPT = "${@('burn_emmc_%s_%s.sh' % (d.getVar('MACHINE'), d.getVar('DUAL_ROOTFS') or '')) if d.getVar('SIGN_BOOT') == 'signed' else ('burn_emmc_%s.sh' % d.getVar('MACHINE'))}"
+BURN_SCRIPT = "${@('burn_emmc_%s_%s.sh' % (d.getVar('MACHINE'), d.getVar('DUAL_ROOTFS') or '')) if d.getVar('SIGNED_BOOT') == 'signed' else ('burn_emmc_%s.sh' % d.getVar('MACHINE'))}"
 
 
 do_install[depends] += "${ROOTFS_IMAGE}:do_image_complete"
