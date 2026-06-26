@@ -5,6 +5,11 @@
 require recipes-fsl/images/myir-image-multimedia.bb
 
 inherit populate_sdk_qt6
+# Override: meta-qt6 populate_sdk_qt6_base forces SDKIMAGE_FEATURES += staticdev-pkgs,
+# but our PACKAGE_EXCLUDE prevents apt from installing Qt6 staticdev packages.
+# This conflict causes "no installation candidate" errors during do_populate_sdk.
+# Remove staticdev-pkgs since we do not ship Qt6 .a files in the SDK.
+SDKIMAGE_FEATURES:remove = " staticdev-pkgs"
 
 CONFLICT_DISTRO_FEATURES = "directfb"
 
