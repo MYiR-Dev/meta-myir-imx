@@ -1,9 +1,0 @@
-NXP Software Content Register
-
-Package:            meta-swupdate-myir
-Version:            walnascar_6.12.34
-Outgoing License:   MIT
-License File:       COPYING.MIT
-Description:    Yocto layer for SWUpdate.
-Release Location:   https://github.com/nxp-imx-support/meta-swupdate-imx
-Origin:             NXP (MIT)

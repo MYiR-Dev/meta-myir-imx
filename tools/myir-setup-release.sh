@@ -169,7 +169,6 @@ hook_in_layer meta-myir/meta-myir-bsp
 hook_in_layer meta-myir/meta-myir-sdk
 hook_in_layer meta-myir/meta-myir-ml
 hook_in_layer meta-myir/meta-myir-v2x
-hook_in_layer meta-myir/meta-swupdate-myir
 hook_in_layer meta-myir/meta-myir-security
 hook_in_layer meta-nxp-demo-experience
 hook_in_layer meta-nxp-connectivity/meta-nxp-matter-baseline
@@ -192,10 +191,10 @@ echo "BBLAYERS += \"\${BSPDIR}/sources/meta-freescale-ml\"" >> $BUILD_DIR/conf/b
 echo "BBLAYERS += \"\${BSPDIR}/sources/meta-hailo/meta-hailo-accelerator\"" >> $BUILD_DIR/conf/bblayers.conf
 echo "BBLAYERS += \"\${BSPDIR}/sources/meta-hailo/meta-hailo-libhailort\"" >> $BUILD_DIR/conf/bblayers.conf
 echo "BBLAYERS += \"\${BSPDIR}/sources/meta-hailo/meta-hailo-tappas\"" >> $BUILD_DIR/conf/bblayers.conf
-#if [ -d ../sources/meta-swupdate-imx ]; then
-#    echo -e "\n## Swupdate layers" >> $BUILD_DIR/conf/bblayers.conf
-#    echo "BBLAYERS += \"\${BSPDIR}/sources/meta-swupdate-imx\"" >> $BUILD_DIR/conf/bblayers.conf
-#fi
+if [ -d ../sources/meta-swupdate-imx ]; then
+    echo -e "\n## Swupdate layers" >> $BUILD_DIR/conf/bblayers.conf
+    echo "BBLAYERS += \"\${BSPDIR}/sources/meta-swupdate-imx\"" >> $BUILD_DIR/conf/bblayers.conf
+fi
 if [ -d ../sources/meta-swupdate ]; then
     echo -e "\n## Swupdate layers" >> $BUILD_DIR/conf/bblayers.conf
     echo "BBLAYERS += \"\${BSPDIR}/sources/meta-swupdate\"" >> $BUILD_DIR/conf/bblayers.conf
