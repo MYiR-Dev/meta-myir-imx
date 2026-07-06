@@ -8,18 +8,31 @@ inherit systemd
 DUAL_ROOTFS ?=""
 SIGNED_BOOT ?=""
 ROOTFS_IMAGE ?= "myir-image-emmc"
+DM_VERITY_IMAGE ?= ""
 
 SRC_URI = " \
     file://home/root/${BURN_SCRIPT};subdir=${BP} \
     file://fac-burn-emmc.service;subdir=${BP} \
     file://licenses/GPL-2;subdir=${BP} \
 "
-BOOT_IMAGE_NAME = "${@'imx-boot-signed' if d.getVar('SIGNED_BOOT') == 'signed' else 'imx-boot'}"
-BURN_SCRIPT = "${@('burn_emmc_%s_%s.sh' % (d.getVar('MACHINE'), d.getVar('DUAL_ROOTFS') or '')) if d.getVar('SIGNED_BOOT') == 'signed' else ('burn_emmc_%s.sh' % d.getVar('MACHINE'))}"
+BOOT_IMAGE_NAME = "${@'imx-boot-signed' if d.getVar('DM_VERITY_IMAGE') or d.getVar('SIGNED_BOOT') == 'signed' else 'imx-boot'}"
+BOOT_IMAGE_NAME:mx6ull-generic-bsp = "u-boot.imx"
+
+BOOT_IMAGE_DEST ?= "imx-boot"
+BOOT_IMAGE_DEST:mx6ull-generic-bsp = "u-boot.imx"
+BURN_SCRIPT = "${@'burn_emmc_%s_verity.sh' % d.getVar('MACHINE') \
+               if d.getVar('DM_VERITY_IMAGE') \
+               else ('burn_emmc_%s_%s.sh' % (d.getVar('MACHINE'), d.getVar('DUAL_ROOTFS') or '')) \
+               if d.getVar('SIGNED_BOOT') == 'signed' \
+               else 'burn_emmc_%s.sh' % d.getVar('MACHINE')}"
+
+DM_VERITY_IMAGE_TYPE ?= "ext4"
+ROOTFS_SRC_FILE = "${@d.getVar('DM_VERITY_IMAGE') + '-' + d.getVar('MACHINE') + '.' + d.getVar('DM_VERITY_IMAGE_TYPE') + '.verity' if d.getVar('DM_VERITY_IMAGE') else d.getVar('ROOTFS_IMAGE') + '-' + d.getVar('MACHINE') + '.rootfs.ext4'}"
 
 
 do_install[depends] += "${ROOTFS_IMAGE}:do_image_complete"
 do_install[depends] += "virtual/kernel:do_deploy"
+do_install[depends] += "${@'${DM_VERITY_IMAGE}:do_image_complete' if d.getVar('DM_VERITY_IMAGE') else ''}"
 
 do_install() {
     install -d ${D}${systemd_system_unitdir}
@@ -35,18 +48,31 @@ do_install() {
 
     # bootloader
     install -m 0644 ${DEPLOY_DIR_IMAGE}/${BOOT_IMAGE_NAME} \
-        ${D}${ROOT_HOME}/mfgimage/imx-boot
+        ${D}${ROOT_HOME}/mfgimage/${BOOT_IMAGE_DEST}
 
     # kernel + dtb
-    for i in ${IMAGE_BOOT_FILES}; do
+    for i in ${@" ".join(item.split(";")[0] for item in d.getVar("IMAGE_BOOT_FILES").split())}; do
         install -m 0644 ${DEPLOY_DIR_IMAGE}/${i} \
             ${D}${ROOT_HOME}/mfgimage/kernel_dtb/
     done
 
-    # rootfs
-    install -m 0644 \
-        ${DEPLOY_DIR_IMAGE}/${ROOTFS_IMAGE}-${MACHINE}.rootfs.ext4 \
-        ${D}${ROOT_HOME}/mfgimage/rootfs-full.ext4
+    # rootfs -- dm-verity / normal
+    if [ -n "${DM_VERITY_IMAGE}" ]; then
+        bbnote "myir-fac-burn: deploying dm-verity rootfs"
+        for f in ${DEPLOY_DIR_IMAGE}/${DM_VERITY_IMAGE}-${MACHINE}*.${DM_VERITY_IMAGE_TYPE}.verity; do
+            if [ -f "$f" ]; then
+                install -m 0644 "$f" ${D}${ROOT_HOME}/mfgimage/rootfs-full.verity
+                bbnote "myir-fac-burn: verity rootfs deployed from $f"
+                break
+            fi
+        done
+        [ -f ${D}${ROOT_HOME}/mfgimage/rootfs-full.verity ] || \
+            bbfatal ".verity file not found in DEPLOY_DIR_IMAGE for ${DM_VERITY_IMAGE}-${MACHINE}"
+    else
+        install -m 0644 \
+            ${DEPLOY_DIR_IMAGE}/${ROOTFS_IMAGE}-${MACHINE}.rootfs.ext4 \
+            ${D}${ROOT_HOME}/mfgimage/rootfs-full.ext4
+    fi
 }
 
 SYSTEMD_PACKAGES = "${PN}"

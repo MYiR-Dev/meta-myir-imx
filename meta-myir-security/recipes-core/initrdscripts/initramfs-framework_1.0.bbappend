@@ -10,4 +10,6 @@
 # ensures reliable detection since the variable is set globally
 # by myir-dmverity.bbclass via INHERIT.
 
-require ${@bb.utils.contains('MYIR_DM_VERITY_OVERLAY', '1', 'initramfs-framework-myir-dm.inc', '', d)}
+#require ${@bb.utils.contains('MYIR_DM_VERITY_OVERLAY', '1', 'initramfs-framework-myir-dm.inc', '', d)}
+include ${@bb.utils.contains('MYIR_DM_VERITY_OVERLAY', '1', 'initramfs-framework-myir-dm.inc', '', d)}
+
