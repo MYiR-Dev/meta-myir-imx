@@ -29,6 +29,7 @@ WKS_FILE:myir-dmverity = "myd-jmx95-15x15-lpddr5-dmverity-overlay.wks.in"
 # ==========================================================================
 WKS_FILE_DEPENDS:remove = "virtual/bootloader imx-boot"
 do_image_wic[depends] += "imx-boot:do_deploy virtual/bootloader:do_deploy"
+do_image_wic[depends] += "myir-initramfs-dmverity:do_image_complete"
 
 # ==========================================================================
 # Kernel container signing is for OS container mode (sec_boot only).

@@ -90,6 +90,7 @@ DEPENDS:remove = " \
 #           → WIC image assembled
 # ============================================================================
 do_image[nostamp] = "1"
+do_image_complete[nostamp] = "1"
 
 # Wait for rootfs:do_image_ext4 which generates the verity hash in
 # STAGING_VERITY_DIR.  This is safe (no cycle) because imx-boot was
