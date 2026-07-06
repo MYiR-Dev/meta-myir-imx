@@ -12,8 +12,8 @@ LICENSE = "BSD-3-Clause"
 LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=f2a70813bc08547f509361c08b718861"
 
 SRC_URI = "${IMX_SYSTEM_MANAGER_SRC};branch=${SRCBRANCH}"
-IMX_SYSTEM_MANAGER_SRC ?= "git://github.com/MYD-JMX95/imx-sm.git;protocol=https"
-SRCBRANCH = "feature_jmx95_walnascar"
+IMX_SYSTEM_MANAGER_SRC ?= "git://github.com/MYiR-Dev/imx-sm.git;protocol=https"
+SRCBRANCH = "develop_jmx95_walnascar"
 SRCREV = "71d598271444b9936259d78e01f8fc218b49e5f6"
 
 S = "${WORKDIR}/git"

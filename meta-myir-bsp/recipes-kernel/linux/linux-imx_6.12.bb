@@ -18,7 +18,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 DEPENDS += "coreutils-native"
 
 SRC_URI = "${LINUX_IMX_SRC}"
-LINUX_IMX_SRC ?= "git://github.com/MYD-JMX95/myir-imx-linux.git;protocol=https;branch=${SRCBRANCH}"
+LINUX_IMX_SRC ?= "git://github.com/MYiR-Dev/myir-imx-linux.git;protocol=https;branch=${SRCBRANCH}"
 SRCBRANCH = "develop_6.12.49"
 KBRANCH = "${SRCBRANCH}"
 LOCALVERSION = "-lts-next"
