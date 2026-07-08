@@ -1,0 +1,68 @@
+# i.MX6ULL HABv4 CSF Template — FIT Image Signing
+#
+# This CSF (Command Sequence File) is used by NXP CST to sign a FIT image
+# with appended IVT for i.MX6ULL processors. The HABv4 boot ROM validates
+# the IVT → CSF chain during bootm when CONFIG_IMX_HAB=y.
+#
+# Target:     i.MX6ULL / i.MX6UL / i.MX7 (HABv4)
+# Keys:       RSA 2048 or 4096 bit
+# Digest:     SHA-256
+# CST:        NXP Code Signing Tool v3.x (linux64)
+#
+# Two-level key model:
+#   SRK  →  (fused in eFuse, root of trust)
+#   CSFK →  (signs the CSF itself)
+#   IMGK →  (signs the image data)
+#
+# Placeholders (substituted by mx6ull_sign_fit.sh):
+#   @@MYIR_HABV4_SRK_TABLE@@       -> SRK table binary (fuse hash)
+#   @@MYIR_HABV4_SRK_SOURCE_IDX@@  -> SRK index (0-based, 0..3)
+#   @@MYIR_HABV4_CSF_KEY@@         -> CSF key certificate PEM
+#   @@MYIR_HABV4_IMG_KEY@@         -> IMG key certificate PEM
+#   @@MYIR_HABV4_IMG_IDX@@         -> IMG key install slot (2-3)
+#   @@SIGNED_IMAGE_PATH@@          -> Padded FIT+IVT file (CSF will be appended)
+#   @@IMAGE_LOAD_ADDR@@            -> DDR load address (0x80800000)
+#   @@AUTH_LENGTH@@                -> Bytes to hash (FIT + pad + IVT, excl. CSF)
+
+[Header]
+# HABv4 CSF header — CST will write signature format info here
+    Version = 4.2
+    Hash Algorithm = sha256
+    Engine Configuration = 0
+    Certificate Format = X509
+    Signature Format = CMS
+    Engine = SW
+
+[Install SRK]
+# SRK table contains the hash of all 4 SRK public keys
+# This is compared against the eFuse values at boot
+    File = "@@MYIR_HABV4_SRK_TABLE@@"
+    # Index of the SRK key used (0-based, 0..3)
+    Source index = @@MYIR_HABV4_SRK_SOURCE_IDX@@
+
+[Install CSFK]
+# CSFK (CSF Key) — signs the CSF commands
+# The CSF itself is validated by this key before any commands execute
+    File = "@@MYIR_HABV4_CSF_KEY@@"
+
+[Authenticate CSF]
+
+[Install Key]
+# Install IMG key into HAB key store slot @@MYIR_HABV4_IMG_IDX@@
+# This key will be used to verify the image signature
+    # Verify IMG key using SRK (index 0)
+    Verification index = 0
+    # Key store slot for the image key
+    Target Index = @@MYIR_HABV4_IMG_IDX@@
+    # IMG key certificate
+    File = "@@MYIR_HABV4_IMG_KEY@@"
+
+[Authenticate Data]
+    # Verify image data using the IMG key in key store
+    Verification index = @@MYIR_HABV4_IMG_IDX@@
+    # Blocks = <DDR_start> <file_offset> <hash_length> "file_path"
+    #   DDR_start:   memory address where image is loaded (for ROM verification)
+    #   file_offset: offset within file (0 = start of file)
+    #   hash_length: bytes to hash (raw FIT + padding + IVT, NOT CSF area)
+    #   file_path:   path to the padded FIT+IVT file for CST to read
+    Blocks = @@IMAGE_LOAD_ADDR@@ 0x00000000 @@AUTH_LENGTH@@ "@@SIGNED_IMAGE_PATH@@"

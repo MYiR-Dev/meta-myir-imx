@@ -1,0 +1,26 @@
+# HAB fuse template for i.MX6ULL
+# Format: H:<type>:<bank>:<word>:<value>
+#   H = Header
+#   T = Type (HAB)
+#   F = Fuse line (bank:word to program)
+#   C = Close command (bank:word:value)
+#
+# References:
+#   i.MX6ULL Reference Manual - Fusemap chapter
+#   i.MX6ULL Security Reference Manual - HAB section
+#
+# SRK hash fuses occupy 8 consecutive words in bank 3:
+#   Bank 3, Word 0-7: SRK_HASH[255:0]
+#
+# Close command: Bank 0, Word 6, bit 0 (SEC_CONFIG[0] = Closed)
+
+H:T:HAB
+H:F:3:0:
+H:F:3:1:
+H:F:3:2:
+H:F:3:3:
+H:F:3:4:
+H:F:3:5:
+H:F:3:6:
+H:F:3:7:
+H:C:0:6:0x00000002
