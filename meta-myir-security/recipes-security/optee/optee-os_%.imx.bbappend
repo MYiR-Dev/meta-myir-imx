@@ -10,4 +10,4 @@
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
-require ${@oe.utils.conditional('MYIR_OPTEE_STORAGE', 'rpmb', 'optee-os-rpmb-fs.inc', '', d)}
+include ${@oe.utils.conditional('MYIR_OPTEE_STORAGE', 'rpmb', 'optee-os-rpmb-fs.inc', 'no-optee-rpmb.inc', d)}
