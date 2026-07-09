@@ -52,8 +52,6 @@ SWUPDATE:mx9-nxp-bsp = "lua swupdate swupdate-www swupdate-progress swupdate-cli
 OPTEE_TEST          ?= ""
 OPTEE_TEST:mx9-nxp-bsp = "lvm2 optee-test python3-cryptography optee-examples openssl"
 
-OPTEE_TEST:mx6ull-nxp-bsp = "lvm2 optee-test optee-client python3-cryptography optee-examples openssl"
-
 EEPROM_PNSN      ?= ""
 EEPROM_PNSN:mx95-nxp-bsp  = "eeprom-pnsn"
 

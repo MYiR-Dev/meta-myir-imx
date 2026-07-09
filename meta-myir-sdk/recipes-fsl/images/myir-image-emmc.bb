@@ -23,8 +23,11 @@ IMAGE_INSTALL:remove = " packagegroup-hailo-tappas-dev-pkg"
 require recipes-fsl/images/myir-image-multimedia.bb
 SDKIMAGE_FEATURES:remove = " staticdev-pkgs"
 
+OPTEE_TEST_6ULL          ?= ""
+OPTEE_TEST_6ULL = "lvm2 optee-test optee-client python3-cryptography optee-examples openssl"
+
 IMAGE_INSTALL_PARSEC = " \
     os-release \
-    ${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'optee-client optee-os', '', d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'optee-client optee-os ${OPTEE_TEST_6ULL}', '', d)} \
 "
 CORE_IMAGE_EXTRA_INSTALL:append:mx6ull-nxp-bsp = " ${IMAGE_INSTALL_PARSEC}"
