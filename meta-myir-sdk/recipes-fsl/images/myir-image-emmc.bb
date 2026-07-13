@@ -26,8 +26,13 @@ SDKIMAGE_FEATURES:remove = " staticdev-pkgs"
 OPTEE_TEST_6ULL          ?= ""
 OPTEE_TEST_6ULL = "lvm2 optee-test optee-client python3-cryptography optee-examples openssl"
 
+SWUPDATE_6ULL          ?= ""
+SWUPDATE_6ULL = "lua swupdate swupdate-www swupdate-progress swupdate-client swupdate-tools-ipc systemd-swusys json-c"
+
 IMAGE_INSTALL_PARSEC = " \
     os-release \
     ${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'optee-client optee-os ${OPTEE_TEST_6ULL}', '', d)} \
+    ${@bb.utils.contains('OTA_SUPPORT', '1', '${SWUPDATE_6ULL}', '', d)} \
 "
 CORE_IMAGE_EXTRA_INSTALL:append:mx6ull-nxp-bsp = " ${IMAGE_INSTALL_PARSEC}"
+IMAGE_FEATURES:remove = "tools-sdk dbg-pkgs dev-pkgs"
