@@ -21,8 +21,13 @@ ECHO_TTY="/dev/ttymxc0"
 burn_process()
 {
         echo timer > /sys/class/leds/${led}/trigger
-        echo 200 >  /sys/class/leds/${led}/delay_on
-        echo 200 >  /sys/class/leds/${led}/delay_off
+	while true; do
+        echo 200 > /sys/class/leds/${led1}/delay_on
+                sleep 1
+        echo 200 > /sys/class/leds/${led1}/delay_off
+        echo "Updating..." > ${ECHO_TTY}
+        sleep 1
+        done
 }
 
 burn_sucesss()
@@ -64,7 +69,7 @@ mksdcard() {
 	node=$1
 	#partition size in 10M
 	BOOT_ROM_SIZE=10
-	KERNEL_DTB_SIZE=200
+	KERNEL_DTB_SIZE=38
 	RESERVED_SIZE=50
 	ALIGN_FIX=8
 	
@@ -184,7 +189,8 @@ check_rootfs() {
 ########################################
 # Ö÷Á÷³Ì
 ########################################
-burn_process
+burn_process &
+LED_PID=$!
 
 echo_fun "start format mmc"
 mksdcard ${EMMC_NODE}
@@ -203,3 +209,9 @@ check_rootfs
 enable_bootpart
 
 burn_sucesss
+
+echo "---------------------------update success---------------------------" > ${ECHO_TTY}
+echo "---------------------------update success---------------------------" > ${ECHO_TTY}
+echo "---------------------------update success---------------------------" > ${ECHO_TTY}
+
+kill $LED_PID
