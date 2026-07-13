@@ -120,67 +120,22 @@ include ${MYIR_UBOOT_HAB_TEE_INC}
 # Support both multi-config (UBOOT_CONFIG) and single-config modes.
 # ==========================================================================
 do_deploy:append:mx6ull-generic-bsp() {
-    ENVSIZE=8192
-
-    if [ -n "${UBOOT_CONFIG}" ]; then
-        for type in ${UBOOT_CONFIG}; do
-            INITENV="${DEPLOYDIR}/${UBOOT_INITIAL_ENV}-${type}"
-            ENVBIN="${DEPLOYDIR}/u-boot-env.bin"
-            if [ -f "$INITENV" ]; then
-                bbnote "uboot-env-bin: Generating $ENVBIN from $INITENV (size=$ENVSIZE)"
-
-                python3 -c "
-import struct, zlib, sys
-
-size = int(sys.argv[1])
-with open(sys.argv[2], 'r') as f:
-    data = f.read().rstrip('\\n').replace('\\n', '\\0') + '\\0'
-
-# Pad to env size (minus 4 bytes for CRC32 header)
-flags = 0x01  # active flag for redundant env
-padded = data.ljust(size - 5, '\0')
-# U-Boot env format: bytes[0:4] = CRC32(data[4:]) in LE
-crc = zlib.crc32(padded.encode()) & 0xffffffff
-with open(sys.argv[3], 'wb') as f:
-    f.write(struct.pack('<I', crc))
-    f.write(bytes([flags]))  # 1-byte active flag
-    f.write(padded.encode())
-" $ENVSIZE "$INITENV" "$ENVBIN"
-
-                bbnote "uboot-env-bin: $ENVBIN generated ($(stat -L -c%s $ENVBIN) bytes)"
-                break
-            fi
-        done
-        if [ ! -f "${DEPLOYDIR}/u-boot-env.bin" ]; then
-            bbwarn "uboot-env-bin: no initial-env found for types ${UBOOT_CONFIG}, skipping"
-        fi
-    else
-        INITENV="${DEPLOYDIR}/${UBOOT_INITIAL_ENV}"
-        ENVBIN="${DEPLOYDIR}/u-boot-env.bin"
-        if [ -f "$INITENV" ]; then
-            bbnote "uboot-env-bin: Generating $ENVBIN from $INITENV (size=$ENVSIZE)"
-
-            python3 -c "
-import struct, zlib, sys
-
-size = int(sys.argv[1])
-with open(sys.argv[2], 'r') as f:
-    data = f.read().rstrip('\\n').replace('\\n', '\\0') + '\\0'
-
-# Pad to env size (minus 4 bytes for CRC32 header)
-flags = 0x01  # active flag for redundant env
-padded = data.ljust(size - 5, '\0')
-# U-Boot env format: bytes[0:4] = CRC32(data[4:]) in LE
-crc = zlib.crc32(padded.encode()) & 0xffffffff
-with open(sys.argv[3], 'wb') as f:
-    f.write(struct.pack('<I', crc))
-    f.write(bytes([flags]))  # 1-byte active flag
-    f.write(padded.encode())
-" $ENVSIZE "$INITENV" "$ENVBIN"
-
-            bbnote "uboot-env-bin: $ENVBIN generated ($(stat -L -c%s $ENVBIN) bytes)"
-        else
-            bbwarn "uboot-env-bin: $INITENV not found, skipping env binary generation"
-        fi
-    fi
+    # Select pre-built u-boot-env binary based on MYIR_HAB_TEE_MODE
+    #   fit    -> u-boot-env-fit.bin    (FIT image boot with OP-TEE)
+    #   nonfit -> u-boot-env-nonfit.bin (non-FIT HAB boot with OP-TEE)
+    #   unset  -> u-boot-env.bin        (legacy fallback)
+    case "${MYIR_HAB_TEE_MODE}" in
+        fit)
+            SRC_ENVBIN="u-boot-env-fit.bin"
+            ;;
+        nonfit)
+            SRC_ENVBIN="u-boot-env-nonfit.bin"
+            ;;
+        *)
+            SRC_ENVBIN="u-boot-env.bin"
+            ;;
+    esac
+    ENVBIN="${DEPLOYDIR}/u-boot-env.bin"
+    install -m 0644 ${THISDIR}/files/${SRC_ENVBIN} ${ENVBIN}
+    bbnote "uboot-env-bin (MYIR_HAB_TEE_MODE=${MYIR_HAB_TEE_MODE}): Installed ${ENVBIN} ($(stat -L -c%s ${ENVBIN}) bytes)"
 }
