@@ -169,7 +169,6 @@ hook_in_layer meta-myir/meta-myir-bsp
 hook_in_layer meta-myir/meta-myir-sdk
 hook_in_layer meta-myir/meta-myir-ml
 hook_in_layer meta-myir/meta-myir-v2x
-hook_in_layer meta-myir/meta-myir-security
 hook_in_layer meta-nxp-demo-experience
 hook_in_layer meta-nxp-connectivity/meta-nxp-matter-baseline
 hook_in_layer meta-nxp-connectivity/meta-nxp-openthread
@@ -198,6 +197,10 @@ fi
 if [ -d ../sources/meta-swupdate ]; then
     echo -e "\n## Swupdate layers" >> $BUILD_DIR/conf/bblayers.conf
     echo "BBLAYERS += \"\${BSPDIR}/sources/meta-swupdate\"" >> $BUILD_DIR/conf/bblayers.conf
+fi
+if [ -d ../sources/meta-myir/meta-myir-security ]; then
+    echo -e "\n## security layers" >> $BUILD_DIR/conf/bblayers.conf
+    echo "BBLAYERS += \"\${BSPDIR}/sources/meta-myir/meta-myir-security\"" >> $BUILD_DIR/conf/bblayers.conf
 fi
 
 echo BSPDIR=${BSPDIR:-UNSET}
