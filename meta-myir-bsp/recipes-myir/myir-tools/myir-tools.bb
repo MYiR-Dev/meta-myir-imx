@@ -11,6 +11,7 @@ SRC_URI = " \
     file://etc/myir_test/myir_audio_play;subdir=${BP} \
     file://etc/myir_test/myir_camera_capture;subdir=${BP} \
     file://etc/myir_test/myir_camera_preview;subdir=${BP} \
+    file://etc/myir_test/myir_audio_arecord;subdir=${BP} \
     file://usr/share/myir/song.mp3;subdir=${BP} \
     file://usr/share/myir/song.wav;subdir=${BP} \
     file://licenses/GPL-2;subdir=${BP} \
@@ -19,7 +20,16 @@ SRC_URI = " \
 
 S = "${WORKDIR}/${BP}"
 
-do_install() {
+do_install:mx6ull-nxp-bsp() {
+    install -d ${D}${datadir}/myir/Music
+    install -d ${D}/etc/myir_test
+
+
+    install -m 0644 ${S}/usr/share/myir/myir_audio_arecord ${D}/etc/myir_test/
+    install -m 0644 ${S}/usr/share/myir/song.wav ${D}${datadir}/myir/Music/
+}
+
+do_install:mx93-nxp-bsp() {
     install -d ${D}${datadir}/myir/Music
     install -d ${D}/etc/myir_test
 
@@ -30,6 +40,18 @@ do_install() {
     install -m 0644 ${S}/usr/share/myir/song.mp3 ${D}${datadir}/myir/Music/
     install -m 0644 ${S}/usr/share/myir/song.wav ${D}${datadir}/myir/Music/
 }
+
+
+do_install:mx95-nxp-bsp() {
+    install -d ${D}${datadir}/myir/Music
+    install -d ${D}/etc/myir_test
+
+    install -m 0755 ${S}/etc/myir_test/myir_audio_play ${D}/etc/myir_test/
+
+    install -m 0644 ${S}/usr/share/myir/song.mp3 ${D}${datadir}/myir/Music/
+    install -m 0644 ${S}/usr/share/myir/song.wav ${D}${datadir}/myir/Music/
+}
+
 
 FILES:${PN} += " \
     ${datadir}/myir/Music/ \

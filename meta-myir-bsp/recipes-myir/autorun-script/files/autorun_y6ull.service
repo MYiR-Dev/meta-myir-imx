@@ -1,0 +1,10 @@
+[Unit]
+Description=auto run script after system startup
+After=multi-user.target psplash-start@fb0.service psplash-systemd.service
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/autorun.sh
+
+[Install]
+WantedBy=multi-user.target

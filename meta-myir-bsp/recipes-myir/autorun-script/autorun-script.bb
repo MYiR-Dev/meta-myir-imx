@@ -8,7 +8,9 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI = " \
     file://autorun.service;subdir=${BP} \
+    file://autorun_y6ull.service;subdir=${BP} \
     file://autorun.sh;subdir=${BP} \
+    file://autorun_y6ull.sh;subdir=${BP} \
     file://licenses/GPL-2;subdir=${BP} \
 "
 
@@ -16,10 +18,18 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 inherit systemd
 
-do_install() {
+do_install:mx6ull-nxp-bsp() {
     install -d ${D}${systemd_system_unitdir}
  		install -d ${D}${bindir}
    
+    install -m 0644 ${S}/autorun_y6ull.service ${D}${systemd_system_unitdir}/autorun.service
+    install -m 0755 ${S}/autorun_y6ull.sh ${D}${bindir}/autorun.sh
+}
+
+do_install:mx9-nxp-bsp() {
+    install -d ${D}${systemd_system_unitdir}
+                install -d ${D}${bindir}
+
     install -m 0644 ${S}/autorun.service ${D}${systemd_system_unitdir}/
     install -m 0755 ${S}/autorun.sh ${D}${bindir}/
 }

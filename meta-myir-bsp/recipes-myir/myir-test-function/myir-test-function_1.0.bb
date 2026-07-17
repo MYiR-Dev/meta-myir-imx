@@ -7,7 +7,10 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI = " \
     file://uart_test.c;subdir=${BP} \
+    file://uart.c;subdir=${BP} \
     file://watchdog.c;subdir=${BP} \
+    file://watchdog_y6ull.c;subdir=${BP} \
+    file://ecspi_test.c;subdir=${BP} \
     file://Makefile;subdir=${BP} \
 "
 
@@ -17,7 +20,15 @@ do_compile() {
     oe_runmake
 }
 
-do_install() {
+do_install:mx6ull-nxp-bsp() {
+    install -d ${D}${bindir}
+
+    install -m 0755 ${S}/uart ${D}${bindir}/uart_test
+    install -m 0755 ${S}/watchdog_y6ull ${D}${bindir}/watchdog_test
+    install -m 0755 ${S}/ecspi_test ${D}${bindir}/ecspi_test
+}
+
+do_install:mx9-nxp-bsp() {
     install -d ${D}${bindir}
 
     install -m 0755 ${S}/uart_test ${D}${bindir}/uart_test
@@ -27,4 +38,5 @@ do_install() {
 FILES:${PN} += " \
     ${bindir}/uart_test \
     ${bindir}/watchdog_test \
+    ${bindir}/ecspi_test \
 "
