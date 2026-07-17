@@ -1,0 +1,22 @@
+#!/bin/sh -x
+
+mdev="/dev/media0"
+mediactl="media-ctl -d $mdev"
+cam="ov5640 0-003c"
+csi="csidev-4ae00000.csi"
+isi="mxc_isi.0"
+code="UYVY8_1X16"
+fmt="YUYV"
+width="1920"
+height="1080"
+format="fmt:${code}/${width}x${height} field:none"
+
+$mediactl -r
+
+$mediactl -l "\"$cam\":0 -> \"$csi\":0 [1]"
+$mediactl -V "\"$cam\":0 [$format]"
+$mediactl -V "\"$csi\":0/0 [$format]"
+$mediactl -V "\"crossbar\":0 [$format]"
+$mediactl -V "\"$isi\":0 [$format]"
+
+gst-launch-1.0 v4l2src device=/dev/video0 io-mode=2 ! video/x-raw,format=YUY2,width=1920,height=1080,framerate=30/1 ! waylandsink

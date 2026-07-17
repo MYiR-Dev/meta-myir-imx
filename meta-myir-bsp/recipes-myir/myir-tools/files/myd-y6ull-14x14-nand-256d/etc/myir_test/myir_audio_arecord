@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# =====================================================
+# Usage:
+#   ./Audio_arecord.sh <record_seconds> <output_file.wav>
+# =====================================================
+
+if [ $# -ne 2 ]; then
+    echo "Usage: $0 <record_seconds> <output_file.wav>"
+    exit 1
+fi
+
+RECORD_TIME=$1
+OUTPUT_FILE=$2
+
+echo "========================================="
+echo "Audio Record Start"
+echo "Record Time : ${RECORD_TIME}s"
+echo "Output File : ${OUTPUT_FILE}"
+echo "========================================="
+
+amixer -c 1 set 'Left Capture Mux' IN2L
+amixer -c 1 set 'Right Capture Mux' IN2R
+
+amixer -c 1 set 'Left Capture Mode' 'Differential Line'
+amixer -c 1 set 'Right Capture Mode' 'Differential Line'
+
+arecord -D plughw:1,0 \
+        -f S16_LE \
+        -r 44100 \
+        -c 2 \
+        -d ${RECORD_TIME} \
+        ${OUTPUT_FILE}
+
+echo "========================================="
+echo "Record Finished"
+echo "Saved to ${OUTPUT_FILE}"
+echo "========================================="
