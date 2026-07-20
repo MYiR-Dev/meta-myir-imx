@@ -24,8 +24,7 @@ do_install:mx6ull-nxp-bsp() {
     install -d ${D}${datadir}/myir/Music
     install -d ${D}/etc/myir_test
 
-
-    install -m 0644 ${S}/usr/share/myir/myir_audio_arecord ${D}/etc/myir_test/
+    install -m 0644 ${S}/etc/myir_test/myir_audio_arecord ${D}/etc/myir_test/
     install -m 0644 ${S}/usr/share/myir/song.wav ${D}${datadir}/myir/Music/
 }
 
