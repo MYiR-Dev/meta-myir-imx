@@ -12,13 +12,13 @@ uart_test: uart_test.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 uart: uart.o
-        $(CC) -o $@ $^ $(LDFLAGS)
+	$(CC) -o $@ $^ $(LDFLAGS)
 
 watchdog_y6ull: watchdog_y6ull.o
-        $(CC) -o $@ $^ $(LDFLAGS)
+	$(CC) -o $@ $^ $(LDFLAGS) 
 
 ecspi_test: ecspi_test.o
-        $(CC) -o $@ $^ $(LDFLAGS)
+	$(CC) -o $@ $^ $(LDFLAGS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
