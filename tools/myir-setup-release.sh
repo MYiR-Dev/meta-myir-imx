@@ -108,7 +108,7 @@ if [ -z "$MACHINE" ]; then
 fi
 
 case $MACHINE in
-imx6*|imx7*)
+imx6*|imx7*|myd-y6ul*)
     : ok
     ;;
 *)
