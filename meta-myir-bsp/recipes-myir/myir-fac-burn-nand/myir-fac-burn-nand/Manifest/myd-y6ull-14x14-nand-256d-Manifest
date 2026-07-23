@@ -1,0 +1,7 @@
+# i.MX6UL
+ubootfile="u-boot.imx"
+kernelfile="zImage"
+dtbfilenand="myd-y6ull-14x14-nand-ddr256.dtb"
+#dtbfilenand="myd-y6ull-14x14-nand-ddr256-ecspi.dtb"
+rootfsfile="myir-image-nand-myd-y6ull-14x14-nand-256d.rootfs.ubi"
+ledname="heartbeat"
