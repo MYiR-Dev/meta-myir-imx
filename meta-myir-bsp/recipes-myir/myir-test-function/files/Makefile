@@ -1,7 +1,7 @@
 CC ?= gcc
 CFLAGS += -I.
 
-TARGETS = watchdog_test uart_test uart watchdog_y6ull ecspi_test
+TARGETS = watchdog_test uart_test uart watchdog_y6ull ecspi_test cam-preview
 
 all: $(TARGETS)
 
@@ -18,6 +18,9 @@ watchdog_y6ull: watchdog_y6ull.o
 	$(CC) -o $@ $^ $(LDFLAGS) 
 
 ecspi_test: ecspi_test.o
+	$(CC) -o $@ $^ $(LDFLAGS)
+
+cam-preview: cam-preview.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 %.o: %.c

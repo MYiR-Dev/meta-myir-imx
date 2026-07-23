@@ -11,6 +11,7 @@ SRC_URI = " \
     file://watchdog.c;subdir=${BP} \
     file://watchdog_y6ull.c;subdir=${BP} \
     file://ecspi_test.c;subdir=${BP} \
+    file://cam-preview.c;subdir=${BP} \
     file://Makefile;subdir=${BP} \
 "
 
@@ -26,6 +27,7 @@ do_install:mx6ull-nxp-bsp() {
     install -m 0755 ${S}/uart ${D}${bindir}/uart_test
     install -m 0755 ${S}/watchdog_y6ull ${D}${bindir}/watchdog_test
     install -m 0755 ${S}/ecspi_test ${D}${bindir}/ecspi_test
+    install -m 0755 ${S}/cam-preview ${D}${bindir}/cam-preview
 }
 
 do_install:mx9-nxp-bsp() {
