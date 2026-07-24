@@ -23,6 +23,8 @@ IMAGE_INSTALL:remove = " packagegroup-hailo-tappas-dev-pkg"
 require recipes-fsl/images/myir-image-multimedia.bb
 SDKIMAGE_FEATURES:remove = " staticdev-pkgs"
 
+IMAGE_INSTALL:append = " bc"
+
 OPTEE_TEST_6ULL          ?= ""
 OPTEE_TEST_6ULL = "lvm2 optee-test optee-client python3-cryptography optee-examples openssl"
 
