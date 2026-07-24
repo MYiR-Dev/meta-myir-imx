@@ -14,9 +14,7 @@ COMPATIBLE_MACHINE = "^(myd-y6ull-14x14-nand-256d|myd-y6ull-14x14-nand-512d)$"
 IMAGE_FEATURES += " \
     splash \
     nfs-client \
-    tools-debug \
     ssh-server-openssh \
-    hwcodecs \
     allow-empty-password \
     allow-root-login \
     empty-root-password \
@@ -24,18 +22,21 @@ IMAGE_FEATURES += " \
 "
 
 IMAGE_INSTALL += " \
-    packagegroup-imx-core-tools \
-    packagegroup-fsl-gstreamer1.0 \
-    packagegroup-fsl-gstreamer1.0-full \
     firmwared \
-    ${CLINFO} \
     curl \
+    bc \
+    evtest \
+    coreutils \
     net-tools \
+    memtester \
+    util-linux \
+    ethtool \
+    file \
     v4l-utils \
-    tcpdump \
     iperf3 \
-    hostapd \
-    sqlite3 \
+    can-utils \
+    i2c-tools \
+    udev-extraconf \
     tzdata \
     alsa-utils \
     serialcheck \
@@ -47,7 +48,6 @@ IMAGE_INSTALL += " \
     tslib-uinput \
     tslib-tests \
     bridge-utils \
-    libmodbus \
     ppp \
     ppp-quectel \
     libdrm \
@@ -64,33 +64,6 @@ IMAGE_INSTALL += " \
 SDKIMAGE_FEATURES:remove = " \
     staticdev-pkgs \
 "
-
-#imx6ull 256N256D 512N512D
-#256N256D
-MYIR_Y6ULX_256N256D_IMAGE_FEATURES = " \
-"
-
-MYIR_Y6ULX_256N256D_IMAGE_INSTALL = " \
-"
-
-#512N512D
-MYIR_Y6ULX_512N512D_IMAGE_FEATURES = " \
-    tools-profile \
-    tools-sdk \
-    package-management \
-"
-
-MYIR_Y6ULX_512N512D_IMAGE_INSTALL = " \
-    packagegroup-imx-security \
-"
-
-IMAGE_FEATURES:append:myd-y6ull-14x14-nand-256d = "${MYIR_Y6ULX_256N256D_IMAGE_FEATURES}"
-IMAGE_INSTALL:append:myd-y6ull-14x14-nand-256d = "${MYIR_Y6ULX_256N256D_IMAGE_INSTALL}"
-
-IMAGE_FEATURES:append:myd-y6ull-14x14-nand-512d = "${MYIR_Y6ULX_512N512D_IMAGE_FEATURES}"
-IMAGE_INSTALL:append:myd-y6ull-14x14-nand-512d = "${MYIR_Y6ULX_512N512D_IMAGE_INSTALL}"
-
-
 
 CLINFO              ?= ""
 CLINFO:imxgpu        = "clinfo"
