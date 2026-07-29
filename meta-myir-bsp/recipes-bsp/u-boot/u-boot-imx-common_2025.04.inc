@@ -8,7 +8,7 @@ SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH}"
 UBOOT_SRC ?= "git://github.com/MYiR-Dev/myir-imx-uboot.git;protocol=https"
 SRCBRANCH = "develop_v2025.04"
 LOCALVERSION ?= "-${SRCBRANCH}"
-SRCREV = "e78f488a9e8228fddf1f8d941412688ffe2f9a2f"
+SRCREV = "d4f5022970f098f495753a47b245189f1bebcf33"
 
 DEPENDS += " \
     bc-native \
