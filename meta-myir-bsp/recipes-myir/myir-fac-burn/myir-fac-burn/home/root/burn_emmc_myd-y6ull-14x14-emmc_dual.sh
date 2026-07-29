@@ -141,6 +141,11 @@ burn_kernel_dtb() {
         cp ${KERNEL_DTB_DIR}/* /mnt/mmcblk${PART}p${index}
         cmd_check $? "burn kernel/dtb failed"
 
+	# If fitImage-signed was copied, rename it to fitImage
+	if [ -f /mnt/mmcblk${PART}p${index}/fitImage-myd-y6ull-14x14-emmc-signed.bin ]; then
+	    mv /mnt/mmcblk${PART}p${index}/fitImage-myd-y6ull-14x14-emmc-signed.bin /mnt/mmcblk${PART}p${index}/fitImage
+	fi
+
         sync
         umount /mnt/mmcblk${PART}p${index}
     done
