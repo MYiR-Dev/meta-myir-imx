@@ -4,7 +4,7 @@ DESCRIPTION = "Boot from SD and burn full image to eMMC automatically"
 LICENSE = "GPL-2.0-only"
 LIC_FILES_CHKSUM = "file://licenses/GPL-2;md5=94d55d512a9ba36caa9b7df079bae19f"
 
-COMPATIBLE_MACHINE = "^(myd-lmx9x-11x11|myd-y6ull-14x14-emmc|myd-jmx95-15x15-lpddr5)$"
+COMPATIBLE_MACHINE = "^(myd-js8mpq|myd-lmx9x-11x11|myd-y6ull-14x14-emmc|myd-jmx95-15x15-lpddr5)$"
 
 inherit systemd
 DUAL_ROOTFS ?=""
