@@ -54,4 +54,4 @@ FILES:${PN} += "\
     ${datadir}/myir/Capture/myir.jpg \
 "
 
-COMPATIBLE_MACHINE = "(mx93-nxp-bsp|mx95-nxp-bsp)"
+COMPATIBLE_MACHINE = "(mx8mp-nxp-bsp|mx93-nxp-bsp|mx95-nxp-bsp)"

@@ -2,10 +2,11 @@ SUMMARY = "myir utils 2.0 - audio and camera test utilities"
 DESCRIPTION = "myir audio/camera test scripts and sample media files"
 
 LICENSE = "GPL-2.0-only"
-LIC_FILES_CHKSUM = "file://${THISDIR}/files/${MACHINE}/licenses/GPL-2;md5=a3ac5472be79591e880a452856ca24d1"
+MYIR_TOOLS_COMMON_DIR = "${THISDIR}/files/myd-lmx9x-11x11"
+LIC_FILES_CHKSUM = "file://${MYIR_TOOLS_COMMON_DIR}/licenses/GPL-2;md5=a3ac5472be79591e880a452856ca24d1"
 
 
-FILESEXTRAPATHS:prepend := "${THISDIR}/files/${MACHINE}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files/${MACHINE}:${MYIR_TOOLS_COMMON_DIR}:"
 
 SRC_URI = " \
     file://etc/myir_test/myir_audio_play;subdir=${BP} \
@@ -46,6 +47,17 @@ do_install:mx95-nxp-bsp() {
     install -d ${D}/etc/myir_test
 
     install -m 0755 ${S}/etc/myir_test/myir_audio_play ${D}/etc/myir_test/
+
+    install -m 0644 ${S}/usr/share/myir/song.mp3 ${D}${datadir}/myir/Music/
+    install -m 0644 ${S}/usr/share/myir/song.wav ${D}${datadir}/myir/Music/
+}
+
+do_install:mx8mp-nxp-bsp() {
+    install -d ${D}${datadir}/myir/Music
+    install -d ${D}/etc/myir_test
+
+    install -m 0755 ${S}/etc/myir_test/myir_audio_play ${D}/etc/myir_test/
+    install -m 0755 ${S}/etc/myir_test/myir_audio_arecord ${D}/etc/myir_test/
 
     install -m 0644 ${S}/usr/share/myir/song.mp3 ${D}${datadir}/myir/Music/
     install -m 0644 ${S}/usr/share/myir/song.wav ${D}${datadir}/myir/Music/

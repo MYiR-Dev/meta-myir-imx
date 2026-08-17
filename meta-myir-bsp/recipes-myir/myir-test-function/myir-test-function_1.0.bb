@@ -37,6 +37,13 @@ do_install:mx9-nxp-bsp() {
     install -m 0755 ${S}/watchdog_test ${D}${bindir}/watchdog_test
 }
 
+do_install:myd-js8mpq() {
+    install -d ${D}${bindir}
+
+    install -m 0755 ${S}/uart_test ${D}${bindir}/uart_test
+    install -m 0755 ${S}/watchdog_test ${D}${bindir}/watchdog_test
+}
+
 FILES:${PN} += " \
     ${bindir}/uart_test \
     ${bindir}/watchdog_test \

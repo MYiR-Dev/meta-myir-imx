@@ -18,6 +18,14 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 inherit systemd
 
+do_install:myd-js8mpq() {
+    install -d ${D}${systemd_system_unitdir}
+    install -d ${D}${bindir}
+
+    install -m 0644 ${S}/autorun.service ${D}${systemd_system_unitdir}/
+    install -m 0755 ${S}/autorun.sh ${D}${bindir}/
+}
+
 do_install:mx6ull-nxp-bsp() {
     install -d ${D}${systemd_system_unitdir}
  		install -d ${D}${bindir}

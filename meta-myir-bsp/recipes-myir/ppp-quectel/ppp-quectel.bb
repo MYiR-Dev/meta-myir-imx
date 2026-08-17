@@ -42,5 +42,14 @@ do_install:mx95-nxp-bsp() {
     install -m 0755 ${S}/quectel-chat-disconnect ${D}${sysconfdir}/ppp/chatscripts/
 }
 
+do_install:myd-js8mpq() {
+    install -d ${D}${sysconfdir}/ppp/chatscripts
+    install -d ${D}${sysconfdir}/ppp/peers
+
+    install -m 0755 ${S}/quectel-dial ${D}${sysconfdir}/ppp/peers/
+    install -m 0755 ${S}/quectel-chat-connect ${D}${sysconfdir}/ppp/chatscripts/
+    install -m 0755 ${S}/quectel-chat-disconnect ${D}${sysconfdir}/ppp/chatscripts/
+}
+
 
 FILES:${PN} += "${sysconfdir}/ppp"
