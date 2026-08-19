@@ -13,6 +13,12 @@ S = "${WORKDIR}/git/vvcam/v4l2"
 
 inherit module
 
+# The VVCAM top-level Makefile enters each driver directory through plain
+# recursive make calls.  Pass the complete Yocto kernel release as a make
+# command-line variable so those calls retain the kernel LOCALVERSION and the
+# resulting modules use the same vermagic as in-tree modules.
+EXTRA_OEMAKE:append = " KERNELRELEASE=${KERNEL_VERSION}"
+
 MODULES_MODULE_SYMVERS_LOCATION = "dwe"
 
 DEBUG_PREFIX_MAP:prepend = " \
