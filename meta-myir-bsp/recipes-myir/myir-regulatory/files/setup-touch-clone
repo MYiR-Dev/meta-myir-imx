@@ -29,6 +29,21 @@ calibration_matrix=$3 0.0 0.0 0.0 $4 0.0
 EOF
 }
 
+# The MIPI panel uses an I2C Goodix controller.  Do not let the generic
+# I2C-to-LVDS rule bind it to a disabled output when the DSI variant boots.
+# Resolve the connector name at runtime so this also works if its DRM card
+# number changes.
+DSI_OUT=""
+for status_file in /sys/class/drm/card*-DSI-*/status; do
+    [ -r "$status_file" ] || continue
+    [ "$(cat "$status_file")" = "connected" ] || continue
+
+    DSI_OUT=${status_file%/status}
+    DSI_OUT=${DSI_OUT##*/}
+    DSI_OUT=${DSI_OUT#*-}
+    break
+done
+
 if [ "$CLONE_MODE" = "1" ] && [ -n "$CLONE_SRC" ] && [ "$CLONE_SRC" != "0" ]; then
     case "$CLONE_SRC" in
         53) SOURCE_OUT="LVDS-1" ;;
@@ -70,6 +85,15 @@ EOF
     add_calib "generic ft5x06 (79)" "LVDS-1" "1.0" "1.0"
     add_calib "ILITEK ILITEK-TP" "HDMI-A-1" "1.0" "1.0"
     echo "touch-clone: extend mode, I2C->LVDS-1, USB->HDMI-A-1"
+fi
+
+if [ -n "$DSI_OUT" ]; then
+    cat >> "$RULES_FILE" << EOF
+# MIPI panel: its I2C Goodix touchscreen follows the connected DSI output
+SUBSYSTEM=="input", ENV{ID_INPUT_TOUCHSCREEN}=="1", ATTRS{name}=="Goodix Capacitive TouchScreen", ENV{WL_OUTPUT}="$DSI_OUT"
+EOF
+    add_calib "Goodix Capacitive TouchScreen" "$DSI_OUT" "1.0" "1.0"
+    echo "touch-clone: Goodix touchscreen -> $DSI_OUT"
 fi
 
 udevadm control --reload-rules

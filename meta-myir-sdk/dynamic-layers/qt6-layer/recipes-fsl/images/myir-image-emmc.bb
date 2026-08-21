@@ -5,7 +5,7 @@
 # This recipe is for mx93/mx95 machines only (Qt6-capable SOCs).
 # mx6ull uses the non-qt6 variant at:
 #   meta-myir-sdk/recipes-fsl/images/myir-image-emmc.bb
-COMPATIBLE_MACHINE = "(mx93-nxp-bsp|mx95-nxp-bsp)"
+COMPATIBLE_MACHINE = "(mx93-nxp-bsp|mx95-nxp-bsp|mx8mp-nxp-bsp)"
 
 require recipes-fsl/images/myir-image-multimedia.bb
 
@@ -67,5 +67,6 @@ QT6_IMAGE_INSTALL = " \
 
 IMAGE_INSTALL:append:mx93-nxp-bsp = " ${QT6_IMAGE_INSTALL}"
 IMAGE_INSTALL:append:mx95-nxp-bsp = " ${QT6_IMAGE_INSTALL}"
+IMAGE_INSTALL:append:mx8mp-nxp-bsp = " ${QT6_IMAGE_INSTALL}"
 
 export IMAGE_BASENAME = "myir-image-emmc"

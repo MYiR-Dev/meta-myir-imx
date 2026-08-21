@@ -48,9 +48,11 @@ DOCKER:mx9-nxp-bsp = "docker"
 
 SWUPDATE          ?= ""
 SWUPDATE:mx9-nxp-bsp = "lua swupdate swupdate-www swupdate-progress swupdate-client swupdate-tools-ipc systemd-swusys json-c"
+SWUPDATE:mx8mp-nxp-bsp = "lua swupdate swupdate-www swupdate-progress swupdate-client swupdate-tools-ipc systemd-swusys json-c"
 
 OPTEE_TEST          ?= ""
 OPTEE_TEST:mx9-nxp-bsp = "lvm2 optee-test python3-cryptography optee-examples openssl"
+OPTEE_TEST:mx8mp-nxp-bsp = "lvm2 optee-test python3-cryptography optee-examples openssl"
 
 EEPROM_PNSN      ?= ""
 EEPROM_PNSN:mx95-nxp-bsp  = "eeprom-pnsn"
@@ -155,6 +157,7 @@ CORE_IMAGE_EXTRA_INSTALL = " \
 # Machine-specific additions via Override syntax (standard BitBake idiom)
 # NOTE: mx9-nxp-bsp covers both mx93-nxp-bsp and mx95-nxp-bsp
 CORE_IMAGE_EXTRA_INSTALL:append:mx9-nxp-bsp = " ${CORE_IMAGE_EXTRA_INSTALL_MX9}"
+CORE_IMAGE_EXTRA_INSTALL:append:mx8mp-nxp-bsp = " ${CORE_IMAGE_EXTRA_INSTALL_MX9}"
 CORE_IMAGE_EXTRA_INSTALL:append:mx6ull-nxp-bsp = " ${CORE_IMAGE_EXTRA_INSTALL_MX6ULL}"
 
 # Dynamic extras (no machine condition needed each var has its own overrides)
