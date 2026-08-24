@@ -1,0 +1,14 @@
+# short-description: MYD-JS8MPQ SWUpdate A/B eMMC image
+# long-description:
+# Create matching boot and rootfs slots for the U-Boot environment layout:
+#   slot A: p1 boot_a,   p2 rootfs_a
+#   slot B: p3 boot_b,   p4 rootfs_b
+# The i.MX boot container remains in the raw area before the first partition.
+
+part u-boot --source rawcopy --sourceparams="file=imx-boot.tagged" --ondisk mmcblk --no-table --align ${IMX_BOOT_SEEK}
+part /boot --source bootimg-partition --ondisk mmcblk --fstype=vfat --label boot_a --active --align 8192 --fixed-size 256 --no-fstab-update
+part / --source rootfs --ondisk mmcblk --fstype=ext4 --label rootfs_a --align 8192 --no-fstab-update
+part --source bootimg-partition --ondisk mmcblk --fstype=vfat --label boot_b --align 8192 --fixed-size 256 --no-fstab-update
+part --source rootfs --ondisk mmcblk --fstype=ext4 --label rootfs_b --align 8192 --no-fstab-update
+
+bootloader --ptable msdos

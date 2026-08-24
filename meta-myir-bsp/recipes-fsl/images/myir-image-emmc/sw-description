@@ -1,0 +1,88 @@
+software =
+{
+    version = "@@SWUPDATE_VERSION@@";
+    description = "MYD-JS8MPQ SWUpdate A/B image";
+    hardware-compatibility: [ "1.0" ];
+
+    myd-js8mpq:
+    {
+        stable:
+        {
+            dualA_to_dualB:
+            {
+                images: (
+                {
+                    filename = "myir-image-emmc-@@MACHINE@@.rootfs.ext4.gz";
+                    device = "/dev/mmcblk1p4";
+                    compressed = "zlib";
+                    installed-directly = true;
+                    sha256 = "$swupdate_get_sha256(myir-image-emmc-@@MACHINE@@.rootfs.ext4.gz)";
+                }
+                );
+
+                files: (
+                    { filename = "Image"; path = "/Image"; device = "/dev/mmcblk1p3"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(Image)"; },
+                    { filename = "myd-js8mpq.dtb"; path = "/myd-js8mpq.dtb"; device = "/dev/mmcblk1p3"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq.dtb)"; },
+                    { filename = "myd-js8mpq-lvds1.dtb"; path = "/myd-js8mpq-lvds1.dtb"; device = "/dev/mmcblk1p3"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-lvds1.dtb)"; },
+                    { filename = "myd-js8mpq-lvds-dual.dtb"; path = "/myd-js8mpq-lvds-dual.dtb"; device = "/dev/mmcblk1p3"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-lvds-dual.dtb)"; },
+                    { filename = "myd-js8mpq-dsi.dtb"; path = "/myd-js8mpq-dsi.dtb"; device = "/dev/mmcblk1p3"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-dsi.dtb)"; },
+                    { filename = "myd-js8mpq-hdmi-ov5640.dtb"; path = "/myd-js8mpq-hdmi-ov5640.dtb"; device = "/dev/mmcblk1p3"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-hdmi-ov5640.dtb)"; },
+                    { filename = "myd-js8mpq-hdmi-ov13855-isp.dtb"; path = "/myd-js8mpq-hdmi-ov13855-isp.dtb"; device = "/dev/mmcblk1p3"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-hdmi-ov13855-isp.dtb)"; },
+                    { filename = "myd-js8mpq-lvds0-lvds1.dtb"; path = "/myd-js8mpq-lvds0-lvds1.dtb"; device = "/dev/mmcblk1p3"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-lvds0-lvds1.dtb)"; },
+                    { filename = "myd-js8mpq-2g.dtb"; path = "/myd-js8mpq-2g.dtb"; device = "/dev/mmcblk1p3"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-2g.dtb)"; },
+                    { filename = "myd-js8mpq-dsi-2g.dtb"; path = "/myd-js8mpq-dsi-2g.dtb"; device = "/dev/mmcblk1p3"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-dsi-2g.dtb)"; },
+                    { filename = "myd-js8mpq-lvds1-2g.dtb"; path = "/myd-js8mpq-lvds1-2g.dtb"; device = "/dev/mmcblk1p3"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-lvds1-2g.dtb)"; },
+                    { filename = "myd-js8mpq-lvds-dual-2g.dtb"; path = "/myd-js8mpq-lvds-dual-2g.dtb"; device = "/dev/mmcblk1p3"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-lvds-dual-2g.dtb)"; },
+                    { filename = "myd-js8mpq-hdmi-ov5640-2g.dtb"; path = "/myd-js8mpq-hdmi-ov5640-2g.dtb"; device = "/dev/mmcblk1p3"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-hdmi-ov5640-2g.dtb)"; },
+                    { filename = "myd-js8mpq-hdmi-ov13855-isp-2g.dtb"; path = "/myd-js8mpq-hdmi-ov13855-isp-2g.dtb"; device = "/dev/mmcblk1p3"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-hdmi-ov13855-isp-2g.dtb)"; },
+                    { filename = "myd-js8mpq-lvds0-lvds1-2g.dtb"; path = "/myd-js8mpq-lvds0-lvds1-2g.dtb"; device = "/dev/mmcblk1p3"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-lvds0-lvds1-2g.dtb)"; },
+                    { filename = "myd-js8mpq-hdmi-max96722-2g.dtb"; path = "/myd-js8mpq-hdmi-max96722-2g.dtb"; device = "/dev/mmcblk1p3"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-hdmi-max96722-2g.dtb)"; }
+                );
+
+                bootenv: (
+                    { name = "bootslot"; value = "dualB"; },
+                    { name = "upgrade_available"; value = "1"; },
+                    { name = "bootcount"; value = "0"; }
+                );
+            };
+
+            dualB_to_dualA:
+            {
+                images: (
+                {
+                    filename = "myir-image-emmc-@@MACHINE@@.rootfs.ext4.gz";
+                    device = "/dev/mmcblk1p2";
+                    compressed = "zlib";
+                    installed-directly = true;
+                    sha256 = "$swupdate_get_sha256(myir-image-emmc-@@MACHINE@@.rootfs.ext4.gz)";
+                }
+                );
+
+                files: (
+                    { filename = "Image"; path = "/Image"; device = "/dev/mmcblk1p1"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(Image)"; },
+                    { filename = "myd-js8mpq.dtb"; path = "/myd-js8mpq.dtb"; device = "/dev/mmcblk1p1"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq.dtb)"; },
+                    { filename = "myd-js8mpq-lvds1.dtb"; path = "/myd-js8mpq-lvds1.dtb"; device = "/dev/mmcblk1p1"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-lvds1.dtb)"; },
+                    { filename = "myd-js8mpq-lvds-dual.dtb"; path = "/myd-js8mpq-lvds-dual.dtb"; device = "/dev/mmcblk1p1"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-lvds-dual.dtb)"; },
+                    { filename = "myd-js8mpq-dsi.dtb"; path = "/myd-js8mpq-dsi.dtb"; device = "/dev/mmcblk1p1"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-dsi.dtb)"; },
+                    { filename = "myd-js8mpq-hdmi-ov5640.dtb"; path = "/myd-js8mpq-hdmi-ov5640.dtb"; device = "/dev/mmcblk1p1"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-hdmi-ov5640.dtb)"; },
+                    { filename = "myd-js8mpq-hdmi-ov13855-isp.dtb"; path = "/myd-js8mpq-hdmi-ov13855-isp.dtb"; device = "/dev/mmcblk1p1"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-hdmi-ov13855-isp.dtb)"; },
+                    { filename = "myd-js8mpq-lvds0-lvds1.dtb"; path = "/myd-js8mpq-lvds0-lvds1.dtb"; device = "/dev/mmcblk1p1"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-lvds0-lvds1.dtb)"; },
+                    { filename = "myd-js8mpq-2g.dtb"; path = "/myd-js8mpq-2g.dtb"; device = "/dev/mmcblk1p1"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-2g.dtb)"; },
+                    { filename = "myd-js8mpq-dsi-2g.dtb"; path = "/myd-js8mpq-dsi-2g.dtb"; device = "/dev/mmcblk1p1"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-dsi-2g.dtb)"; },
+                    { filename = "myd-js8mpq-lvds1-2g.dtb"; path = "/myd-js8mpq-lvds1-2g.dtb"; device = "/dev/mmcblk1p1"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-lvds1-2g.dtb)"; },
+                    { filename = "myd-js8mpq-lvds-dual-2g.dtb"; path = "/myd-js8mpq-lvds-dual-2g.dtb"; device = "/dev/mmcblk1p1"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-lvds-dual-2g.dtb)"; },
+                    { filename = "myd-js8mpq-hdmi-ov5640-2g.dtb"; path = "/myd-js8mpq-hdmi-ov5640-2g.dtb"; device = "/dev/mmcblk1p1"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-hdmi-ov5640-2g.dtb)"; },
+                    { filename = "myd-js8mpq-hdmi-ov13855-isp-2g.dtb"; path = "/myd-js8mpq-hdmi-ov13855-isp-2g.dtb"; device = "/dev/mmcblk1p1"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-hdmi-ov13855-isp-2g.dtb)"; },
+                    { filename = "myd-js8mpq-lvds0-lvds1-2g.dtb"; path = "/myd-js8mpq-lvds0-lvds1-2g.dtb"; device = "/dev/mmcblk1p1"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-lvds0-lvds1-2g.dtb)"; },
+                    { filename = "myd-js8mpq-hdmi-max96722-2g.dtb"; path = "/myd-js8mpq-hdmi-max96722-2g.dtb"; device = "/dev/mmcblk1p1"; filesystem = "vfat"; sha256 = "$swupdate_get_sha256(myd-js8mpq-hdmi-max96722-2g.dtb)"; }
+                );
+
+                bootenv: (
+                    { name = "bootslot"; value = "dualA"; },
+                    { name = "upgrade_available"; value = "1"; },
+                    { name = "bootcount"; value = "0"; }
+                );
+            };
+        };
+    };
+}
