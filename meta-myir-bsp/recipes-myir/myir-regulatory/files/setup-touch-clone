@@ -10,12 +10,16 @@ CLONE_MODE=$(sed -n '/^\[core\]/,/^\[/{s/^clone-mode=//p}' $WESTON_INI 2>/dev/nu
 CLONE_SRC=$(sed -n '/^\[core\]/,/^\[/{s/^clone-connector-id=//p}' $WESTON_INI 2>/dev/null)
 CLONE_EXTEND=$(sed -n '/^\[core\]/,/^\[/{s/^extend-connector-id=//p}' $WESTON_INI 2>/dev/null)
 
-# Remove existing calibrator sections (everything between [touchscreen-calibrator] and the next [section])
+# Remove existing calibrator sections and their leading separator.  Buffer
+# blank lines until the next non-blank line so trailing blanks are discarded
+# instead of accumulating every time this helper runs.
 awk '
-    BEGIN { skip=0 }
-    /^\[touchscreen-calibrator\]/ { skip=1; next }
+    BEGIN { skip=0; blanks="" }
+    /^\[touchscreen-calibrator\]/ { skip=1; blanks=""; next }
     /^\[/ && skip { skip=0 }
-    !skip
+    skip { next }
+    /^[[:space:]]*$/ { blanks=blanks $0 ORS; next }
+    { printf "%s", blanks; blanks=""; print }
 ' "$WESTON_INI" > "$WESTON_INI.tmp" && mv "$WESTON_INI.tmp" "$WESTON_INI"
 
 add_calib() {

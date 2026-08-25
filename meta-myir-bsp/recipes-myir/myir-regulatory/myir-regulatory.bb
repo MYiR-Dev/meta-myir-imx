@@ -12,6 +12,7 @@ SRC_URI = " \
     file://setup-touch-clone;subdir=${BP} \
     file://COPYING;subdir=${BP} \
 "
+SRC_URI:append:myd-js8mpq = " file://setup-touch-clone-js8mp;subdir=${BP}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
@@ -32,6 +33,16 @@ do_install() {
     echo "ExecStartPre=-/usr/bin/setup-touch-clone" >> ${D}/etc/systemd/system/weston.service.d/touch-clone.conf
 }
 
+# MYD-JS8MPQ uses an isolated dual-single-link LVDS implementation.  Keep the
+# board-specific clone policy out of the common helper and select it only
+# through this exact MACHINE override.
+do_install:append:myd-js8mpq() {
+    install -m 0755 ${S}/setup-touch-clone-js8mp ${D}/usr/bin/
+
+    echo "[Service]" > ${D}/etc/systemd/system/weston.service.d/touch-clone.conf
+    echo "ExecStartPre=-/usr/bin/setup-touch-clone-js8mp" >> ${D}/etc/systemd/system/weston.service.d/touch-clone.conf
+}
+
 FILES:${PN} += " \
     /usr/bin/check-touch-mapping \
     /usr/bin/setup-touch-clone \
@@ -39,3 +50,5 @@ FILES:${PN} += " \
     /etc/udev/rules.d/70-ilitek-usb-power.rules \
     /etc/systemd/system/weston.service.d/touch-clone.conf \
 "
+
+FILES:${PN}:append:myd-js8mpq = " /usr/bin/setup-touch-clone-js8mp"

@@ -1,0 +1,189 @@
+#!/bin/sh
+# setup-touch-clone-js8mp - select isolated display clone mode and touch mapping
+# The dual single-link LVDS DT explicitly opts in with fsl,channel-clone.
+
+WESTON_INI=${WESTON_INI:-/etc/xdg/weston/weston.ini}
+RULES_FILE=${RULES_FILE:-/etc/udev/rules.d/80-touch-output.rules}
+DRM_CLASS=${DRM_CLASS:-/sys/class/drm}
+CLONE_DT_PROPERTY=${CLONE_DT_PROPERTY:-/sys/firmware/devicetree/base/ldb-display-controller/fsl,channel-clone}
+CLONE_CONFIG_BACKUP=${CLONE_CONFIG_BACKUP:-/var/lib/myir-regulatory/weston.ini.before-channel-clone}
+SOC_COMPATIBLE=${SOC_COMPATIBLE:-/sys/firmware/devicetree/base/compatible}
+
+# This helper relies on the i.MX8MP LDB clone implementation and must not
+# rewrite Weston or touch configuration on other SoCs, even if it is copied
+# there by an older image.
+if [ ! -r "$SOC_COMPATIBLE" ] ||
+	! tr '\000' '\n' < "$SOC_COMPATIBLE" | grep -qx 'fsl,imx8mp'; then
+	echo "touch-clone: non-i.MX8MP platform, skip"
+	exit 0
+fi
+
+# Save and override the normal Weston configuration only for the opted-in dual
+# single-link LVDS variant.  Restore it when another DTB boots so HDMI, DSI,
+# single-channel LVDS, split-pixel dual-link LVDS and user settings are kept.
+if [ -e "$CLONE_DT_PROPERTY" ]; then
+	if [ ! -e "$CLONE_CONFIG_BACKUP" ]; then
+		mkdir -p "$(dirname "$CLONE_CONFIG_BACKUP")"
+		cp -p "$WESTON_INI" "$CLONE_CONFIG_BACKUP"
+	fi
+
+	CLONE_MODE=0
+	CLONE_SRC=0
+	CLONE_DST=0
+	CLONE_OUTPUT_MODE=off
+
+	set --
+	for status_file in "$DRM_CLASS"/card*-LVDS-*/status; do
+		[ -r "$status_file" ] || continue
+		[ "$(cat "$status_file")" = "connected" ] || continue
+
+		connector_dir=${status_file%/status}
+		connector_id=$(cat "$connector_dir/connector_id" 2>/dev/null)
+		[ -n "$connector_id" ] || continue
+		set -- "$@" "$connector_dir:$connector_id"
+	done
+
+	if [ "$#" -eq 2 ]; then
+		CLONE_MODE=1
+		CLONE_SRC=${1##*:}
+		CLONE_DST=${2##*:}
+		CLONE_OUTPUT_MODE=$(sed -n '1p' "${2%:*}/modes")
+		[ -n "$CLONE_OUTPUT_MODE" ] || CLONE_OUTPUT_MODE=1024x600
+	else
+		echo "touch-clone: fsl,channel-clone needs two connected LVDS outputs" >&2
+	fi
+
+	awk -v clone_mode="$CLONE_MODE" -v clone_src="$CLONE_SRC" \
+		-v clone_dst="$CLONE_DST" -v clone_output_mode="$CLONE_OUTPUT_MODE" '
+		/^\[/ { section = $0 }
+		section == "[core]" && /^clone-mode=/ {
+			print "clone-mode=" clone_mode
+			next
+		}
+		section == "[core]" && /^clone-connector-id=/ {
+			print "clone-connector-id=" clone_src
+			next
+		}
+		section == "[core]" && /^extend-connector-id=/ {
+			print "extend-connector-id=0"
+			next
+		}
+		section == "[cloneoutput]" && /^conn_id=/ {
+			print "conn_id=" clone_dst
+			next
+		}
+		section == "[cloneoutput]" && /^mode=/ {
+			print "mode=" clone_output_mode
+			next
+		}
+		{ print }
+	' "$WESTON_INI" > "$WESTON_INI.tmp" && mv "$WESTON_INI.tmp" "$WESTON_INI"
+elif [ -e "$CLONE_CONFIG_BACKUP" ]; then
+	cp -p "$CLONE_CONFIG_BACKUP" "$WESTON_INI"
+	rm -f "$CLONE_CONFIG_BACKUP"
+fi
+
+CLONE_MODE=$(sed -n '/^\[core\]/,/^\[/{s/^clone-mode=//p}' "$WESTON_INI" 2>/dev/null)
+CLONE_SRC=$(sed -n '/^\[core\]/,/^\[/{s/^clone-connector-id=//p}' "$WESTON_INI" 2>/dev/null)
+CLONE_EXTEND=$(sed -n '/^\[core\]/,/^\[/{s/^extend-connector-id=//p}' "$WESTON_INI" 2>/dev/null)
+
+# Remove existing calibrator sections and their leading separator.  Buffer
+# blank lines until the next non-blank line so trailing blanks are discarded
+# instead of accumulating every time this helper runs.
+awk '
+    BEGIN { skip=0; blanks="" }
+    /^\[touchscreen-calibrator\]/ { skip=1; blanks=""; next }
+    /^\[/ && skip { skip=0 }
+    skip { next }
+    /^[[:space:]]*$/ { blanks=blanks $0 ORS; next }
+    { printf "%s", blanks; blanks=""; print }
+' "$WESTON_INI" > "$WESTON_INI.tmp" && mv "$WESTON_INI.tmp" "$WESTON_INI"
+
+add_calib() {
+    # $1=name, $2=output, $3=sx, $4=sy
+    cat >> "$WESTON_INI" << EOF
+
+[touchscreen-calibrator]
+name=$1
+output=$2
+calibration_matrix=$3 0.0 0.0 0.0 $4 0.0
+EOF
+}
+
+# The MIPI panel uses an I2C Goodix controller.  Do not let the generic
+# I2C-to-LVDS rule bind it to a disabled output when the DSI variant boots.
+# Resolve the connector name at runtime so this also works if its DRM card
+# number changes.
+DSI_OUT=""
+for status_file in "$DRM_CLASS"/card*-DSI-*/status; do
+    [ -r "$status_file" ] || continue
+    [ "$(cat "$status_file")" = "connected" ] || continue
+
+    DSI_OUT=${status_file%/status}
+    DSI_OUT=${DSI_OUT##*/}
+    DSI_OUT=${DSI_OUT#*-}
+    break
+done
+
+if [ "$CLONE_MODE" = "1" ] && [ -n "$CLONE_SRC" ] && [ "$CLONE_SRC" != "0" ]; then
+	SOURCE_OUT=""
+	for connector_id_file in "$DRM_CLASS"/card*-*/connector_id; do
+		[ -r "$connector_id_file" ] || continue
+		[ "$(cat "$connector_id_file")" = "$CLONE_SRC" ] || continue
+
+		SOURCE_OUT=${connector_id_file%/connector_id}
+		SOURCE_OUT=${SOURCE_OUT##*/}
+		SOURCE_OUT=${SOURCE_OUT#*-}
+		break
+	done
+	[ -n "$SOURCE_OUT" ] || SOURCE_OUT=LVDS-1
+
+    if [ "$CLONE_EXTEND" = "0" ] || [ -z "$CLONE_EXTEND" ]; then
+        cat > $RULES_FILE << EOF
+# Clone mode: all touchscreens -> $SOURCE_OUT
+SUBSYSTEM=="input", ENV{ID_INPUT_TOUCHSCREEN}=="1", ENV{WL_OUTPUT}="$SOURCE_OUT"
+EOF
+
+        if [ "$SOURCE_OUT" = "LVDS-1" ]; then
+            add_calib "generic ft5x06 (79)" "LVDS-1" "1.0" "1.0"
+            add_calib "ILITEK ILITEK-TP" "LVDS-1" "0.5333" "0.5555"
+        else
+            add_calib "ILITEK ILITEK-TP" "HDMI-A-1" "1.0" "1.0"
+            add_calib "generic ft5x06 (79)" "HDMI-A-1" "1.875" "1.8"
+        fi
+        echo "touch-clone: clone($SOURCE_OUT source), all touches -> $SOURCE_OUT"
+
+    else
+        cat > $RULES_FILE << EOF
+# Clone+extend mode
+SUBSYSTEM=="input", ENV{ID_INPUT_TOUCHSCREEN}=="1", DEVPATH=="*/i2c*", ENV{WL_OUTPUT}="$SOURCE_OUT"
+SUBSYSTEM=="input", ENV{ID_INPUT_TOUCHSCREEN}=="1", DEVPATH=="*/usb*", ENV{WL_OUTPUT}="HDMI-A-1"
+EOF
+        add_calib "generic ft5x06 (79)" "$SOURCE_OUT" "1.0" "1.0"
+        add_calib "ILITEK ILITEK-TP" "HDMI-A-1" "1.0" "1.0"
+        echo "touch-clone: clone+extend"
+    fi
+else
+    cat > $RULES_FILE << EOF
+# Extend mode: I2C -> LVDS, USB -> HDMI
+SUBSYSTEM=="input", ENV{ID_INPUT_TOUCHSCREEN}=="1", DEVPATH=="*/i2c*", ENV{WL_OUTPUT}="LVDS-1"
+SUBSYSTEM=="input", ENV{ID_INPUT_TOUCHSCREEN}=="1", DEVPATH=="*/usb*", ENV{WL_OUTPUT}="HDMI-A-1"
+EOF
+    add_calib "generic ft5x06 (79)" "LVDS-1" "1.0" "1.0"
+    add_calib "ILITEK ILITEK-TP" "HDMI-A-1" "1.0" "1.0"
+    echo "touch-clone: extend mode, I2C->LVDS-1, USB->HDMI-A-1"
+fi
+
+if [ -n "$DSI_OUT" ]; then
+    cat >> "$RULES_FILE" << EOF
+# MIPI panel: its I2C Goodix touchscreen follows the connected DSI output
+SUBSYSTEM=="input", ENV{ID_INPUT_TOUCHSCREEN}=="1", ATTRS{name}=="Goodix Capacitive TouchScreen", ENV{WL_OUTPUT}="$DSI_OUT"
+EOF
+    add_calib "Goodix Capacitive TouchScreen" "$DSI_OUT" "1.0" "1.0"
+    echo "touch-clone: Goodix touchscreen -> $DSI_OUT"
+fi
+
+if [ -z "$SKIP_UDEV_RELOAD" ]; then
+	udevadm control --reload-rules
+	udevadm trigger --subsystem-match=input
+fi
