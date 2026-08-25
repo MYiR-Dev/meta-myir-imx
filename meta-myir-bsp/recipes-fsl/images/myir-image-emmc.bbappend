@@ -51,6 +51,7 @@ SWUPDATE_IMAGES:append:myd-js8mpq = " \
     myd-js8mpq-hdmi-ov5640.dtb \
     myd-js8mpq-hdmi-ov13855-isp.dtb \
     myd-js8mpq-lvds0-lvds1.dtb \
+    myd-js8mpq-hdmi-max96722.dtb \
     myd-js8mpq-2g.dtb \
     myd-js8mpq-dsi-2g.dtb \
     myd-js8mpq-lvds1-2g.dtb \
