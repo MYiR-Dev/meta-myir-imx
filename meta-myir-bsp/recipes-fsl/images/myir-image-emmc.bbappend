@@ -1,5 +1,9 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
+# Install the board-specific CAAM tagged-key stack only in explicitly enabled
+# MYD-JS8MPQ images. Other i.MX machines keep their existing package set.
+IMAGE_INSTALL:append:myd-js8mpq = "${@' packagegroup-myd-js8mpq-caam-dmcrypt' if d.getVar('MYD_JS8MPQ_CAAM_DMCRYPT') == '1' else ''}"
+
 # Generate the .swu bundle as part of the normal myir-image-emmc build for
 # MYD-JS8MPQ A/B images.
 IMAGE_CLASSES:append:myd-js8mpq = "${@bb.utils.contains('OTA_SUPPORT', '1', ' swupdate-image', '', d)}"

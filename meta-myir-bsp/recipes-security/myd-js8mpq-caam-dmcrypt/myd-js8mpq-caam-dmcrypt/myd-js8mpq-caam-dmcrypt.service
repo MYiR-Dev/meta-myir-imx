@@ -1,0 +1,16 @@
+[Unit]
+Description=MYD-JS8MPQ CAAM tagged-key encrypted data volume
+DefaultDependencies=no
+After=systemd-udev-trigger.service systemd-udev-settle.service
+Before=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/myd-js8mpq-caam-dmcrypt start
+ExecStop=/usr/sbin/myd-js8mpq-caam-dmcrypt stop
+RemainAfterExit=yes
+TimeoutStartSec=90
+TimeoutStopSec=30
+
+[Install]
+WantedBy=local-fs.target
