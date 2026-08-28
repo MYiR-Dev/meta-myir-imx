@@ -5,6 +5,7 @@ KERNEL_DTB_DIR=/root/mfgimage/kernel_dtb
 ROOTFS_FILE_EXT4=/root/mfgimage/rootfs-full.ext4
 ECHO_TTY=/dev/ttymxc1
 LED_NAME=blue
+BURN_PROCESS_PID=
 
 log()
 {
@@ -12,6 +13,23 @@ log()
     if [ -w "${ECHO_TTY}" ]; then
         echo "$*" > "${ECHO_TTY}"
     fi
+}
+
+stop_burn_process()
+{
+    if [ -n "${BURN_PROCESS_PID}" ]; then
+        kill "${BURN_PROCESS_PID}" 2>/dev/null || true
+        wait "${BURN_PROCESS_PID}" 2>/dev/null || true
+        BURN_PROCESS_PID=
+    fi
+}
+
+burn_process()
+{
+    while true; do
+        log "Updating..."
+        sleep 2
+    done
 }
 
 set_led()
@@ -25,6 +43,7 @@ set_led()
 
 fail()
 {
+    stop_burn_process
     log "ERROR: $*"
     set_led none
     if [ -w "/sys/class/leds/${LED_NAME}/brightness" ]; then
@@ -153,6 +172,8 @@ check_inputs
 check_not_running_from_emmc
 
 log "Factory burn target: ${EMMC_NODE}"
+burn_process &
+BURN_PROCESS_PID=$!
 partition_emmc
 burn_boot_partition
 burn_rootfs
@@ -160,5 +181,6 @@ burn_bootloader
 verify_rootfs
 sync
 
+stop_burn_process
 set_led heartbeat
 log "Factory burn completed successfully"

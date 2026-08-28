@@ -19,6 +19,9 @@ SRC_URI = " \
 "
 BOOT_IMAGE_NAME = "${@'imx-boot-signed' if d.getVar('DM_VERITY_IMAGE') or d.getVar('SIGNED_BOOT') == 'signed' else 'imx-boot'}"
 BOOT_IMAGE_NAME:mx6ull-generic-bsp = "u-boot.imx"
+# MYD-JS8MPQ HAB signing publishes the selected signed/unsigned container
+# through the common imx-boot deploy name.
+BOOT_IMAGE_NAME:myd-js8mpq = "imx-boot"
 
 BOOT_IMAGE_DEST ?= "imx-boot"
 BOOT_IMAGE_DEST:mx6ull-generic-bsp = "u-boot.imx"
