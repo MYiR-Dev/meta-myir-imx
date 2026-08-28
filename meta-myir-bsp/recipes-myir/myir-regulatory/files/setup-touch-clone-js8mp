@@ -30,6 +30,7 @@ if [ -e "$CLONE_DT_PROPERTY" ]; then
 	CLONE_MODE=0
 	CLONE_SRC=0
 	CLONE_DST=0
+	CLONE_EXTEND=0
 	CLONE_OUTPUT_MODE=off
 
 	set --
@@ -53,8 +54,23 @@ if [ -e "$CLONE_DT_PROPERTY" ]; then
 		echo "touch-clone: fsl,channel-clone needs two connected LVDS outputs" >&2
 	fi
 
+	# Select the connected HDMI output as the Weston extension output.  Do not
+	# hard-code a connector number because DRM IDs can change between boots.
+	for status_file in "$DRM_CLASS"/card*-HDMI-A-*/status; do
+		[ -r "$status_file" ] || continue
+		[ "$(cat "$status_file")" = "connected" ] || continue
+
+		connector_dir=${status_file%/status}
+		connector_id=$(cat "$connector_dir/connector_id" 2>/dev/null)
+		if [ -n "$connector_id" ]; then
+			CLONE_EXTEND=$connector_id
+			break
+		fi
+	done
+
 	awk -v clone_mode="$CLONE_MODE" -v clone_src="$CLONE_SRC" \
-		-v clone_dst="$CLONE_DST" -v clone_output_mode="$CLONE_OUTPUT_MODE" '
+		-v clone_dst="$CLONE_DST" -v clone_extend="$CLONE_EXTEND" \
+		-v clone_output_mode="$CLONE_OUTPUT_MODE" '
 		/^\[/ { section = $0 }
 		section == "[core]" && /^clone-mode=/ {
 			print "clone-mode=" clone_mode
@@ -65,7 +81,7 @@ if [ -e "$CLONE_DT_PROPERTY" ]; then
 			next
 		}
 		section == "[core]" && /^extend-connector-id=/ {
-			print "extend-connector-id=0"
+			print "extend-connector-id=" clone_extend
 			next
 		}
 		section == "[cloneoutput]" && /^conn_id=/ {
