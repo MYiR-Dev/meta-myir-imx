@@ -1,0 +1,40 @@
+From: MYIR Tech <support@myirtech.com>
+Date: Thu, 27 Aug 2026 11:00:00 +0800
+Subject: [PATCH] frontend: keep DRM compositor alive without connected outputs
+
+The DRM backend creates heads for disconnected connectors and keeps its udev
+hotplug monitor active. This allows a connector that becomes connected later
+to create and enable an output without restarting Weston.
+
+However, REQUIRE_OUTPUTS_ANY currently treats an empty layoutput list as an
+error because both failed_layoutputs and the list length are zero. This makes
+Weston exit during initialisation when no monitor is connected, before the DRM
+backend can receive a later hotplug event.
+
+Do not fail the initialisation when no layoutput was attempted. Preserve the
+existing failure policy when one or more detected outputs actually fail to
+enable.
+
+Upstream-Status: Inappropriate [i.MX8MP product startup policy]
+Signed-off-by: MYIR Tech <support@myirtech.com>
+---
+ frontend/main.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/frontend/main.c b/frontend/main.c
+index bea7ad51..35cabd4a 100644
+--- a/frontend/main.c
++++ b/frontend/main.c
+@@ -2977,7 +2977,12 @@ drm_process_layoutputs(struct wet_compositor *wet)
+ 	if (wet->require_outputs == REQUIRE_OUTPUTS_ALL_FOUND &&
+ 	    failed_layoutputs > 0)
+ 		return -1;
++
++	/* No layoutput means no output can currently be enabled. Keep
++	 * the compositor alive so a later hotplug can create the first output.
++	 * An attempted output which failed to enable must remain fatal. */
+ 	if (wet->require_outputs == REQUIRE_OUTPUTS_ANY &&
++	    failed_layoutputs > 0 &&
+ 	    failed_layoutputs == wl_list_length(&wet->layoutput_list))
+ 		return -1;
+ 
