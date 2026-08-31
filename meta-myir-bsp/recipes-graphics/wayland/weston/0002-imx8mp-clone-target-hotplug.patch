@@ -1,0 +1,100 @@
+From: MYIR Tech <support@myirtech.com>
+Date: Fri, 28 Aug 2026 10:00:00 +0800
+Subject: [PATCH] drm: keep i.MX8MP clone targets hotplug-aware
+
+Track connection state for clone targets and clear or restore their DRM
+connector, CRTC and plane state when HDMI hotplug changes. This is limited to
+the existing i.MX8MP G2D clone implementation.
+
+Upstream-Status: Inappropriate [i.MX8MP product-specific clone extension]
+Signed-off-by: MYIR Tech <support@myirtech.com>
+---
+ libweston/backend-drm/drm-internal.h |  1 +
+ libweston/backend-drm/drm.c          | 22 ++++++++++++++++++++++
+ libweston/backend-drm/kms.c          | 21 +++++++++++++++++++++
+ 3 files changed, 44 insertions(+)
+
+diff --git a/libweston/backend-drm/drm-internal.h b/libweston/backend-drm/drm-internal.h
+--- a/libweston/backend-drm/drm-internal.h
++++ b/libweston/backend-drm/drm-internal.h
+@@ -302,6 +302,7 @@
+ 	uint32_t plane_id;
+ 	uint32_t width;
+ 	uint32_t height;
++	bool connected;
+ };
+ 
+ struct drmcloneoutput{
+diff --git a/libweston/backend-drm/drm.c b/libweston/backend-drm/drm.c
+--- a/libweston/backend-drm/drm.c
++++ b/libweston/backend-drm/drm.c
+@@ -3316,6 +3316,7 @@
+ 				b->clone_info[clone_index].crtc_id = encoder->crtc_id;
+ 				b->clone_info[clone_index].conn_id = connector_id;
+ 				b->clone_info[clone_index].mode = find_mode(b, connector_id, conn);
++				b->clone_info[clone_index].connected = true;
+ 				b->clone_conn++;
+ 				clone_index++;
+ 				drmModeFreeEncoder(encoder);
+@@ -3385,6 +3385,22 @@
+ 		if (b->clone_mode && connector_id != (uint32_t)b->clone_connid) {
+ 			for (j = 0; j < b->clone_conn; j++) {
+ 				if (b->clone_info[j].conn_id == connector_id) {
++					drmModeConnector *clone_conn = drmModeGetConnector(device->drm.fd,
++										connector_id);
++					bool connected = clone_conn &&
++						clone_conn->connection == DRM_MODE_CONNECTED &&
++						clone_conn->count_modes > 0;
++					if (clone_conn && connected)
++						b->clone_info[j].mode = find_mode(b, connector_id,
++												 clone_conn);
++					if (b->clone_info[j].connected != connected) {
++						b->clone_info[j].connected = connected;
++						weston_log("DRM: clone target connector %d is %s.\n",
++								   connector_id,
++								   connected ? "connected" : "disconnected");
++						weston_compositor_damage_all(b->compositor);
++					}
++					drmModeFreeConnector(clone_conn);
+ 					NewConn = false;
+ 					break;
+ 				}
+@@ -3451,6 +3467,7 @@
+ 					}
+ 
+ 					b->clone_info[clone_index].conn_id = connector_id;
++					b->clone_info[clone_index].connected = true;
+ 					b->modecount++;
+ 					b->clone_info[clone_index].mode = conn->modes[0];
+ 					drmSetClientCap(device->drm.fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1);
+diff --git a/libweston/backend-drm/kms.c b/libweston/backend-drm/kms.c
+--- a/libweston/backend-drm/kms.c
++++ b/libweston/backend-drm/kms.c
+@@ -1264,6 +1264,27 @@
+ 	property_crtc_id = get_property_id(fd_drm, props, "CRTC_ID");
+ 	drmModeFreeObjectProperties(props);
+ 
++	if (!b->clone_info[index].connected) {
++		drmModeAtomicAddProperty(req, conn_id, property_crtc_id, 0);
++
++		props = drmModeObjectGetProperties(fd_drm, crtc_id,
++							 DRM_MODE_OBJECT_CRTC);
++		property_active = get_property_id(fd_drm, props, "ACTIVE");
++		property_mode_id = get_property_id(fd_drm, props, "MODE_ID");
++		drmModeFreeObjectProperties(props);
++		drmModeAtomicAddProperty(req, crtc_id, property_active, 0);
++		drmModeAtomicAddProperty(req, crtc_id, property_mode_id, 0);
++
++		props = drmModeObjectGetProperties(fd_drm, plane_id,
++							 DRM_MODE_OBJECT_PLANE);
++		property_crtc_id = get_property_id(fd_drm, props, "CRTC_ID");
++		property_fb_id = get_property_id(fd_drm, props, "FB_ID");
++		drmModeFreeObjectProperties(props);
++		drmModeAtomicAddProperty(req, plane_id, property_crtc_id, 0);
++		drmModeAtomicAddProperty(req, plane_id, property_fb_id, 0);
++		return 0;
++	}
++
+ 	drmModeCreatePropertyBlob(fd_drm, &b->clone_info[index].mode,
+ 			sizeof(b->clone_info[index].mode), &blob_id);
+ 

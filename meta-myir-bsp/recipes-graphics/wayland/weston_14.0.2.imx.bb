@@ -170,6 +170,8 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI:append = " file://clone_difResolution14_addextend_display_v14.0.2.diff"
 SRC_URI:append:mx8mp-nxp-bsp = " \
     file://0001-imx8mp-frontend-keep-weston-alive-without-output.patch \
+    file://0002-imx8mp-clone-target-hotplug.patch \
+    file://0003-imx8mp-clone-init-null-guards.patch \
 "
 
 PACKAGECONFIG:remove = "${PACKAGECONFIG_IMX_REMOVALS}"

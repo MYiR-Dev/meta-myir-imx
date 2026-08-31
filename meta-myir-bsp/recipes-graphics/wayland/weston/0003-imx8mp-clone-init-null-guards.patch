@@ -1,0 +1,25 @@
+From: MYIR Tech <support@myirtech.com>
+Date: Fri, 28 Aug 2026 12:30:00 +0800
+Subject: [PATCH] drm: avoid null clone encoder and plane dereferences
+
+Upstream-Status: Inappropriate [i.MX8MP product-specific clone extension]
+Signed-off-by: MYIR Tech <support@myirtech.com>
+---
+ libweston/backend-drm/drm.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/libweston/backend-drm/drm.c b/libweston/backend-drm/drm.c
+--- a/libweston/backend-drm/drm.c
++++ b/libweston/backend-drm/drm.c
+@@ -3307,0 +3308,8 @@
++				if (!encoder || !plane_res) {
++					weston_log("DRM: clone connector %d has no encoder/plane resources.\n",
++						   connector_id);
++					drmModeFreeEncoder(encoder);
++					drmModeFreeConnector(conn);
++					continue;
++				}
++
+@@ -3310,0 +3319,2 @@
++					if (!plane)
++						continue;
