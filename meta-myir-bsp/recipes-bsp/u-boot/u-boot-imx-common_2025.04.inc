@@ -5,11 +5,10 @@ LIC_FILES_CHKSUM = "file://Licenses/gpl-2.0.txt;md5=b234ee4d69f5fce4486a80fdaf4a
 
 SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH}"
 
-#UBOOT_SRC ?= "git://github.com/MYiR-Dev/myir-imx-uboot.git;protocol=https"
-UBOOT_SRC ?= "git:///media/disk_p/wujl/myd-js8mp/new_bsp/myir-imx-uboot;protocol=file"
+UBOOT_SRC ?= "git://github.com/MYiR-Dev/myir-imx-uboot.git;protocol=https"
 SRCBRANCH = "develop_v2025.04"
 LOCALVERSION ?= "-${SRCBRANCH}"
-SRCREV = "f81c194c178fb93ce97d9a8bdeca52fb9e051b3d"
+SRCREV = "b0af50d425014db8343b8b2aa71896e4c5728cae"
 
 DEPENDS += " \
     bc-native \
