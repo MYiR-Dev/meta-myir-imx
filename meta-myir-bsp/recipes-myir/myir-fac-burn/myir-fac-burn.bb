@@ -94,10 +94,19 @@ do_install() {
         ${D}${ROOT_HOME}/mfgimage/${BOOT_IMAGE_DEST}
 
     # kernel + dtb
+    #
+    # Keep the historical flattened layout for all boot files.  For the
+    # non-OTA MYD-JS8MPQ image, however, extlinux.conf must be placed below
+    # extlinux/ because that is the path searched by U-Boot bootflow.
     for i in ${@" ".join(item.split(";")[0] for item in d.getVar("IMAGE_BOOT_FILES").split())}; do
         install -m 0644 ${DEPLOY_DIR_IMAGE}/${i} \
             ${D}${ROOT_HOME}/mfgimage/kernel_dtb/
     done
+    if [ "${MACHINE}" = "myd-js8mpq" ] && [ "${UBOOT_EXTLINUX}" = "1" ]; then
+        install -m 0644 -D ${DEPLOY_DIR_IMAGE}/extlinux.conf \
+            ${D}${ROOT_HOME}/mfgimage/kernel_dtb/extlinux/extlinux.conf
+        rm -f ${D}${ROOT_HOME}/mfgimage/kernel_dtb/extlinux.conf
+    fi
 
     # rootfs -- dm-verity / normal
     if [ -n "${DM_VERITY_IMAGE}" ]; then
