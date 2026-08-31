@@ -1,0 +1,88 @@
+From: MYIR Tech <support@myirtech.com>
+Date: Fri, 28 Aug 2026 15:00:00 +0800
+Subject: [PATCH] drm: imx8mp hdmi prefer valid 4k30 mode
+
+Some 4K sinks advertise 3840x2160@60 as the EDID preferred mode.  The
+i.MX8MP HDMI path supports up to a 297 MHz pixel clock, so that mode is
+removed during DRM mode validation.  Without a replacement preferred mode,
+Weston can retain an older 2560x1440 mode even though 3840x2160@30 is valid.
+
+Promote the highest-refresh 3840x2160 mode at or below 297 MHz for i.MX8MP.
+The behaviour is opt-in in dw-hdmi because that driver is shared by other
+platforms, and it does not affect sinks which do not advertise a 4K mode.
+
+Upstream-Status: Inappropriate [i.MX8MP product policy]
+Signed-off-by: MYIR Tech <support@myirtech.com>
+---
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 28 ++++++++++++++++++++++++++++
+ drivers/gpu/drm/imx/dw_hdmi-imx.c         |  1 +
+ include/drm/bridge/dw_hdmi.h               |  3 +++
+ 3 files changed, 32 insertions(+)
+
+diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+index 6a46baa0737c..0781baa0737c 100644
+--- a/include/drm/bridge/dw_hdmi.h
++++ b/include/drm/bridge/dw_hdmi.h
+@@ -131,6 +131,9 @@ struct dw_hdmi_plat_data {
+ 	unsigned long input_bus_encoding;
+ 	bool use_drm_infoframe;
+ 	bool ycbcr_420_allowed;
++	/* Prefer a valid 3840x2160 mode when the EDID preferred mode is
++	 * outside the platform's supported pixel-clock range. */
++	bool prefer_4k30;
+ 
+ 	/*
+ 	 * Private data passed to all the .mode_valid() and .configure_phy()
+diff --git a/drivers/gpu/drm/imx/dw_hdmi-imx.c b/drivers/gpu/drm/imx/dw_hdmi-imx.c
+index ba9729fb06d9..38e6373ba6cf 100644
+--- a/drivers/gpu/drm/imx/dw_hdmi-imx.c
++++ b/drivers/gpu/drm/imx/dw_hdmi-imx.c
+@@ -311,6 +311,7 @@ static const struct dw_hdmi_plat_data imx8mp_hdmi_drv_data = {
+ 	.phy_ops    = &imx8mp_hdmi_phy_ops,
+ 	.phy_name   = "samsung_dw_hdmi_phy2",
+ 	.phy_force_vendor = true,
++	.prefer_4k30 = true,
+ 	.enable_audio	= imx8mp_hdmi_enable_audio,
+ 	.disable_audio  = imx8mp_hdmi_disable_audio,
+ };
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index ab425320136a..b4806e335aa1 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -2537,6 +2537,34 @@ static int dw_hdmi_connector_get_modes(struct drm_connector *connector)
+ 	cec_notifier_set_phys_addr(hdmi->cec_notifier,
+ 				   connector->display_info.source_physical_address);
+ 	ret = drm_edid_connector_add_modes(connector);
++
++	/*
++	 * Some 4K sinks advertise 3840x2160@60 as the EDID preferred mode.
++	 * i.MX8MP supports up to 297 MHz (3840x2160@30), so that preferred
++	 * mode is culled later by mode_valid().  Promote the highest-refresh
++	 * valid 4K mode now, otherwise userspace may keep an older 2K mode.
++	 * This is opt-in because dw-hdmi is shared by platforms with different
++	 * pixel-clock capabilities.
++	 */
++	if (hdmi->plat_data->prefer_4k30) {
++		struct drm_display_mode *mode, *best = NULL;
++
++		list_for_each_entry(mode, &connector->probed_modes, head) {
++			if (mode->hdisplay != 3840 || mode->vdisplay != 2160 ||
++			    mode->clock > 297000)
++				continue;
++
++			if (!best || drm_mode_vrefresh(mode) >
++				    drm_mode_vrefresh(best))
++				best = mode;
++		}
++
++		if (best) {
++			list_for_each_entry(mode, &connector->probed_modes, head)
++				mode->type &= ~DRM_MODE_TYPE_PREFERRED;
++			best->type |= DRM_MODE_TYPE_PREFERRED;
++		}
++	}
+ 	drm_edid_free(drm_edid);
+ 
+ 	return ret;
+-- 
+2.43.0
