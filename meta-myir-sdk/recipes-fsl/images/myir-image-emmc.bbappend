@@ -55,7 +55,6 @@ SWUPDATE_IMAGES:append:myd-js8mpq = " \
     myd-js8mpq-hdmi-ov5640.dtb \
     myd-js8mpq-hdmi-ov13855-isp.dtb \
     myd-js8mpq-lvds0-lvds1.dtb \
-    myd-js8mpq-hdmi-max96722.dtb \
     myd-js8mpq-2g.dtb \
     myd-js8mpq-dsi-2g.dtb \
     myd-js8mpq-lvds1-2g.dtb \
@@ -64,4 +63,18 @@ SWUPDATE_IMAGES:append:myd-js8mpq = " \
     myd-js8mpq-hdmi-ov13855-isp-2g.dtb \
     myd-js8mpq-lvds0-lvds1-2g.dtb \
     myd-js8mpq-hdmi-max96722-2g.dtb \
+"
+IMAGE_FEATURES:remove:myd-js8mpq = "tools-sdk"
+
+# Hailo：rootfs 使用 runtime，完整开发组放入 SDK
+CORE_IMAGE_EXTRA_INSTALL:remove:myd-js8mpq = " \
+    packagegroup-hailo-tappas-dev-pkg \
+"
+
+CORE_IMAGE_EXTRA_INSTALL:append:myd-js8mpq = " \
+    packagegroup-hailo-tappas \
+"
+
+TOOLCHAIN_TARGET_TASK:append:myd-js8mpq = " \
+    packagegroup-hailo-tappas-dev-pkg \
 "
