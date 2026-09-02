@@ -9,10 +9,16 @@ inherit  systemd
 
 S = "${WORKDIR}"
 
+MYIR_SWUPDATE_SCRIPT = "myir-swupdate.sh"
+# Only JS8MPQ uses PARTUUID root arguments; all other machines retain the
+# original device-name based script and behavior.
+MYIR_SWUPDATE_SCRIPT:myd-js8mpq = "myir-swupdate-js8mpq.sh"
+RDEPENDS:${PN}:myd-js8mpq += "util-linux-findmnt"
+
 SRC_URI = "file://hwrevision;subdir=${BP} \
            file://licenses/GPL-2;subdir=${BP} \
            file://myir-swupdate.service;subdir=${BP} \
-           file://myir-swupdate.sh;subdir=${BP} \
+           file://${MYIR_SWUPDATE_SCRIPT};subdir=${BP} \
            file://board_part_info.conf;subdir=${BP} \
            file://sw-versions;subdir=${BP} \
           "
@@ -36,7 +42,7 @@ do_install(){
 	install -d ${D}${sysconfdir}
 
 	install -m 644 ${S}/myir-swupdate.service ${D}${systemd_system_unitdir}/myir-swupdate.service
-	install -m 755 ${S}/myir-swupdate.sh ${D}${sysconfdir}/myir-swupdate.sh
+	install -m 755 ${S}/${MYIR_SWUPDATE_SCRIPT} ${D}${sysconfdir}/myir-swupdate.sh
 	install -m 644 ${S}/sw-versions ${D}${sysconfdir}/sw-versions
 	install -m 644 ${S}/hwrevision ${D}${sysconfdir}/hwrevision
 	echo "${MACHINE} ${HW_MAJOR}.${HW_MINOR}" >  ${D}${sysconfdir}/hwrevision

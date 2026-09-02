@@ -11,10 +11,11 @@ IMAGE_CLASSES:append:myd-js8mpq = "${@bb.utils.contains('OTA_SUPPORT', '1', ' sw
 SWUPDATE_VERSION:myd-js8mpq = "${DISTRO_VERSION}${IMAGE_VERSION_SUFFIX}"
 SWUPDATE_IMAGES_FSTYPES[myir-image-emmc] = ".ext4.gz"
 
-# meta-swupdate signs sw-description with the deployed key set. The default
-# development key is generated outside the layer. Production builds should
-# disable automatic generation and keep keys in a protected external path,
-# for example in local.conf or a CI secret configuration:
+# meta-swupdate signs sw-description with the deployed key set. The key
+# provider first uses the complete key set under recipes-myir/swupdate/swupdate,
+# then reuses an existing deploy key set, and only then generates development
+# keys when SWUPDATE_AUTO_GENERATE_KEYS is enabled. Production builds should
+# keep keys in a protected external path, for example in local.conf or CI:
 #
 #   SWUPDATE_AUTO_GENERATE_KEYS = "0"
 #   SWUPDATE_PRIVATE_KEY = "/secure/path/priv.pem"
@@ -22,11 +23,11 @@ SWUPDATE_IMAGES_FSTYPES[myir-image-emmc] = ".ext4.gz"
 #   SWUPDATE_PASSWORD_FILE = "/secure/path/priv.password"
 SWUPDATE_SIGNING:myd-js8mpq = "${@'RSA' if d.getVar('OTA_SUPPORT') == '1' else ''}"
 
-# Generate the development key set before both rootfs construction and SWU
-# signing. The public half installed here must match the private key used by
-# do_swuimage; otherwise CONFIG_SIGNED_IMAGES devices reject the bundle.
-do_rootfs[depends] += "${@'swupdate-signing-keys:do_deploy' if d.getVar('MACHINE') == 'myd-js8mpq' and d.getVar('OTA_SUPPORT') == '1' and d.getVar('SWUPDATE_AUTO_GENERATE_KEYS') == '1' else ''}"
-do_swuimage[depends] += "${@'swupdate-signing-keys:do_deploy' if d.getVar('MACHINE') == 'myd-js8mpq' and d.getVar('OTA_SUPPORT') == '1' and d.getVar('SWUPDATE_AUTO_GENERATE_KEYS') == '1' else ''}"
+# Always deploy and validate the selected key set before rootfs construction
+# and SWU signing. The public half installed here must match the private key
+# used by do_swuimage, or CONFIG_SIGNED_IMAGES rejects the bundle.
+do_rootfs[depends] += "${@'swupdate-signing-keys:do_deploy' if d.getVar('MACHINE') == 'myd-js8mpq' and d.getVar('OTA_SUPPORT') == '1' else ''}"
+do_swuimage[depends] += "${@'swupdate-signing-keys:do_deploy' if d.getVar('MACHINE') == 'myd-js8mpq' and d.getVar('OTA_SUPPORT') == '1' else ''}"
 
 install_swupdate_public_key() {
     if [ "${OTA_SUPPORT}" != "1" ]; then
