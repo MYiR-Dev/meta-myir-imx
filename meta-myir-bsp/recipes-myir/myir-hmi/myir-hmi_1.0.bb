@@ -28,6 +28,7 @@ inherit qt6-cmake
 EXTRA_OECMAKE = "-DCMAKE_BUILD_TYPE=Release"
 EXTRA_OECMAKE:append:mx93-nxp-bsp = " -DENABLE_SOFTWARE_QUICK_BACKEND=ON"
 EXTRA_OECMAKE:append:mx95-nxp-bsp = " -DENABLE_PLAYER=ON"
+EXTRA_OECMAKE:append:myd-js8mpq = " -DENABLE_PLAYER=ON"
 
 do_install() {
     install -d ${D}${bindir}
