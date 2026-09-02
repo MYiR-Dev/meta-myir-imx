@@ -51,6 +51,15 @@ do_install(){
 	
 }
 
+do_install:append:myd-js8mpq() {
+	# Keep JS8MPQ's installed metadata aligned with its SWU release. Other
+	# machines retain the board-info recipe's original sw-versions file.
+	echo "rootfs ${MYIR_RELEASE_VERSION}" > ${D}${sysconfdir}/sw-versions
+	echo "${MYIR_RELEASE_VERSION}" > ${D}${sysconfdir}/swupdate-version
+}
+
+FILES:${PN}:append:myd-js8mpq = " ${sysconfdir}/swupdate-version"
+
 
 SYSTEMD_PACKAGES = "${PN}"
 SYSTEMD_SERVICE:${PN} = "myir-swupdate.service"

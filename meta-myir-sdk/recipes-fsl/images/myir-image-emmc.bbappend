@@ -8,7 +8,7 @@ IMAGE_INSTALL:append:myd-js8mpq = "${@' packagegroup-myd-js8mpq-caam-dmcrypt' if
 # MYD-JS8MPQ A/B images.
 IMAGE_CLASSES:append:myd-js8mpq = "${@bb.utils.contains('OTA_SUPPORT', '1', ' swupdate-image', '', d)}"
 
-SWUPDATE_VERSION:myd-js8mpq = "${DISTRO_VERSION}${IMAGE_VERSION_SUFFIX}"
+SWUPDATE_VERSION:myd-js8mpq = "${MYIR_RELEASE_VERSION}"
 SWUPDATE_IMAGES_FSTYPES[myir-image-emmc] = ".ext4.gz"
 
 # meta-swupdate signs sw-description with the deployed key set. The key
