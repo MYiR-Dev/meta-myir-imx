@@ -22,7 +22,7 @@ LINUX_IMX_SRC ?= "git://github.com/MYiR-Dev/myir-imx-linux.git;protocol=https;br
 SRCBRANCH = "develop_6.12.49"
 KBRANCH = "${SRCBRANCH}"
 KERNEL_LOCALVERSION = "-lts-next"
-SRCREV = "95cd56e693b2667fcd37d24e4e5f15e056fb0ed7"
+SRCREV = "b3e89e7cccee49dcf039901eca27a18fad03d9d2"
 
 # PV is defined in the base in linux-imx.inc file and uses the LINUX_VERSION definition
 # required by kernel-yocto.bbclass.
