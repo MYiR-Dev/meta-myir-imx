@@ -1,5 +1,5 @@
 DESCRIPTION = "MYiR HMI Qt6 Demo Application"
-SUMMARY = "MEasy_HMI - Qt6/QML HMI demo for i.MX9 Platforms"
+SUMMARY = "MEasy_HMI - Qt6/QML HMI demo for supported i.MX platforms"
 LICENSE = "CLOSED"
 
 SRC_URI = "gitsm://github.com/MYiR-Dev/mxapp.git;protocol=https;branch=MXAPP2-QT6-IMX9X \
@@ -27,8 +27,25 @@ inherit qt6-cmake
 
 EXTRA_OECMAKE = "-DCMAKE_BUILD_TYPE=Release"
 EXTRA_OECMAKE:append:mx93-nxp-bsp = " -DENABLE_SOFTWARE_QUICK_BACKEND=ON"
+EXTRA_OECMAKE:append:mx6ull-nxp-bsp = " -DENABLE_SOFTWARE_QUICK_BACKEND=ON"
 EXTRA_OECMAKE:append:mx95-nxp-bsp = " -DENABLE_PLAYER=ON"
 EXTRA_OECMAKE:append:myd-js8mpq = " -DENABLE_PLAYER=ON"
+
+# QML imports and platform plugins are loaded at runtime and are not all
+# discovered through the executable's shared-library dependencies.
+RDEPENDS:${PN}:append:mx6ull-nxp-bsp = " \
+    qtbase \
+    qtbase-plugins \
+    qtdeclarative \
+    qtdeclarative-plugins \
+    qtdeclarative-qmlplugins \
+    qtmultimedia \
+    qtmultimedia-plugins \
+    qtmultimedia-qmlplugins \
+    qtvirtualkeyboard \
+    qtvirtualkeyboard-plugins \
+    qtvirtualkeyboard-qmlplugins \
+"
 
 do_install() {
     install -d ${D}${bindir}
@@ -55,4 +72,4 @@ FILES:${PN} += "\
     ${datadir}/myir/Capture/myir.jpg \
 "
 
-COMPATIBLE_MACHINE = "(mx8mp-nxp-bsp|mx93-nxp-bsp|mx95-nxp-bsp)"
+COMPATIBLE_MACHINE = "(mx8mp-nxp-bsp|mx93-nxp-bsp|mx95-nxp-bsp|myd-y6ull-14x14-emmc|myd-y6ull-14x14-nand-512d)"

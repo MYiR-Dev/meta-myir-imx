@@ -38,3 +38,5 @@ IMAGE_INSTALL_PARSEC = " \
 "
 CORE_IMAGE_EXTRA_INSTALL:append:mx6ull-nxp-bsp = " ${IMAGE_INSTALL_PARSEC}"
 IMAGE_FEATURES:remove = "tools-sdk dbg-pkgs dev-pkgs"
+
+IMAGE_INSTALL:append:myd-y6ull-14x14-emmc = " myir-hmi"

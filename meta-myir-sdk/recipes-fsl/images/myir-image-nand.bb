@@ -61,6 +61,10 @@ IMAGE_INSTALL += " \
     autorun-script \
 "
 
+# meta-hailo injects this package group globally, but i.MX6ULL NAND boards do
+# not have Hailo hardware and cannot use the associated accelerator stack.
+IMAGE_INSTALL:remove = " packagegroup-hailo-tappas-dev-pkg"
+
 SDKIMAGE_FEATURES:remove = " \
     staticdev-pkgs \
 "
@@ -73,3 +77,5 @@ CLINFO:mx7-nxp-bsp   = ""
 DOCKER            ?= ""
 DOCKER:mx8-nxp-bsp = "docker"
 DOCKER:mx9-nxp-bsp = "docker"
+
+IMAGE_INSTALL:append:myd-y6ull-14x14-nand-512d = " myir-hmi"
