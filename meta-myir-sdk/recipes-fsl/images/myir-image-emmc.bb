@@ -22,9 +22,11 @@ IMAGE_INSTALL:remove = " packagegroup-hailo-tappas-dev-pkg"
 
 require recipes-fsl/images/myir-image-multimedia.bb
 
-# Provide Qt6's qmake and SDK paths only for the eMMC 6ULL HMI image.
+# Provide Qt6's qmake, SDK paths, and SerialPort development files only for
+# the eMMC 6ULL HMI image.
 inherit_defer ${@'populate_sdk_qt6_base' if d.getVar('MACHINE') == 'myd-y6ull-14x14-emmc' else ''}
 TOOLCHAIN_HOST_TASK:append:myd-y6ull-14x14-emmc = " nativesdk-cmake nativesdk-qtbase-dev nativesdk-qtbase-tools"
+TOOLCHAIN_TARGET_TASK:append:myd-y6ull-14x14-emmc = " qtserialport-dev"
 
 SDKIMAGE_FEATURES:remove = " staticdev-pkgs"
 
@@ -44,4 +46,4 @@ IMAGE_INSTALL_PARSEC = " \
 CORE_IMAGE_EXTRA_INSTALL:append:mx6ull-nxp-bsp = " ${IMAGE_INSTALL_PARSEC}"
 IMAGE_FEATURES:remove = "tools-sdk dbg-pkgs dev-pkgs"
 
-IMAGE_INSTALL:append:myd-y6ull-14x14-emmc = " myir-hmi"
+IMAGE_INSTALL:append:myd-y6ull-14x14-emmc = " myir-hmi qtserialport"

@@ -65,9 +65,11 @@ IMAGE_INSTALL += " \
 # not have Hailo hardware and cannot use the associated accelerator stack.
 IMAGE_INSTALL:remove = " packagegroup-hailo-tappas-dev-pkg"
 
-# Provide Qt6's qmake and SDK paths only for the 512 MB NAND HMI image.
+# Provide Qt6's qmake, SDK paths, and SerialPort development files only for
+# the 512 MB NAND HMI image.
 inherit_defer ${@'populate_sdk_qt6_base' if d.getVar('MACHINE') == 'myd-y6ull-14x14-nand-512d' else ''}
 TOOLCHAIN_HOST_TASK:append:myd-y6ull-14x14-nand-512d = " nativesdk-cmake nativesdk-qtbase-dev nativesdk-qtbase-tools"
+TOOLCHAIN_TARGET_TASK:append:myd-y6ull-14x14-nand-512d = " qtserialport-dev"
 
 SDKIMAGE_FEATURES:remove = " \
     staticdev-pkgs \
@@ -82,4 +84,4 @@ DOCKER            ?= ""
 DOCKER:mx8-nxp-bsp = "docker"
 DOCKER:mx9-nxp-bsp = "docker"
 
-IMAGE_INSTALL:append:myd-y6ull-14x14-nand-512d = " myir-hmi"
+IMAGE_INSTALL:append:myd-y6ull-14x14-nand-512d = " myir-hmi qtserialport"
